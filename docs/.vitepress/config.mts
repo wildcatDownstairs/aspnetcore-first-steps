@@ -21,7 +21,7 @@ export default defineConfig({
   lang: 'zh-CN',
   title: 'ASP.NET Core 第一步',
   description: '写给有编程经验者的中文 ASP.NET Core 渐进式教程：.NET 10 + Minimal API，从第一个接口到数据库、认证、测试与部署。',
-  base: '/aspnetcore-first-steps/',
+  base: '/',
   cleanUrls: true,
   locales: {
     root: { label: '简体中文', lang: 'zh-CN' },
@@ -55,7 +55,7 @@ export default defineConfig({
   },
 
   head: [
-    ['link', { rel: 'icon', type: 'image/png', href: '/aspnetcore-first-steps/logo.png' }],
+    ['link', { rel: 'icon', type: 'image/png', href: '/logo.png' }],
     ['meta', { name: 'theme-color', content: '#512bd4' }],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:locale', content: 'zh_CN' }],

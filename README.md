@@ -2,7 +2,7 @@
 
 写给有编程经验者的中文 ASP.NET Core 渐进式教程：.NET 10 + Minimal API，从第一个接口到数据库、认证、测试与部署。
 
-在线阅读：[ASP.NET Core 第一步](https://wildcatdownstairs.github.io/aspnetcore-first-steps/)
+在线阅读：[ASP.NET Core 第一步](https://aspnetcore-first-steps.pages.dev/)
 
 ## 仓库结构
 
@@ -13,14 +13,14 @@ docs/                    教程 Markdown（VitePress 站点）
   .vitepress/theme/      自定义主题：配色、动效、"FastAPI 对照"提示框等
   tutorial/              教程主线
 samples/NN-章节名/        每章对应一个可独立运行的完整项目
-.github/workflows/ci.yml 编译与测试示例 → 验证容器持久化 → 构建站点 → 发布到 GitHub Pages
+.github/workflows/ci.yml 编译与测试示例 → 验证容器持久化 → 构建站点
 ```
 
 ## 本地运行
 
 ```bash
 npm install
-npm run docs:dev      # 开发模式，http://localhost:5173/aspnetcore-first-steps/
+npm run docs:dev      # 开发模式，http://localhost:5173/
 npm run docs:build    # 生产构建，输出到 docs/.vitepress/dist
 ```
 
@@ -76,7 +76,21 @@ dotnet run
 
 ## 部署
 
-推送到 `main` 分支后，GitHub Actions 会先编译全部示例（任何一个失败都会中止），再构建站点并发布到 GitHub Pages。首次使用需要在仓库 **Settings → Pages** 中把 Source 设为 **GitHub Actions**。
+站点由 Cloudflare Pages 通过 Git 集成部署，推送到 `main` 分支后自动构建并发布。Pages 配置如下：
+
+| 配置项 | 值 |
+| --- | --- |
+| 框架预设 | VitePress |
+| 生产分支 | `main` |
+| 构建命令 | `npm run docs:build` |
+| 构建输出目录 | `docs/.vitepress/dist` |
+| 根目录 | 留空（仓库根目录） |
+| 环境变量 `NODE_VERSION` | `24` |
+| 环境变量 `GITHUB_REPOSITORY` | `wildcatDownstairs/aspnetcore-first-steps` |
+
+站点使用根路径 `/`，适用于 Pages 域名和自定义域名。`GITHUB_REPOSITORY` 用于生成仓库及页面编辑链接。
+
+GitHub Actions 继续编译和测试示例、验证容器持久化、检查中英文同步并构建站点，不再发布 GitHub Pages。Cloudflare 的自动部署与 GitHub Actions 独立运行，不会等待这些检查完成。
 
 ## 中英文内容同步
 

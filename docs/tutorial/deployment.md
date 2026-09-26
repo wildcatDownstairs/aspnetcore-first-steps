@@ -170,7 +170,7 @@ docker compose up -d --force-recreate api
 
 如果代理改变了请求的协议、主机名或客户端地址，应用需要按[代理与转发头文档](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/proxy-load-balancer?view=aspnetcore-10.0)配置受信任的代理。不要无条件信任公网发来的转发头。
 
-GitHub Pages 托管的是本教程生成的静态网页，不能运行这个 ASP.NET Core API。API 需要能运行 .NET 或容器的主机。
+Cloudflare Pages 托管的是本教程生成的静态网页，不能直接运行这个 ASP.NET Core API。API 需要能运行 .NET 或容器的主机。
 
 排查启动问题可以用：
 

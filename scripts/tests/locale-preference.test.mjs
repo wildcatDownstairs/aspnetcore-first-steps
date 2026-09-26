@@ -14,8 +14,8 @@ test('browser languages keep their priority, with English as the fallback', () =
   assert.equal(preferredLanguage(['de-DE']), 'en')
   assert.equal(preferredLanguage([]), 'en')
 })
-test('only the entry homepage redirects; explicit language and chapter links remain intact', () => {
-  const base = '/aspnetcore-first-steps/'
+for (const base of ['/', '/aspnetcore-first-steps/']) {
+test(`only the entry homepage redirects under ${base}; explicit language and chapter links remain intact`, () => {
   assert.equal(languageRedirect(base, base, 'en'), base + 'en/')
   assert.equal(languageRedirect(base + 'index.html', base, 'en'), base + 'en/')
   assert.equal(languageRedirect(base.slice(0, -1), base, 'en'), base + 'en/')
@@ -24,3 +24,4 @@ test('only the entry homepage redirects; explicit language and chapter links rem
   assert.equal(languageRedirect(base + 'en/', base, 'zh-CN'), null)
   assert.equal(languageRedirect(base + 'en/tutorial/testing', base, 'zh-CN'), null)
 })
+}

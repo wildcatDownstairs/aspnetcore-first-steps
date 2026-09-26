@@ -170,7 +170,7 @@ The port mapping is `127.0.0.1:5080:8080`, which only allows access from the hos
 
 If the proxy changes the request scheme, host name, or client address, configure trusted proxies in the app as described in the [proxy and forwarded headers documentation](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/proxy-load-balancer?view=aspnetcore-10.0). Do not unconditionally trust forwarded headers from the public internet.
 
-GitHub Pages hosts the static website generated for this tutorial; it cannot run the ASP.NET Core API. The API needs a host that can run .NET or containers.
+Cloudflare Pages hosts the static website generated for this tutorial; it cannot directly run the ASP.NET Core API. The API needs a host that can run .NET or containers.
 
 To investigate startup problems, use:
 
