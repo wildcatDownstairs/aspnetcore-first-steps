@@ -67,6 +67,7 @@ export default defineConfig({
   },
 
   head: [
+    ['meta', { name: 'google-site-verification', content: 'NvdeLtDnpSV8va_-gEuw1MLeoy4Pk1L1Z6FPYduzHbQ' }],
     ['link', { rel: 'icon', type: 'image/png', href: '/logo.png' }],
     ['meta', { name: 'theme-color', content: '#512bd4' }],
   ],
