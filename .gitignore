@@ -13,6 +13,8 @@ obj/
 .playwright-mcp/
 .playwright-cli/
 .claude/
+.wrangler/
+output/playwright/
 
 # 本机环境变量及用户密钥
 .env

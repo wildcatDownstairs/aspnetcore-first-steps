@@ -1,4 +1,5 @@
 import type { HeadConfig, PageData } from 'vitepress'
+import { localeCodes, localeForPath, locales } from './locales.mts'
 
 export const siteOrigin = 'https://aspnetcore-first-steps.pages.dev'
 
@@ -8,14 +9,16 @@ export function pagePath(relativePath: string) {
 }
 
 export function applySeo(page: PageData, pages: string[]) {
-  const english = page.relativePath.startsWith('en/')
-  const siteName = english ? 'ASP.NET Core First Steps' : 'ASP.NET Core 第一步'
-  const canonical = siteOrigin + pagePath(page.relativePath)
-  const source = page.relativePath.replace(/^en\//, '')
+  const code = localeForPath(page.relativePath)
+  const locale = locales[code]
+  const siteName = locale.title
+  const entry = page.relativePath === 'index.md'
+  const canonical = siteOrigin + (entry ? '/en/' : pagePath(page.relativePath))
+  const source = page.relativePath.replace(/^(zh|en|ja)\//, '')
   const title = page.titleTemplate === false ? page.title
     : page.title === siteName && !page.titleTemplate ? siteName
     : `${page.title} | ${page.titleTemplate || siteName}`
-  const lang = english ? 'en' : 'zh-CN'
+  const lang = locale.lang
   const home = source === 'index.md'
   const head: HeadConfig[] = [
     ['link', { rel: 'canonical', href: canonical }],
@@ -24,8 +27,7 @@ export function applySeo(page: PageData, pages: string[]) {
     ['meta', { property: 'og:title', content: title }],
     ['meta', { property: 'og:description', content: page.description }],
     ['meta', { property: 'og:url', content: canonical }],
-    ['meta', { property: 'og:locale', content: english ? 'en_US' : 'zh_CN' }],
-    ['meta', { property: 'og:locale:alternate', content: english ? 'zh_CN' : 'en_US' }],
+    ['meta', { property: 'og:locale', content: locale.og }],
     ['meta', { property: 'og:image', content: `${siteOrigin}/logo.png` }],
     ['meta', { property: 'og:image:alt', content: siteName }],
     ['meta', { name: 'twitter:card', content: 'summary' }],
@@ -35,12 +37,18 @@ export function applySeo(page: PageData, pages: string[]) {
     ['meta', { name: 'twitter:image:alt', content: siteName }],
   ]
   // 只声明确实存在的翻译，避免以后新增单语言页面时生成无效链接。
-  for (const [hreflang, file] of [['zh-CN', source], ['en', `en/${source}`]]) {
+  for (const alternative of localeCodes) {
+    const file = `${alternative}/${source}`
     if (pages.includes(file)) {
-      head.push(['link', { rel: 'alternate', hreflang, href: siteOrigin + pagePath(file) }])
+      head.push(['link', { rel: 'alternate', hreflang: locales[alternative].lang, href: siteOrigin + pagePath(file) }])
+      if (alternative !== code) head.push(['meta', { property: 'og:locale:alternate', content: locales[alternative].og }])
     }
   }
-  const website = siteOrigin + (english ? '/en/' : '/')
+  // 首页的默认入口负责语言协商，章节的默认版本是对应英文页。
+  if (home || pages.includes(`en/${source}`)) {
+    head.push(['link', { rel: 'alternate', hreflang: 'x-default', href: siteOrigin + (home ? '/' : pagePath(`en/${source}`)) }])
+  }
+  const website = `${siteOrigin}/${code}/`
   head.push(['script', { type: 'application/ld+json' }, JSON.stringify({
     '@context': 'https://schema.org',
     '@type': home ? 'WebSite' : 'WebPage',

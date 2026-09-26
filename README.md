@@ -11,7 +11,11 @@ docs/                    教程 Markdown（VitePress 站点）
   .vitepress/config.mts  站点配置
   .vitepress/nav.ts      顶部导航 + 按学习阶段分组的侧边栏（章节唯一数据源）
   .vitepress/theme/      自定义主题：配色、动效、"FastAPI 对照"提示框等
-  tutorial/              教程主线
+  zh/                    中文基准内容
+  en/                    英文译文
+  ja/                    日文译文
+functions/index.js       Cloudflare Pages 根路径语言分流
+shared/language.mjs      浏览器语言与手动选择解析
 samples/NN-章节名/        每章对应一个可独立运行的完整项目
 .github/workflows/ci.yml 编译与测试示例 → 验证容器持久化 → 构建站点
 ```
@@ -70,7 +74,7 @@ dotnet run
 ### 新增一章
 
 1. 在 `samples/NN-章节名/` 创建项目（`launchSettings.json` 统一使用 `http://localhost:5080`）；
-2. 在 `docs/tutorial/` 新建 Markdown；
+2. 在 `docs/zh/tutorial/` 新建 Markdown，并同步英文和日文；
 3. 在 `docs/.vitepress/nav.ts` 中把对应章节的 `ready` 改为 `true`；
 4. 自查：`dotnet build -warnaserror` 通过、只引入一个新概念、解释了"为什么"、给出了预期输出、末尾有总结。
 
@@ -88,23 +92,41 @@ dotnet run
 | 环境变量 `NODE_VERSION` | `24` |
 | 环境变量 `GITHUB_REPOSITORY` | `wildcatDownstairs/aspnetcore-first-steps` |
 
-站点使用根路径 `/`，适用于 Pages 域名和自定义域名。`GITHUB_REPOSITORY` 用于生成仓库及页面编辑链接。
+站点使用根路径 `/`，适用于 Pages 域名和自定义域名。`GITHUB_REPOSITORY` 可覆盖仓库及页面编辑链接；未设置时默认使用 `wildcatDownstairs/aspnetcore-first-steps`，本地预览也会显示 GitHub 入口。
 
-GitHub Actions 继续编译和测试示例、验证容器持久化、检查中英文同步并构建站点，不再发布 GitHub Pages。Cloudflare 的自动部署与 GitHub Actions 独立运行，不会等待这些检查完成。
+GitHub Actions 继续编译和测试示例、验证容器持久化、检查中英日同步并构建站点，不再发布 GitHub Pages。Cloudflare 的自动部署与 GitHub Actions 独立运行，不会等待这些检查完成。
 
-## 中英文内容同步
+## 中英日内容同步
 
-中文 `docs/` 是内容基准，英文放在 `docs/en/`，路径逐页对应。两种语言共用 `samples/`：代码注释、示例数据和应用消息统一使用英文，两种正文引用同一份代码和预期输出。新增或更新中文页面时同步英文页面，导航只在 `nav.ts` 维护章节结构。提交前运行 `npm run docs:check-translations` 检查页面覆盖、代码引用、章节数量和语言链接，再运行站点构建；这些检查也已加入 CI。
+中文 `docs/zh/` 是内容基准，英文放在 `docs/en/`，日文放在 `docs/ja/`，路径逐页对应。三种语言共用 `samples/`：代码注释、示例数据和应用消息统一使用英文，正文引用同一份代码和预期输出。新增或更新中文页面时同步两种译文，导航只在 `nav.ts` 维护章节结构。
 
-中文使用 `/`，英文使用 `/en/`；访问任一地址都不会按浏览器语言或历史选择自动跳转。通过导航栏的语言按钮切换到对应章节，语言链接也会输出到静态 HTML。
+`npm run docs:check-translations` 检查页面覆盖、示例引用、章节数量和语言链接。`npm run docs:build` 会先运行翻译检查和站点单元测试，再构建并检查 HTML，因此 Cloudflare Git 构建也会执行这些检查。
 
-## 中英文 SEO
+## 语言 URL 与边缘分流
 
-正式域名在 `docs/.vitepress/seo.mts` 中统一维护。每页使用本语言的独立标题和描述，生成指向自身的 canonical、中文与英文的双向 hreflang、Open Graph / Twitter 分享信息及 WebSite / WebPage 结构化数据。新增页面时填写 frontmatter 的 `title` 和 `description`，并同步翻译。
+- 中文：`/zh/`，英文：`/en/`，日文：`/ja/`；正文沿用相同 slug，例如 `/ja/tutorial/first-steps`。
+- 只有根路径 `/` 的 GET/HEAD 请求经过 Pages Function：有效的 `site_language` Cookie 优先，其次按 `Accept-Language` 的 q 权重匹配 zh/en/ja；无匹配或请求头缺失时默认英文。地区变体如 ja-JP、zh-TW 归入对应语言，当前中文内容为简体。
+- 语言按钮切换到对应章节并保存手动选择一年。直接访问任何明确的语言 URL 都不会被改写，也不会因浏览器语言而跳转。没有 Cookie 时会重新按浏览器偏好判断，不使用 IP 国家识别。
+- 个性化入口返回 302 和 `Cache-Control: private, no-store`，保留查询参数。不要用 CDN Cache Rules 强制缓存根入口，也不能只依赖 Vary 自动隔离缓存。
+- 构建根据中文页面生成 `_redirects`，将旧的 `/tutorial/…`、`/advanced/…` 和速查页逐页 301 到 `/zh/…`；根地址保留给语言分流。
+- `docs/public/_routes.json` 只让根路径调用 Functions，正文与资源直接由 Pages 提供。`wrangler.jsonc` 固定项目名称、构建目录与兼容日期，仓库根目录的 `functions/` 由 Pages Git 集成部署。
 
-构建时生成 `/sitemap.xml`（包含两种语言及真实 Git 更新时间）和 `/robots.txt`，404 页面标记为不收录。更换正式域名时需更新 `siteOrigin` 以及本文件的站点链接，再重新构建。`npm run docs:build` 会自动运行 SEO 检查，验证全部页面的实际 HTML、语言对应关系和站点地图，因此本地、GitHub CI 和 Cloudflare 构建都会验证这些结果。也可单独运行 `npm run docs:check-seo` 检查已有构建。
+本地验证完整边缘行为：
 
-上线后可在 Google Search Console / Bing Webmaster Tools 验证站点并提交 `https://aspnetcore-first-steps.pages.dev/sitemap.xml`。生成 SEO 元信息和站点地图不代表搜索引擎已经收录。
+```bash
+npm run docs:build
+npm run docs:edge       # http://127.0.0.1:5179/；包含 Functions 与旧地址重定向
+```
+
+`docs:dev` / `docs:preview` 只提供 VitePress 页面，不执行 Pages Functions 或旧 URL 重定向。根入口的静态备用页会默认跳到 `/en/`，三语言页面也可直接访问。
+
+## 三语言 SEO
+
+正式域名在 `docs/.vitepress/seo.mts` 中统一维护。每页生成本语言的独立标题和描述、自引用 canonical、中英日双向 hreflang、Open Graph / Twitter 分享信息及 WebSite / WebPage 结构化数据。首页的 x-default 指向根入口，章节指向对应英文版。根备用页 canonical 指向英文首页，不作为重复内容列入 sitemap。
+
+构建生成 `/sitemap.xml`（三种语言及已有 Git 更新时间）和 `/robots.txt`，404 标记为不收录。更换正式域名时更新 `siteOrigin` 与本文件站点链接。`npm run docs:check-seo` 检查全部页面的实际 HTML、语言对应关系、正文链接与锚点、站点地图、Function 路由范围和旧地址映射。
+
+上线后可在 Google Search Console / Bing Webmaster Tools 验证站点并提交 `https://aspnetcore-first-steps.pages.dev/sitemap.xml`。生成元信息和站点地图不代表搜索引擎已经收录。
 
 第 21～23 章的测试从各章目录运行，例如：
 

@@ -10,14 +10,18 @@
     "docs:preview": "vitepress preview docs",
     "docs:check-translations": "node scripts/check-translations.mjs",
     "docs:check-seo": "node scripts/check-seo.mjs",
-    "test:site": "node --test scripts/tests/*.test.mjs"
+    "test:site": "node --test scripts/tests/*.test.mjs",
+    "predocs:build": "npm run docs:check-translations && npm run test:site",
+    "docs:edge": "wrangler pages dev --ip 127.0.0.1 --port 5179 --inspector-port 0"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260926.1",
     "@fontsource-variable/jetbrains-mono": "^5.3.0",
     "@types/markdown-it-container": "^4.0.1",
     "markdown-it-cjk-friendly": "^3.0.0",
     "markdown-it-container": "^4.0.0",
     "vitepress": "^1.6.4",
-    "vue": "^3.5.43"
+    "vue": "^3.5.43",
+    "wrangler": "^4.141.0"
   }
 }

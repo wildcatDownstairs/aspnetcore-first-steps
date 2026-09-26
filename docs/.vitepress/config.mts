@@ -1,32 +1,44 @@
 import { defineConfig, type HeadConfig } from 'vitepress'
 import container from 'markdown-it-container'
 import cjkFriendly from 'markdown-it-cjk-friendly'
-import { nav, tutorialSidebar, englishNav, englishSidebar } from './nav'
+import { localeConfig, searchTranslations } from './locale-config.mts'
+import { localeCodes, locales } from './locales.mts'
+import { writeLegacyRedirects } from './redirects.mts'
 import { writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { applySeo, siteOrigin } from './seo.mts'
 
-// GitHub Actions 自动提供 owner/repo；Cloudflare Pages 在构建环境变量中配置。
-const repo = process.env.GITHUB_REPOSITORY
-const repoUrl = repo ? `https://github.com/${repo}` : ''
+// 本地预览与 Pages 未配置环境变量时也显示仓库入口；fork 可通过环境变量覆盖。
+const repo = process.env.GITHUB_REPOSITORY?.trim() || 'wildcatDownstairs/aspnetcore-first-steps'
+const repoUrl = `https://github.com/${repo}`
 
-// 中文分词：MiniSearch 默认按空白切词，对中文几乎无效，改用 Intl.Segmenter。
+// 中日文不能只按空白分词；Intl.Segmenter 同时处理 CJK 与英文。
 // 注意：VitePress 会把这个函数按源码序列化到浏览器端，所以它不能引用外部变量。
 function tokenize(text: string): string[] {
   const g = globalThis as any
-  g.__zhSegmenter ??= new Intl.Segmenter('zh-CN', { granularity: 'word' })
+  g.__cjkSegmenter ??= new Intl.Segmenter('ja', { granularity: 'word' })
   const out: string[] = []
-  for (const s of g.__zhSegmenter.segment(text)) if (s.isWordLike) out.push(s.segment)
+  for (const s of g.__cjkSegmenter.segment(text)) if (s.isWordLike) out.push(s.segment)
   return out
 }
 
 export default defineConfig({
-  lang: 'zh-CN',
-  title: 'ASP.NET Core 第一步',
-  description: '写给有编程经验者的中文 ASP.NET Core 渐进式教程：.NET 10 + Minimal API，从第一个接口到数据库、认证、测试与部署。',
+  lang: locales.en.lang,
+  title: locales.en.title,
+  description: locales.en.description,
   base: '/',
   cleanUrls: true,
-  sitemap: { hostname: siteOrigin },
+  sitemap: {
+    hostname: siteOrigin,
+    transformItems: items => items.filter(item => /^(zh|en|ja)\//.test(item.url)).map(item => ({
+      ...item,
+      // VitePress 会把根入口也归为英文；剔除该重复项后补上 x-default。
+      links: [
+        ...(item.links || []).filter(link => /^(zh|en|ja)\//.test(link.url)),
+        { lang: 'x-default', url: /^(zh|en|ja)\/$/.test(item.url) ? '/' : item.url.replace(/^(zh|ja)\//, 'en/') },
+      ],
+    })),
+  },
   transformPageData(pageData, { siteConfig }) {
     applySeo(pageData, siteConfig.pages)
   },
@@ -36,28 +48,13 @@ export default defineConfig({
     if (page === '404.md') head.push(['meta', { name: 'robots', content: 'noindex, follow' }])
     return head
   },
-  async buildEnd({ outDir }) {
+  async buildEnd({ outDir, pages }) {
+    await writeLegacyRedirects(outDir, pages)
     await writeFile(join(outDir, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${siteOrigin}/sitemap.xml\n`)
   },
   locales: {
-    root: { label: '简体中文', lang: 'zh-CN' },
-    en: {
-      label: 'English', lang: 'en', title: 'ASP.NET Core First Steps',
-      description: 'A step-by-step ASP.NET Core tutorial for developers new to C#: .NET 10, Minimal APIs, EF Core, authentication, testing, and deployment.',
-      themeConfig: {
-        nav: englishNav,
-        sidebar: { '/en/tutorial/': englishSidebar },
-        outline: { level: [2, 3], label: 'On this page' },
-        docFooter: { prev: 'Previous page', next: 'Next page' },
-        lastUpdated: { text: 'Last updated' },
-        editLink: repoUrl ? { pattern: `${repoUrl}/edit/main/docs/:path`, text: 'Edit this page on GitHub' } : undefined,
-        darkModeSwitchLabel: 'Appearance', lightModeSwitchTitle: 'Switch to light theme',
-        darkModeSwitchTitle: 'Switch to dark theme', sidebarMenuLabel: 'Contents',
-        returnToTopLabel: 'Back to top', langMenuLabel: 'Change language',
-        notFound: { title: 'Page not found', quote: 'This page may have moved, or the address may be incorrect.', linkLabel: 'Go home', linkText: 'Go home' },
-        footer: { message: 'Built with .NET 10 and Minimal APIs · Runnable examples in every chapter', copyright: 'Original writing and sample code' },
-      },
-    },
+    root: localeConfig('en', repoUrl),
+    ...Object.fromEntries(localeCodes.map(code => [code, localeConfig(code, repoUrl)])),
   },
   lastUpdated: true,
   srcExclude: ['README.md'],
@@ -111,68 +108,17 @@ export default defineConfig({
   },
 
   themeConfig: {
+    ...localeConfig('en', repoUrl).themeConfig,
     logo: '/logo.png',
-    nav,
-    sidebar: {
-      '/tutorial/': tutorialSidebar,
-    },
-
-    socialLinks: repoUrl ? [{ icon: 'github', link: repoUrl }] : [],
-    editLink: repoUrl
-      ? { pattern: `${repoUrl}/edit/main/docs/:path`, text: '在 GitHub 上编辑此页' }
-      : undefined,
-
-    outline: { level: [2, 3], label: '本页目录' },
-    docFooter: { prev: '上一页', next: '下一页' },
-    lastUpdated: { text: '最后更新于' },
-    darkModeSwitchLabel: '外观',
-    lightModeSwitchTitle: '切换到浅色模式',
-    darkModeSwitchTitle: '切换到深色模式',
-    sidebarMenuLabel: '目录',
-    returnToTopLabel: '回到顶部',
-    langMenuLabel: '语言',
-    notFound: {
-      title: '页面不存在',
-      quote: '这个地址没有对应的页面，可能章节还没写完，或者链接有误。',
-      linkLabel: '返回首页',
-      linkText: '返回首页',
-    },
-
-    footer: {
-      message: '基于 .NET 10 与 Minimal API · 所有示例均可直接 <code>dotnet run</code>',
-      copyright: '文字与示例代码均为原创',
-    },
-
+    socialLinks: [{ icon: 'github', link: repoUrl }],
     search: {
       provider: 'local',
       options: {
-        locales: {
-          en: { translations: {
-            button: { buttonText: 'Search tutorials…', buttonAriaLabel: 'Search tutorials' },
-            modal: {
-              displayDetails: 'Display detailed list', resetButtonTitle: 'Clear search',
-              backButtonTitle: 'Close search', noResultsText: 'No results found',
-              footer: { selectText: 'Select', navigateText: 'Navigate', closeText: 'Close' },
-            },
-          } },
-        },
+        translations: searchTranslations.en,
+        locales: Object.fromEntries(localeCodes.map(code => [code, { translations: searchTranslations[code] }])),
         miniSearch: {
           options: { tokenize },
           searchOptions: { fuzzy: 0.1, prefix: true, combineWith: 'AND', tokenize },
-        },
-        translations: {
-          button: { buttonText: '搜索教程…', buttonAriaLabel: '搜索' },
-          modal: {
-            displayDetails: '显示详细列表',
-            resetButtonTitle: '清除',
-            backButtonTitle: '关闭搜索',
-            noResultsText: '没有找到相关结果',
-            footer: {
-              selectText: '选择',
-              navigateText: '切换',
-              closeText: '关闭',
-            },
-          },
         },
       },
     },

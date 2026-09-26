@@ -4,7 +4,7 @@ description: ASP.NET Core 第一步教程的完整学习路线：六个阶段、
 prev: false
 next:
   text: 环境准备
-  link: /tutorial/setup
+  link: /zh/tutorial/setup
 ---
 
 # 学习路线

@@ -1,4 +1,5 @@
 import type { DefaultTheme } from 'vitepress'
+import type { Locale } from './locales.mts'
 
 /**
  * 教程主线：按"学习阶段"分组，组内顺序就是阅读顺序（后面的章节依赖前面的）。
@@ -80,35 +81,6 @@ export const stages: Stage[] = [
   },
 ]
 
-export const nav: DefaultTheme.NavItem[] = [
-  { text: '教程', link: '/tutorial/', activeMatch: '^/tutorial/' },
-  { text: '进阶', link: '/advanced/', activeMatch: '^/advanced/' },
-  {
-    text: '对照速查',
-    activeMatch: '^/(fastapi-cheatsheet|efcore-sql-cheatsheet)',
-    items: [
-      { text: 'FastAPI ↔ ASP.NET Core', link: '/fastapi-cheatsheet' },
-      { text: 'EF Core / LINQ ↔ PostgreSQL', link: '/efcore-sql-cheatsheet' },
-    ],
-  },
-  { text: '关于', link: '/about', activeMatch: '^/about' },
-]
-
-const label = (c: Chapter) =>
-  `<span class="ch-num">${c.num}</span><span class="ch-title">${c.title}</span>` +
-  (c.ready ? '' : '<span class="ch-soon">即将推出</span>')
-
-export const tutorialSidebar: DefaultTheme.SidebarItem[] = [
-  { text: '学习路线', link: '/tutorial/' },
-  ...stages.map((s) => ({
-    text: s.title,
-    collapsed: false,
-    items: s.chapters.map((c) =>
-      c.ready ? { text: label(c), link: `/tutorial/${c.slug}` } : { text: label(c) },
-    ),
-  })),
-]
-
 // 英文只提供文案映射，章节编号、顺序和发布状态仍由 stages 决定。
 const englishChapters: Record<string, string> = {
   setup: 'Environment setup', 'csharp-tour': 'A quick tour of C#',
@@ -131,29 +103,63 @@ const englishStages = [
   ['Security', 'Identify callers and decide what they can do'],
   ['Going live', 'Test your API, organize its code, and deploy it'],
 ]
+const japaneseChapters: Record<string, string> = {
+  setup: '環境構築', 'csharp-tour': 'C# の基礎', 'first-steps': 'はじめの一歩',
+  'path-params': 'ルートパラメーター', 'query-params': 'クエリパラメーター',
+  'request-body': 'リクエストボディ', validation: '入力検証',
+  'headers-cookies': 'ヘッダーと Cookie', 'response-types': 'レスポンスの型',
+  errors: 'ステータスコードとエラー処理', 'route-groups': 'ルートグループ',
+  'dependency-injection': '依存性の注入', configuration: '構成と Options',
+  middleware: 'ミドルウェア', logging: 'ログ', 'efcore-basics': 'EF Core 入門',
+  'relations-queries': 'リレーションシップとクエリ', crud: 'CRUD API の実装',
+  authentication: '認証（JWT）', authorization: '認可', cors: 'CORS', testing: 'テスト',
+  'project-structure': '機能別のプロジェクト構成', deployment: '発行とデプロイ',
+}
+const japaneseStages = [
+  ['入門', 'ツールを整え、C# に触れ、最初のエンドポイントを動かす'],
+  ['リクエストとレスポンス', 'HTTP リクエストからデータを取得し、適切なレスポンスを返す'],
+  ['アプリケーションの基盤', '構成、ログ、疎結合なコンポーネントを整える'],
+  ['データアクセス', 'EF Core で SQLite に保存し、API を組み立てる'],
+  ['セキュリティ', '呼び出し元を識別し、許可する操作を決める'],
+  ['公開に向けて', 'テストし、コードを整理してデプロイする'],
+]
 export function stagesFor(language: string): Stage[] {
-  if (language !== 'en') return stages
+  if (language === 'zh' || language === 'zh-CN') return stages
+  const translatedStages = language === 'ja' ? japaneseStages : englishStages
+  const chapters = language === 'ja' ? japaneseChapters : englishChapters
   return stages.map((stage, i) => ({
-    ...stage, title: englishStages[i][0], summary: englishStages[i][1],
-    chapters: stage.chapters.map(c => ({ ...c, title: englishChapters[c.slug] })),
+    ...stage, title: translatedStages[i][0], summary: translatedStages[i][1],
+    chapters: stage.chapters.map(c => ({ ...c, title: chapters[c.slug] })),
   }))
 }
-export const englishSidebar: DefaultTheme.SidebarItem[] = [
-  { text: 'Learning path', link: '/en/tutorial/' },
-  ...stagesFor('en').map(stage => ({
-    text: stage.title, collapsed: false,
-    items: stage.chapters.map(c => ({
-      text: label(c).replace('即将推出', 'Coming soon'),
-      ...(c.ready ? { link: `/en/tutorial/${c.slug}` } : {}),
+const labels = {
+  zh: ['教程', '进阶', '对照速查', '关于', '学习路线', '即将推出'],
+  en: ['Tutorial', 'Advanced', 'Cheat sheets', 'About', 'Learning path', 'Coming soon'],
+  ja: ['チュートリアル', '応用', '早見表', '概要', '学習ロードマップ', '近日公開'],
+}
+export function navFor(locale: Locale): DefaultTheme.NavItem[] {
+  const [tutorial, advanced, cheatsheets, about] = labels[locale]
+  const prefix = `/${locale}`
+  return [
+    { text: tutorial, link: `${prefix}/tutorial/`, activeMatch: `^${prefix}/tutorial/` },
+    { text: advanced, link: `${prefix}/advanced/`, activeMatch: `^${prefix}/advanced/` },
+    { text: cheatsheets, activeMatch: `^${prefix}/(fastapi-cheatsheet|efcore-sql-cheatsheet)`, items: [
+      { text: 'FastAPI ↔ ASP.NET Core', link: `${prefix}/fastapi-cheatsheet` },
+      { text: 'EF Core / LINQ ↔ PostgreSQL', link: `${prefix}/efcore-sql-cheatsheet` },
+    ] },
+    { text: about, link: `${prefix}/about`, activeMatch: `^${prefix}/about` },
+  ]
+}
+export function sidebarFor(locale: Locale): DefaultTheme.SidebarItem[] {
+  return [
+    { text: labels[locale][4], link: `/${locale}/tutorial/` },
+    ...stagesFor(locale).map(stage => ({
+      text: stage.title, collapsed: false,
+      items: stage.chapters.map(c => ({
+        text: `<span class="ch-num">${c.num}</span><span class="ch-title">${c.title}</span>` +
+          (c.ready ? '' : `<span class="ch-soon">${labels[locale][5]}</span>`),
+        ...(c.ready ? { link: `/${locale}/tutorial/${c.slug}` } : {}),
+      })),
     })),
-  })),
-]
-export const englishNav: DefaultTheme.NavItem[] = [
-  { text: 'Tutorial', link: '/en/tutorial/', activeMatch: '^/en/tutorial/' },
-  { text: 'Advanced', link: '/en/advanced/', activeMatch: '^/en/advanced/' },
-  { text: 'Cheat sheets', activeMatch: '^/en/(fastapi-cheatsheet|efcore-sql-cheatsheet)', items: [
-    { text: 'FastAPI ↔ ASP.NET Core', link: '/en/fastapi-cheatsheet' },
-    { text: 'EF Core / LINQ ↔ PostgreSQL', link: '/en/efcore-sql-cheatsheet' },
-  ] },
-  { text: 'About', link: '/en/about', activeMatch: '^/en/about' },
-]
+  ]
+}
