@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useData, withBase } from 'vitepress'
-import { languageStorageKey } from '../locale-preference.mjs'
 
 const { lang, page } = useData()
 const english = computed(() => lang.value === 'en')
@@ -18,10 +17,6 @@ const languages = computed(() => [
 function close(focus = false) {
   open.value = false
   if (focus) button.value?.focus()
-}
-function chooseLanguage(language: string) {
-  try { localStorage.setItem(languageStorageKey, language) } catch { /* Storage may be disabled. */ }
-  close()
 }
 async function focusFirst() {
   open.value = true
@@ -51,11 +46,11 @@ onUnmounted(() => document.removeEventListener('pointerdown', outside))
       <span>{{ english ? 'EN' : '中文' }}</span>
       <svg class="language-chevron" :class="{ expanded: open }" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m3 4.5 3 3 3-3" /></svg>
     </button>
-    <div v-if="open" id="site-language-options" class="language-options" role="group"
+    <div v-show="open" id="site-language-options" class="language-options" role="group"
       :aria-label="english ? 'Reading language' : '阅读语言'">
       <p class="language-caption">{{ english ? 'Reading language' : '阅读语言' }}</p>
       <a v-for="item in languages" :key="item.code" :href="item.href" :lang="item.code" :hreflang="item.code"
-        :aria-current="item.active ? 'true' : undefined" @click="chooseLanguage(item.code)">
+        :aria-current="item.active ? 'true' : undefined" @click="close()">
         <span><strong>{{ item.label }}</strong><small>{{ item.note }}</small></span>
         <svg v-if="item.active" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m3 8 3 3 7-7" /></svg>
       </a>

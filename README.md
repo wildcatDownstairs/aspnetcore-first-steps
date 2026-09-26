@@ -96,7 +96,15 @@ GitHub Actions 继续编译和测试示例、验证容器持久化、检查中�
 
 中文 `docs/` 是内容基准，英文放在 `docs/en/`，路径逐页对应。两种语言共用 `samples/`：代码注释、示例数据和应用消息统一使用英文，两种正文引用同一份代码和预期输出。新增或更新中文页面时同步英文页面，导航只在 `nav.ts` 维护章节结构。提交前运行 `npm run docs:check-translations` 检查页面覆盖、代码引用、章节数量和语言链接，再运行站点构建；这些检查也已加入 CI。
 
-首次访问入口首页时，浏览器首选语言为中文则显示中文，匹配到英文或无受支持语言时显示英文。手动选择保存在本机，优先于浏览器偏好；直接访问章节或 `/en/` 地址时尊重链接指定的语言。`npm run test:site` 验证语言选择与跳转规则。
+中文使用 `/`，英文使用 `/en/`；访问任一地址都不会按浏览器语言或历史选择自动跳转。通过导航栏的语言按钮切换到对应章节，语言链接也会输出到静态 HTML。
+
+## 中英文 SEO
+
+正式域名在 `docs/.vitepress/seo.mts` 中统一维护。每页使用本语言的独立标题和描述，生成指向自身的 canonical、中文与英文的双向 hreflang、Open Graph / Twitter 分享信息及 WebSite / WebPage 结构化数据。新增页面时填写 frontmatter 的 `title` 和 `description`，并同步翻译。
+
+构建时生成 `/sitemap.xml`（包含两种语言及真实 Git 更新时间）和 `/robots.txt`，404 页面标记为不收录。更换正式域名时需更新 `siteOrigin` 以及本文件的站点链接，再重新构建。`npm run docs:build` 会自动运行 SEO 检查，验证全部页面的实际 HTML、语言对应关系和站点地图，因此本地、GitHub CI 和 Cloudflare 构建都会验证这些结果。也可单独运行 `npm run docs:check-seo` 检查已有构建。
+
+上线后可在 Google Search Console / Bing Webmaster Tools 验证站点并提交 `https://aspnetcore-first-steps.pages.dev/sitemap.xml`。生成 SEO 元信息和站点地图不代表搜索引擎已经收录。
 
 第 21～23 章的测试从各章目录运行，例如：
 

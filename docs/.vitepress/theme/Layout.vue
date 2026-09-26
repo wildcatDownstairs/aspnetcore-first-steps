@@ -4,9 +4,8 @@ import { useData, useRoute } from 'vitepress'
 import { nextTick, onMounted, onUnmounted, provide, ref, watch } from 'vue'
 import HeroVisual from './components/HeroVisual.vue'
 import LanguageSwitch from './components/LanguageSwitch.vue'
-import { languageStorageKey, preferredLanguage, languageRedirect } from './locale-preference.mjs'
 
-const { isDark, frontmatter, site } = useData()
+const { isDark, frontmatter } = useData()
 const route = useRoute()
 
 /* ---------- 明暗切换：从点击位置圆形扩散（不支持 View Transitions 时直接切换） ---------- */
@@ -141,14 +140,6 @@ function replayEnter() {
 }
 
 onMounted(() => {
-  let savedLanguage: string | null = null
-  try { savedLanguage = localStorage.getItem(languageStorageKey) } catch { /* Storage may be disabled. */ }
-  const language = preferredLanguage(navigator.languages?.length ? navigator.languages : [navigator.language], savedLanguage)
-  const redirect = languageRedirect(location.pathname, site.value.base, language)
-  if (redirect) {
-    location.replace(redirect + location.search)
-    return
-  }
   addEventListener('scroll', onScroll, { passive: true })
   onScroll()
   observeReveal()

@@ -1,7 +1,8 @@
 ---
 layout: home
 title: ASP.NET Core First Steps
-titleTemplate: A Progressive ASP.NET Core Tutorial in English
+titleTemplate: .NET 10 & Minimal APIs Tutorial
+description: Learn C# and ASP.NET Core with .NET 10 and Minimal APIs. Follow runnable examples covering routing, EF Core, JWT authentication, testing, and Docker deployment.
 
 hero:
   name: ASP.NET Core First Steps

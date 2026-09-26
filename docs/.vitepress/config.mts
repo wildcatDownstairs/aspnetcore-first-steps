@@ -1,9 +1,12 @@
-import { defineConfig } from 'vitepress'
+import { defineConfig, type HeadConfig } from 'vitepress'
 import container from 'markdown-it-container'
 import cjkFriendly from 'markdown-it-cjk-friendly'
 import { nav, tutorialSidebar, englishNav, englishSidebar } from './nav'
+import { writeFile } from 'node:fs/promises'
+import { join } from 'node:path'
+import { applySeo, siteOrigin } from './seo.mts'
 
-// CI 中由 GitHub Actions 自动提供（owner/repo），本地开发时为空，相关链接会隐藏
+// GitHub Actions 自动提供 owner/repo；Cloudflare Pages 在构建环境变量中配置。
 const repo = process.env.GITHUB_REPOSITORY
 const repoUrl = repo ? `https://github.com/${repo}` : ''
 
@@ -23,12 +26,24 @@ export default defineConfig({
   description: '写给有编程经验者的中文 ASP.NET Core 渐进式教程：.NET 10 + Minimal API，从第一个接口到数据库、认证、测试与部署。',
   base: '/',
   cleanUrls: true,
+  sitemap: { hostname: siteOrigin },
+  transformPageData(pageData, { siteConfig }) {
+    applySeo(pageData, siteConfig.pages)
+  },
+  transformHead({ page, description }) {
+    // VitePress 1.x 的默认描述直接插入 HTML；经 head 序列化才能正确转义引号。
+    const head: HeadConfig[] = [['meta', { name: 'description', content: description }]]
+    if (page === '404.md') head.push(['meta', { name: 'robots', content: 'noindex, follow' }])
+    return head
+  },
+  async buildEnd({ outDir }) {
+    await writeFile(join(outDir, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${siteOrigin}/sitemap.xml\n`)
+  },
   locales: {
     root: { label: '简体中文', lang: 'zh-CN' },
     en: {
       label: 'English', lang: 'en', title: 'ASP.NET Core First Steps',
       description: 'A step-by-step ASP.NET Core tutorial for developers new to C#: .NET 10, Minimal APIs, EF Core, authentication, testing, and deployment.',
-      head: [['meta', { property: 'og:locale', content: 'en_US' }]],
       themeConfig: {
         nav: englishNav,
         sidebar: { '/en/tutorial/': englishSidebar },
@@ -57,8 +72,6 @@ export default defineConfig({
   head: [
     ['link', { rel: 'icon', type: 'image/png', href: '/logo.png' }],
     ['meta', { name: 'theme-color', content: '#512bd4' }],
-    ['meta', { property: 'og:type', content: 'website' }],
-    ['meta', { property: 'og:locale', content: 'zh_CN' }],
   ],
 
   markdown: {

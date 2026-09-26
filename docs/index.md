@@ -2,6 +2,7 @@
 layout: home
 title: ASP.NET Core 第一步
 titleTemplate: 中文 ASP.NET Core 渐进式教程
+description: 从零学习 C# 与 ASP.NET Core：基于 .NET 10 和 Minimal API，逐步掌握路由、EF Core 数据库、JWT 认证、测试与 Docker 部署，每章都有可运行示例。
 
 hero:
   name: ASP.NET Core 第一步

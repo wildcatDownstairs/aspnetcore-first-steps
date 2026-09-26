@@ -6,8 +6,10 @@
   "scripts": {
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
+    "postdocs:build": "npm run docs:check-seo",
     "docs:preview": "vitepress preview docs",
     "docs:check-translations": "node scripts/check-translations.mjs",
+    "docs:check-seo": "node scripts/check-seo.mjs",
     "test:site": "node --test scripts/tests/*.test.mjs"
   },
   "devDependencies": {
