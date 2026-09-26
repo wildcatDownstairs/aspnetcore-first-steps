@@ -1,5 +1,6 @@
 import { defineConfig } from 'vitepress'
 import container from 'markdown-it-container'
+import cjkFriendly from 'markdown-it-cjk-friendly'
 import { nav, tutorialSidebar } from './nav'
 
 // CI 中由 GitHub Actions 自动提供（owner/repo），本地开发时为空，相关链接会隐藏
@@ -42,6 +43,10 @@ export default defineConfig({
   markdown: {
     theme: { light: 'github-light', dark: 'github-dark' },
     config(md) {
+      // 让 **加粗** 在中文标点旁也能正确闭合，例如 **为什么？**因为……
+      // （CommonMark 原规则要求闭合的 ** 后面是空格或标点，中文正文通常不满足）
+      md.use(cjkFriendly)
+
       // 独立代码块（不在 code-group 中）也显示文件名标题：
       // VitePress 默认只在 code-group 的标签页上显示 [title]
       const fence = md.renderer.rules.fence!

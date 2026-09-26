@@ -57,7 +57,7 @@ Windows PowerShell 对引号和反斜杠换行的处理与 bash 不同，上面�
 
 第 29 行用一个 record 描述了"创建待办事项时需要提供什么"：一个字符串 `Title` 和一个整数 `Priority`。第 20 行处理程序的参数类型就是 `CreateTodo`。
 
-框架看到参数类型是 `CreateTodo` 这种**复杂类型**（不是 `int`、`string` 这类简单值），就推断它来自请求体——这正是上一章参数来源表格中的第三条规则。然后它会读取请求正文，用 **System.Text.Json**（.NET 内置的 JSON 库）反序列化成 `CreateTodo` 对象。
+本例是 POST 端点，`CreateTodo` 是一个没有注册为服务、没有自定义绑定的**复杂类型**（不是 `int`、`string` 这类简单值），因此框架推断它来自请求体——这正是上一章参数来源表格中的第三条规则。然后它会读取请求正文，用 **System.Text.Json**（.NET 内置的 JSON 库）反序列化成 `CreateTodo` 对象。
 
 进入处理程序时，`input` 已经是一个完整的、强类型的对象：`input.Title` 是 `string`，`input.Priority` 是 `int`。编辑器能补全这些属性，拼错属性名会直接编译失败。
 
@@ -119,7 +119,7 @@ Microsoft.AspNetCore.Http.BadHttpRequestException: Failed to read parameter "Cre
 
 ### 忘了 Content-Type
 
-如果不带 `Content-Type: application/json` 请求头，服务器会返回 `415 Unsupported Media Type`（不支持的媒体类型）：
+本教程用 `Content-Type: application/json` 声明 JSON 请求体；框架也接受 `application/*+json` 这类带 `+json` 后缀的媒体类型。如果携带请求体，却没有提供受支持的 JSON 媒体类型，就会返回 `415 Unsupported Media Type`（不支持的媒体类型）：
 
 ```http
 HTTP/1.1 415 Unsupported Media Type
@@ -154,8 +154,8 @@ System.Text.Json 提供了 `RespectNullableAnnotations` 等选项，可以让反
 
 ## 总结
 
-- 处理程序的参数如果是**复杂类型**（如 record），框架会从**请求体**读取 JSON 并反序列化成该类型。
-- 请求必须带 `Content-Type: application/json`，否则返回 415；JSON 格式错误或类型不匹配返回 400。
+- 在本章的 POST 端点中，普通的**复杂类型**参数（如 `CreateTodo`）默认从**请求体**读取 JSON；这项推断不适用于 GET 等方法或已注册为服务的类型。
+- 携带 JSON 请求体时，应提供受支持的 `Content-Type`，本教程使用 `application/json`；媒体类型不支持返回 415，JSON 格式错误或类型不匹配返回 400。
 - 用单独的**输入模型**（`CreateTodo`）接收请求体，与**数据模型**（`Todo`）分开，服务器控制的字段（如 `Id`）无法被客户端篡改。
 - 反序列化不检查业务规则：缺少的字段会变成 `null` 或 `0`，需要额外的校验。
 

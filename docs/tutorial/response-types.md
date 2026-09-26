@@ -1,13 +1,13 @@
 ---
 title: 响应类型
-description: 用 TypedResults 返回带状态码的结果，用 Results<T1, T2> 在返回类型中列出所有可能的响应，让编译器和 OpenAPI 文档都知道端点会返回什么。
+description: 用 TypedResults 返回带状态码的结果，用 Results<T1, T2> 约束处理程序主动返回的结果，并为 OpenAPI 提供响应元数据。
 ---
 
 # 响应类型
 
-到目前为止，处理程序都是直接返回一个对象，框架把它序列化成 JSON，状态码永远是 `200 OK`。但真实的 API 需要表达更多结果：找不到资源时返回 `404`，创建成功时返回 `201`，删除成功时返回 `204`。
+前几章的 Todo 处理程序直接返回对象时，框架把它序列化成 JSON，并使用 `200 OK`。但真实的 API 需要表达更多结果：找不到资源时返回 `404`，创建成功时返回 `201`，删除成功时返回 `204`。
 
-本节的新概念：**把"所有可能的响应"写进处理程序的返回类型。**
+本节的新概念：**用返回类型约束处理程序主动返回的结果。**
 
 <<< @/../samples/08-response-types/Program.cs{1,19-33 cs:line-numbers} [08-response-types/Program.cs]
 
@@ -96,7 +96,7 @@ Content-Length: 0
 `Created` 的第一个参数是新资源的地址，框架会把它放进 `Location` 响应头。这是 HTTP 的约定：客户端创建资源后，可以直接用这个地址访问它。
 :::
 
-## Results<T1, T2>：列出所有可能
+## Results<T1, T2>：列出处理程序的返回结果
 
 <<< @/../samples/08-response-types/Program.cs{19-23 cs:line-numbers} [08-response-types/Program.cs]
 
@@ -108,17 +108,21 @@ Content-Length: 0
 
 ### 编译器帮你守住约定
 
-联合类型是一份**约定**：这个端点只会返回这两种结果。如果之后有人在处理程序里加了一行 `return TypedResults.BadRequest();`，编译会失败：
+联合类型是一份**约定**：这个处理程序的返回值只能是这两种结果。如果之后有人在处理程序里加了一行 `return TypedResults.BadRequest();`，编译会失败：
 
 ```text
 Program.cs(22,24): error CS0029: 无法将类型“Microsoft.AspNetCore.Http.HttpResults.BadRequest”隐式转换为“Microsoft.AspNetCore.Http.HttpResults.Results<Microsoft.AspNetCore.Http.HttpResults.Ok<Todo>, Microsoft.AspNetCore.Http.HttpResults.NotFound>”
 ```
 
-要返回 400，就必须把 `BadRequest` 加进返回类型。**端点能返回什么，永远写在它的签名上**，不会因为某次修改而悄悄变化。
+要让这个处理程序主动返回 `BadRequest`，就必须把它加进返回类型。编译器会检查处理程序的返回值是否符合声明。
+
+::: warning 注意
+这个约定不涵盖整个请求处理过程：参数绑定、校验、中间件和异常处理还可能产生其他响应。例如本章 POST 处理程序声明返回 `Created<Todo>`，但发送损坏的 JSON 时，框架会在调用它之前返回 400。
+:::
 
 ### 文档自动同步
 
-打开 `/openapi/v1.json`，每个端点的 `responses` 都和返回类型一一对应：
+打开 `/openapi/v1.json`，本例中各处理程序的返回类型提供了以下响应信息：
 
 | 端点 | 文档中的响应 |
 | --- | --- |
@@ -126,7 +130,7 @@ Program.cs(22,24): error CS0029: 无法将类型“Microsoft.AspNetCore.Http.Htt
 | `POST /todos` | `201`（响应体为 `Todo`） |
 | `DELETE /todos/{id}` | `204`、`404` |
 
-这些信息全部来自返回类型，没有写任何额外的标注。在 `/scalar` 页面中，每个端点下方会列出这些可能的响应。
+这些信息全部来自返回类型，没有写任何额外的标注。在 `/scalar` 页面中，每个端点下方会列出这些响应。它们不是框架可能产生的全部响应；需要对调用方明确承诺的其他响应，应额外补充文档描述，下一章会演示一个 409 的例子。
 
 ## 为什么不用 Results
 
@@ -149,14 +153,14 @@ Program.cs(22,24): error CS0029: 无法将类型“Microsoft.AspNetCore.Http.Htt
 :::
 
 ::: fastapi
-FastAPI 用 `response_model` 和 `responses={404: {...}}` 在装饰器里描述响应，这些描述与函数实际返回什么是分开的，可能不一致。`Results<Ok<Todo>, NotFound>` 把描述和实现合二为一：写错了编译不过。
+FastAPI 的 `response_model` 同时负责运行时响应校验、字段过滤和文档生成，`responses` 补充其他响应说明。`TypedResults` 与 `Results<...>` 通过 C# 返回类型约束处理程序的结果并提供响应元数据，不等同于 Pydantic 的运行时响应校验。
 :::
 
 ## 总结
 
 - `TypedResults` 的方法（`Ok`、`Created`、`NoContent`、`NotFound` 等）返回带状态码的**具体类型**，例如 `Created<Todo>`。
-- 有多种可能结果时，用 `Results<T1, T2, ...>` 作为返回类型，列出全部可能；返回未列出的类型会**编译失败**。
-- OpenAPI 文档中的响应列表直接来自返回类型，代码和文档始终一致。
+- 处理程序需要返回多种结果时，用 `Results<T1, T2, ...>` 列出这些结果；主动返回未列出的类型会**编译失败**。
+- 具体结果类型能提供 OpenAPI 响应元数据；参数绑定、校验、中间件等产生的额外响应，以及无法从类型确定的状态码，需要时应补充描述。
 - `Results.Xxx()` 返回笼统的 `IResult`，会丢失类型信息，因此优先使用 `TypedResults`。
 
-下一章：[状态码与错误处理](./errors)——让所有错误都有统一、有用的格式。上一章：[Header 与 Cookie](./headers-cookies)。
+下一章：[状态码与错误处理](./errors)——用统一格式表达常见错误。上一章：[Header 与 Cookie](./headers-cookies)。

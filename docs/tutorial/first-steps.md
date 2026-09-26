@@ -1,6 +1,6 @@
 ---
 title: 第一步
-description: 用 dotnet new web 创建项目，逐行理解 Program.cs，用 MapGet 写出第一个端点，并通过 OpenAPI 与 Scalar 获得交互式文档。
+description: 用 dotnet new web 创建项目，用 MapGet 定义第一个端点，运行并验证它返回的 JSON。
 ---
 
 # 第一步
@@ -11,7 +11,7 @@ description: 用 dotnet new web 创建项目，逐行理解 Program.cs，用 Map
 
 <<< @/../samples/02-first-steps/Program.cs{cs:line-numbers} [02-first-steps/Program.cs]
 
-17 行，这就是一个完整的 Web API。下面先让它跑起来，再逐行拆解。
+17 行，这就是一个完整的 Web API。本节重点理解第 15 行的端点；其余启动和文档配置先沿用这份代码，下面只解释运行它所需的要点。
 
 ## 创建项目
 
@@ -88,7 +88,7 @@ Transfer-Encoding: chunked
 
 也可以直接在浏览器中打开 <http://localhost:5080/>。回到运行服务的终端，按 `Ctrl+C` 可以停止它。
 
-## 查看交互式文档
+:::: details 可选：查看交互式文档
 
 服务运行时，打开 <http://localhost:5080/scalar>，你会看到一个 API 文档页面：左侧列出所有端点，点开 `GET /` 后可以直接点击 **Test Request** 发送请求并查看响应。
 
@@ -120,6 +120,8 @@ Transfer-Encoding: chunked
 `/scalar` 页面相当于 FastAPI 自带的 `/docs`，`/openapi/v1.json` 相当于 `/openapi.json`。区别在于 ASP.NET Core 把"生成文档"和"展示文档"拆成了两个包，你可以自由选择展示工具。
 :::
 
+::::
+
 ## 逐行拆解
 
 ### 第 3～7 行：builder 与 app 两个阶段
@@ -134,21 +136,12 @@ Transfer-Encoding: chunked
 
 **第 7 行** `Build()` 根据前面的配置和服务清单，构建出真正的应用对象 `app`（类型是 `WebApplication`）。
 
-**为什么要分成 builder 和 app 两个阶段？** 因为两个阶段做的事情不同：
-
-- **builder 阶段**：决定"应用由哪些组件构成"。这个阶段可以随意增删服务。
-- **app 阶段**：决定"请求来了怎么处理"。此时组件清单已经**冻结**，不能再改。
-
-冻结带来了两个好处：一是应用运行期间组件不会被意外修改，多个请求并发访问时是安全的；二是很多配置错误（比如某个组件缺少它依赖的另一个组件）可以在启动时就暴露出来，而不是等到某个请求触发时才报错。
+::: info 技术细节
+为什么要分成两个阶段？`builder` 先准备配置和服务注册，`Build()` 再据此创建应用，之后用 `app` 定义如何处理请求。`Build()` 后服务注册集合变为只读，不能再增删注册；它不会冻结服务实例中的可变状态，也不保证服务实例的并发安全。服务的创建和生命周期会在[依赖注入](./dependency-injection)一章展开。
+:::
 
 ::: warning 注意
-如果在 `Build()` 之后才调用 `builder.Services.AddXxx()`，程序启动时会直接崩溃：
-
-```text
-Unhandled exception. System.InvalidOperationException: The service collection cannot be modified because it is read-only.
-```
-
-所有服务注册都必须写在 `Build()` 之前。
+`builder.Services.AddXxx()` 这类服务注册必须放在 `Build()` 之前，否则会抛出“服务集合为只读”的异常。
 :::
 
 ### 第 9～13 行：只在开发环境中暴露文档
@@ -193,58 +186,17 @@ Unhandled exception. System.InvalidOperationException: The service collection ca
 最后一行 `app.Run()` 启动 Web 服务器并开始监听请求。它会一直阻塞，直到你按下 `Ctrl+C`，所以它总是 `Program.cs` 的最后一行。
 
 ::: info 技术细节
-响应头中的 `Server: Kestrel` 表明处理请求的是 **Kestrel**——ASP.NET Core 内置的跨平台 Web 服务器。它直接编译在你的程序里，不需要像 Python 那样另外安装 uvicorn 之类的服务器进程。`dotnet run` 启动的就是一个自带 Web 服务器的可执行程序。
+响应头中的 `Server: Kestrel` 表明处理请求的是 **Kestrel**——ASP.NET Core 内置的跨平台 Web 服务器。它随 ASP.NET Core 共享框架提供，在应用进程内运行，不需要另外启动一个 Web 服务器进程。
 :::
 
-## 让编译器帮你检查
-
-C# 是静态类型语言，很多错误在运行之前就会被发现。试着把第 15 行的 `MapGet` 故意写错成 `MapGt`，编辑器会立即标出红色波浪线；执行 `dotnet build` 会看到：
-
-```text
-Program.cs(15,5): error CS1061: “WebApplication”未包含“MapGt”的定义，并且找不到可接受第一个“WebApplication”类型参数的可访问扩展方法“MapGt”(是否缺少 using 指令或程序集引用?)
-```
-
-错误信息告诉你：在第 15 行第 5 列，`WebApplication` 类型上没有 `MapGt` 这个成员。程序根本不会启动，更不会在某个请求到来时才崩溃。
-
-同样，在 `app.` 后面输入 `Map`，编辑器会列出所有可用的方法（`MapGet`、`MapPost`、`MapGroup`……）并显示它们的参数说明。**你不需要记住 API，类型信息就是文档。**前面看到的 OpenAPI 文档也是同一个道理：返回值的结构来自代码中的类型，而不是另外维护的注释。
-
-## 使用 dotnet watch 自动重载
-
-每次改代码都要 `Ctrl+C` 再 `dotnet run` 很麻烦。改用：
-
-```bash
-dotnet watch
-```
-
-它会运行项目并监视文件变化。启动后把第 15 行的文字改成 `"你好，热重载！"` 并保存，终端里会出现：
-
-```text
-dotnet watch ⌚ File updated: .\Program.cs
-dotnet watch 🔥 C# and Razor changes applied in 1029ms.
-```
-
-再次请求，内容已经变了，而且服务**没有重启**：
-
-```bash
-curl http://localhost:5080/
-```
-
-```json
-{"message":"你好，热重载！"}
-```
-
-这叫**热重载**（Hot Reload）：修改被直接应用到正在运行的程序中。有些改动无法热应用（例如修改了 `Build()` 之前注册的服务），这时 `dotnet watch` 会自动重启程序，或者提示你按 `Ctrl+R` 手动重启。
-
-::: fastapi
-`dotnet watch` 相当于 `fastapi dev` 或 `uvicorn --reload`。区别是热重载在多数情况下不需要重启进程，内存中的状态会被保留。
-:::
+需要练习编译错误诊断和热重载时，可以阅读[可选附录：开发工具练习](./development-tools)。它不影响本章对端点的理解。
 
 ## 总结
 
 - `dotnet new web` 创建一个最小的 Web 项目，整个应用就写在 `Program.cs` 中。
-- 应用分两个阶段：**builder 阶段**用 `builder.Services` 登记服务；`Build()` 之后的 **app 阶段**定义如何处理请求。分开是为了让组件清单在运行时保持不变，并提前暴露配置错误。
+- 启动代码先用 `builder` 准备服务，再用 `app` 注册端点；服务注册应放在 `Build()` 之前。
 - **端点** = HTTP 方法 + 路由模板 + 处理程序，`app.MapGet("/", () => ...)` 定义了一个 GET 端点。返回对象会被自动序列化为 JSON，属性名转为 camelCase。
 - `AddOpenApi` + `MapOpenApi` + `MapScalarApiReference` 根据代码自动生成交互式文档，出于安全考虑只在开发环境中开启。
-- 静态类型让编辑器和编译器在运行前发现错误；`dotnet watch` 提供热重载。
+- 用 `dotnet run` 启动服务，用 curl 验证响应；按 `Ctrl+C` 停止服务。
 
 下一章：[路由参数](./path-params)——让 URL 中的一部分成为处理程序的参数。上一章：[C# 速览](./csharp-tour)。

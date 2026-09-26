@@ -1,7 +1,8 @@
 /* =====================================================================
  * 设计令牌
- * 克制的配色：中性灰白底色 + 唯一的强调色（.NET 紫，纯色、少量使用）。
- * 不使用渐变、光晕和玻璃拟态。
+ * 克制的配色：米灰色的纸感底色 + 极淡的噪点纹理 + 唯一的强调色（.NET 紫，纯色、少量使用）。
+ * 纯白背景在长时间阅读时偏刺眼，暖色低饱和的底色能降低眩光；代码块保持接近纯白，
+ * 在底色上形成"卡片"的层次。不使用渐变、光晕和玻璃拟态。
  * 语义固定的提示框：tip=绿、info=蓝、warning=琥珀、fastapi=FastAPI 青绿
  * ===================================================================== */
 :root {
@@ -13,14 +14,18 @@
   --vp-c-brand-3: #512bd4;
   --vp-c-brand-soft: rgba(81, 43, 212, 0.08);
 
-  --vp-c-bg: #ffffff;
-  --vp-c-bg-alt: #f7f7f8;
-  --vp-c-bg-soft: #f5f5f6;
-  --vp-c-divider: #e6e6e9;
-  --vp-c-gutter: #ececef;
-  --vp-c-text-1: #1c1c1f;
-  --vp-c-text-2: #5c5c66;
-  --vp-c-text-3: #93939c;
+  --vp-c-bg: #f7f7f2;
+  --vp-c-bg-alt: #efede5;
+  --vp-c-bg-soft: #ebe8de;
+  --vp-c-bg-elv: #fbfaf6;
+  --vp-c-divider: #dfdbcf;
+  --vp-c-gutter: #e6e3d9;
+  --vp-c-text-1: #282722;
+  --vp-c-text-2: #5c5950;
+  --vp-c-text-3: #908c80;
+
+  /* 噪点纹理的不透明度：足够低，感觉得到"纸感"但看不出颗粒 */
+  --app-noise-opacity: 0.03;
 
   --vp-font-family-base: 'Inter', 'Inter var', ui-sans-serif, system-ui, -apple-system, 'PingFang SC', 'Hiragino Sans GB',
     'Microsoft YaHei', 'Noto Sans SC', sans-serif;
@@ -38,7 +43,7 @@
   --vp-button-alt-hover-bg: var(--vp-c-bg-soft);
   --vp-button-alt-hover-border: var(--vp-c-text-3);
 
-  --vp-code-block-bg: #f7f7f8;
+  --vp-code-block-bg: #fcfbf7;
   --vp-code-line-highlight-color: rgba(81, 43, 212, 0.07);
   --vp-code-color: #3f2a9e;
   --vp-code-bg: rgba(81, 43, 212, 0.06);
@@ -53,7 +58,15 @@
   --app-fastapi-border: rgba(0, 121, 107, 0.22);
   --app-fastapi-bg: rgba(0, 121, 107, 0.04);
 
-  --vp-sidebar-bg-color: var(--vp-c-bg-alt);
+  /* 侧边栏与正文共用同一张"纸"，靠蓝图线条而不是色块区分 */
+  --vp-sidebar-bg-color: var(--vp-c-bg);
+
+  /* 蓝图线条与节点（节点是 45° 旋转的小方块，填充底色、描线条色） */
+  --app-rule: #d8d3c6;
+  --app-column-bg: #faf9f5;
+  --app-ticks-l: url('/blueprint/ticks-l-light.svg');
+  --app-ticks-r: url('/blueprint/ticks-r-light.svg');
+  --app-node: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M5 1 9 5 5 9 1 5z' fill='%23f6f5ef' stroke='%23c9c3b4'/%3E%3C/svg%3E");
 }
 
 .dark {
@@ -71,6 +84,14 @@
   --vp-c-text-1: #e8e8ea;
   --vp-c-text-2: #a4a4ad;
   --vp-c-text-3: #6e6e78;
+
+  --app-noise-opacity: 0.015;
+  --vp-sidebar-bg-color: var(--vp-c-bg);
+  --app-rule: #2c2c31;
+  --app-column-bg: #151518;
+  --app-ticks-l: url('/blueprint/ticks-l-dark.svg');
+  --app-ticks-r: url('/blueprint/ticks-r-dark.svg');
+  --app-node: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M5 1 9 5 5 9 1 5z' fill='%23121214' stroke='%23404047'/%3E%3C/svg%3E");
 
   --vp-code-block-bg: #18181b;
   --vp-code-line-highlight-color: rgba(165, 148, 249, 0.1);
@@ -162,6 +183,13 @@
   display: flex;
   align-items: center;
   gap: 8px;
+}
+/* 隐藏侧边栏滚动条（Windows 上默认常驻显示），仍可用滚轮、中键、触控板和键盘滚动 */
+.VPSidebar {
+  scrollbar-width: none;
+}
+.VPSidebar::-webkit-scrollbar {
+  display: none;
 }
 .VPSidebar .ch-num {
   font-family: var(--vp-font-family-mono);
@@ -454,15 +482,6 @@
     color 0.2s;
 }
 
-.VPFeature {
-  border: 1px solid var(--vp-c-divider) !important;
-  border-radius: var(--app-radius) !important;
-  background: transparent !important;
-  transition: border-color 0.2s !important;
-}
-.VPFeature:hover {
-  border-color: var(--vp-c-text-3) !important;
-}
 .VPFeature .title {
   font-weight: 600;
 }
@@ -621,6 +640,22 @@
   animation: none;
   mix-blend-mode: normal;
 }
+::view-transition-group(root) {
+  animation: none;
+}
+/* 切换期间：禁用过渡、暂停动画（暂停而不是取消，避免已播放完的入场动画重新播放）。
+ * 选择器写成 html:root.theme-switching，是为了压过 VitePress 开关组件里
+ * 带 !important 的 .VPSwitch[data-v-xxx] 过渡声明 */
+html:root.theme-switching *,
+html:root.theme-switching *::before,
+html:root.theme-switching *::after {
+  transition: none !important;
+  animation-play-state: paused !important;
+}
+/* 开关按钮里太阳/月亮图标的过渡在 VitePress 中是 .dark .icon[data-v-xxx] [class^='vpi-']，优先级更高，单独覆盖 */
+html:root.theme-switching .VPSwitch .icon [class^='vpi-'] {
+  transition: none !important;
+}
 ::view-transition-old(root),
 .dark::view-transition-new(root) {
   z-index: 1;
@@ -648,4 +683,357 @@
     opacity: 1;
     transform: none;
   }
+}
+
+/* 噪点纹理：固定在视口上的一层，不响应鼠标，打印时隐藏（元素见 Layout.vue） */
+.app-noise {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  pointer-events: none;
+  user-select: none;
+  background-image: url('/noise.png');
+  background-size: 128px 128px;
+  background-repeat: repeat;
+  opacity: var(--app-noise-opacity);
+}
+@media print {
+  .app-noise {
+    display: none;
+  }
+}
+
+/* =====================================================================
+ * 文档页的蓝图框架（教程章节、进阶、对照速查、关于）
+ *
+ *   外轨 ┆ ‖刻度 内轨 │   正文栏（略亮的底色）  │ 刻度‖ …目录…  ┆ 外轨
+ *   ─────◆──────────◆────────────────────────◆─────────────────◆─────  ← 导航栏底线
+ *        ┆          ◆── h2 ──────────────────◆                  ┆
+ *
+ * 正文栏的位置随布局变化（有无侧边栏、是否显示右侧目录），所以由 Layout.vue 在
+ * 挂载、切换页面、尺寸变化时测量，并以 CSS 变量写到 .VPDoc 上（单位 px，相对 .VPDoc）：
+ *   --bp-l / --bp-r    左、右内轨到 .VPDoc 左、右边缘的距离（内轨 = 正文栏外 24px）
+ *   --bp-ol / --bp-or  左、右外轨到 .VPDoc 左、右边缘的距离
+ *   --bp-gl / --bp-gr  左、右沟槽宽度（内轨与外轨之间），为 0 时外轨与内轨重合
+ * 有侧边栏时，左外轨就是侧边栏的边界；没有侧边栏时，外轨在内轨外 104px、左右对称。
+ * 变量就绪后脚本给 .VPDoc 加上 .bp-ready，框架才显示，避免首帧错位。
+ * ===================================================================== */
+@media (min-width: 960px) {
+  .VPNavBar .divider-line {
+    background-color: var(--app-rule) !important;
+  }
+  .VPLocalNav {
+    border-bottom-color: var(--app-rule) !important;
+  }
+
+  .VPDoc {
+    position: relative;
+    isolation: isolate;
+  }
+  /* 节点条左右各伸出 5px，在页面右缘会造成横向滚动；clip 不会建立滚动容器，不影响右侧目录的 sticky */
+  .VPContent {
+    overflow-x: clip;
+  }
+
+  /* 底层：正文栏底色与顶部渐变、内轨（实线）、外轨（虚线）、沟槽刻度 */
+  .VPDoc.bp-ready::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    --bp-col-w: calc(100% - var(--bp-l) - var(--bp-r));
+    background:
+      var(--app-ticks-l) left calc(var(--bp-l) - 32px) top 24px / 32px 400px no-repeat,
+      var(--app-ticks-r) right calc(var(--bp-r) - 32px) top 24px / 32px 400px no-repeat,
+      linear-gradient(var(--app-rule), var(--app-rule)) left var(--bp-l) top / 1px 100% no-repeat,
+      linear-gradient(var(--app-rule), var(--app-rule)) right var(--bp-r) top / 1px 100% no-repeat,
+      repeating-linear-gradient(to bottom, var(--app-rule) 0 4px, transparent 4px 8px) left var(--bp-ol) top / 1px 100% no-repeat,
+      repeating-linear-gradient(to bottom, var(--app-rule) 0 4px, transparent 4px 8px) right var(--bp-or) top / 1px 100% no-repeat,
+      linear-gradient(to bottom, color-mix(in srgb, var(--vp-c-brand-1) 4%, transparent), transparent) left var(--bp-l) top / var(--bp-col-w) 360px no-repeat,
+      linear-gradient(var(--app-column-bg), var(--app-column-bg)) left var(--bp-l) top / var(--bp-col-w) 100% no-repeat;
+  }
+
+  /* 轨道与导航栏底线的交点。盒子左右各多出 5px，让贴边的节点不被裁掉 */
+  .VPDoc.bp-ready::after {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    height: 10px;
+    z-index: 1;
+    pointer-events: none;
+    background:
+      var(--app-node) left calc(var(--bp-ol) + 0.5px) center / 10px 10px no-repeat,
+      var(--app-node) left calc(var(--bp-l) + 0.5px) center / 10px 10px no-repeat,
+      var(--app-node) right calc(var(--bp-r) + 0.5px) center / 10px 10px no-repeat,
+      var(--app-node) right calc(var(--bp-or) + 0.5px) center / 10px 10px no-repeat;
+  }
+
+  /* 二级标题的分隔线：从左外轨贯穿到右内轨（无侧边栏时到右外轨），交点放节点 */
+  .VPDoc.bp-ready .vp-doc h2 {
+    position: relative;
+    border-top: 0;
+  }
+  .VPDoc.bp-ready .vp-doc h2::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: calc(-24px - var(--bp-gl));
+    right: calc(-24px - var(--bp-gr));
+    height: 1px;
+    background: var(--app-rule);
+    pointer-events: none;
+  }
+  .VPDoc.bp-ready .vp-doc h2::after {
+    content: '';
+    position: absolute;
+    top: -4.5px;
+    left: calc(-24px - var(--bp-gl) - 4.5px);
+    right: calc(-24px - var(--bp-gr) - 4.5px);
+    height: 10px;
+    pointer-events: none;
+    background:
+      var(--app-node) left center / 10px 10px no-repeat,
+      var(--app-node) left var(--bp-gl) center / 10px 10px no-repeat,
+      var(--app-node) right var(--bp-gr) center / 10px 10px no-repeat,
+      var(--app-node) right center / 10px 10px no-repeat;
+  }
+
+  /* 无侧边栏的页面底部接着页脚，页脚上边线与轨道的交点也放节点 */
+  .VPContent:not(.has-sidebar) .VPDoc.bp-ready .content-container {
+    position: relative;
+  }
+  .VPContent:not(.has-sidebar) .VPDoc.bp-ready .content-container::after {
+    content: '';
+    position: absolute;
+    bottom: -133px;
+    left: calc(-24px - var(--bp-gl) - 4.5px);
+    right: calc(-24px - var(--bp-gr) - 4.5px);
+    height: 10px;
+    z-index: 1;
+    pointer-events: none;
+    background:
+      var(--app-node) left center / 10px 10px no-repeat,
+      var(--app-node) left var(--bp-gl) center / 10px 10px no-repeat,
+      var(--app-node) right var(--bp-gr) center / 10px 10px no-repeat,
+      var(--app-node) right center / 10px 10px no-repeat;
+  }
+  .VPFooter {
+    border-top-color: var(--app-rule) !important;
+  }
+
+  /* 上一页 / 下一页：与首页特性一致的直角单元格 */
+  .VPDocFooter .pager-link {
+    border-color: var(--app-rule) !important;
+    border-radius: 0 !important;
+    background: transparent;
+    transition: background-color 0.2s, border-color 0.2s !important;
+  }
+  .VPDocFooter .pager-link:hover {
+    border-color: var(--vp-c-brand-1) !important;
+    background: color-mix(in srgb, var(--vp-c-brand-1) 3%, transparent);
+  }
+  .VPDocFooter .edit-info,
+  .VPDocFooter .prev-next {
+    border-color: var(--app-rule) !important;
+  }
+}
+
+/* =====================================================================
+ * 首页的蓝图框架
+ *
+ *   外轨 ┆ ‖刻度 内轨 │      内容栏（略亮的底色）      │ 刻度‖ 内轨 ┆ 外轨
+ *        ┆←─ 沟槽 ─→│                                  │←─ 沟槽 ─→┆
+ *   ─────◆──────────◆──────────────────────────────────◆──────────◆─────
+ *
+ * 内容盒：居中，最宽 1088px，两侧至少 64px（Hero、特性、两个 .home-section 共用）。
+ *   --bp-inner  内轨到视口边缘的距离 = 内容盒左缘 - 32px
+ *   --bp-gutter 沟槽宽度：宽屏 104px；空间不够时为 0，外轨与内轨重合
+ *   --bp-outer  外轨到视口边缘的距离
+ * 所有线条、节点、刻度的位置都由这三个变量算出。
+ * ===================================================================== */
+@media (min-width: 960px) {
+  .VPHome .VPHero .container,
+  .VPHome .VPFeatures .container {
+    max-width: 1088px;
+  }
+  /* 变量定义在 .Layout 上，首页之后的页脚也能用它们给框架"封底"。
+   * 其中的 50% 在使用处才解析，对 .VPHome 和 .VPFooter 都是整页宽度 */
+  .Layout:has(.VPHome) {
+    --bp-inner: max(32px, calc(50% - 576px));
+    --bp-gutter: 0px;
+    --bp-outer: calc(var(--bp-inner) - var(--bp-gutter));
+  }
+  .VPHome {
+    position: relative;
+    isolation: isolate;
+    overflow-x: clip;
+    /* VitePress 在首页底部留了 128px 外边距，线条会在半空中断开；改成内边距，让轨道一直延伸到页脚上边线 */
+    margin-bottom: 0 !important;
+    padding-bottom: 128px;
+  }
+
+  /* 页脚上边线与四条轨道的交点，给框架"封底" */
+  .Layout:has(.VPHome) .VPFooter {
+    position: relative;
+    border-top: 1px solid var(--app-rule) !important;
+  }
+  .Layout:has(.VPHome) .VPFooter::before {
+    content: '';
+    position: absolute;
+    z-index: 1;
+    top: -5.5px;
+    left: calc(var(--bp-outer) - 4.5px);
+    right: calc(var(--bp-outer) - 4.5px);
+    height: 10px;
+    pointer-events: none;
+    background:
+      var(--app-node) left center / 10px 10px no-repeat,
+      var(--app-node) left var(--bp-gutter) center / 10px 10px no-repeat,
+      var(--app-node) right var(--bp-gutter) center / 10px 10px no-repeat,
+      var(--app-node) right center / 10px 10px no-repeat;
+  }
+
+  /* 底层：外轨（虚线）、内轨（实线）、内容栏底色、沟槽里的刻度。z-index: -1 让它位于内容之下 */
+  .VPHome::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: 64px;
+    bottom: 0;
+    left: var(--bp-outer);
+    right: var(--bp-outer);
+    pointer-events: none;
+    background:
+      var(--app-ticks-l) left calc(var(--bp-gutter) - 32px) top 24px / 32px 400px no-repeat,
+      var(--app-ticks-r) right calc(var(--bp-gutter) - 32px) top 24px / 32px 400px no-repeat,
+      linear-gradient(var(--app-rule), var(--app-rule)) left var(--bp-gutter) top / 1px 100% no-repeat,
+      linear-gradient(var(--app-rule), var(--app-rule)) right var(--bp-gutter) top / 1px 100% no-repeat,
+      repeating-linear-gradient(to bottom, var(--app-rule) 0 4px, transparent 4px 8px) left top / 1px 100% no-repeat,
+      repeating-linear-gradient(to bottom, var(--app-rule) 0 4px, transparent 4px 8px) right top / 1px 100% no-repeat,
+      linear-gradient(var(--app-column-bg), var(--app-column-bg)) center top / calc(100% - 2 * var(--bp-gutter)) 100% no-repeat;
+  }
+
+  /* 轨道与导航栏底线的交点 */
+  .VPHome::after {
+    content: '';
+    position: absolute;
+    z-index: 1;
+    top: 59.5px;
+    left: calc(var(--bp-outer) - 4.5px);
+    right: calc(var(--bp-outer) - 4.5px);
+    height: 10px;
+    pointer-events: none;
+    background:
+      var(--app-node) left center / 10px 10px no-repeat,
+      var(--app-node) left var(--bp-gutter) center / 10px 10px no-repeat,
+      var(--app-node) right var(--bp-gutter) center / 10px 10px no-repeat,
+      var(--app-node) right center / 10px 10px no-repeat;
+  }
+
+  /* Hero：内容栏内的纵向渐变，顶部透明、中部提亮、底部带一点品牌紫 */
+  .VPHero {
+    position: relative;
+  }
+  .VPHero::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: 64px;
+    bottom: 0;
+    left: var(--bp-inner);
+    right: var(--bp-inner);
+    pointer-events: none;
+    background: linear-gradient(
+      to top,
+      color-mix(in srgb, var(--vp-c-brand-1) 5%, transparent) 0%,
+      color-mix(in srgb, var(--vp-c-bg-elv) 70%, transparent) 55%,
+      transparent 100%
+    );
+  }
+
+  /* 区块分隔：通栏横线 + 四个交点 */
+  .VPFeatures,
+  .home-section {
+    position: relative;
+  }
+  .VPFeatures::before,
+  .home-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100vw;
+    right: -100vw;
+    height: 1px;
+    background: var(--app-rule);
+    pointer-events: none;
+  }
+  .VPFeatures .container {
+    position: relative;
+  }
+  .VPFeatures .container::after,
+  .home-section::after {
+    content: '';
+    position: absolute;
+    z-index: 1;
+    top: -4.5px;
+    left: calc(-32px - var(--bp-gutter) - 4.5px);
+    right: calc(-32px - var(--bp-gutter) - 4.5px);
+    height: 10px;
+    pointer-events: none;
+    background:
+      var(--app-node) left center / 10px 10px no-repeat,
+      var(--app-node) left var(--bp-gutter) center / 10px 10px no-repeat,
+      var(--app-node) right var(--bp-gutter) center / 10px 10px no-repeat,
+      var(--app-node) right center / 10px 10px no-repeat;
+  }
+
+  /* 特性：从浮动卡片改为网格单元，单元格的分隔线与内轨相接 */
+  .VPFeatures .items {
+    margin: 0 -32px !important;
+    padding: 0 !important;
+  }
+  .VPFeatures .item {
+    padding: 0 !important;
+    border-bottom: 1px solid var(--app-rule);
+  }
+  .VPFeatures .item:not(:nth-child(3n)) {
+    border-right: 1px solid var(--app-rule);
+  }
+  .VPFeatures .item:nth-last-child(-n + 3) {
+    border-bottom: 0;
+  }
+  .VPFeature {
+    height: 100%;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    transition: background-color 0.2s !important;
+  }
+  .VPFeature:hover {
+    background: color-mix(in srgb, var(--vp-c-brand-1) 3%, transparent) !important;
+  }
+  .VPFeature .box {
+    padding: 28px 32px !important;
+  }
+
+  .home-section {
+    max-width: 1088px;
+    padding: 72px 0 !important;
+  }
+}
+
+/* 宽屏：出现外轨和沟槽 */
+@media (min-width: 1400px) {
+  .Layout:has(.VPHome) {
+    --bp-gutter: 104px;
+  }
+}
+
+/* 对照速查：最后一列是章节链接，保持一行，不让"环境准备"这类标题从中间断开 */
+.page-cheatsheet .vp-doc td:last-child,
+.page-cheatsheet .vp-doc th:last-child {
+  white-space: nowrap;
 }

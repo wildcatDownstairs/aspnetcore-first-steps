@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Todo 跨源请求实验</title>
+</head>
+<body>
+  <h1>Todo 跨源请求实验</h1>
+  <p>页面来自 localhost:5178，请求发往 localhost:5080。</p>
+  <label for="token">本地测试令牌（仅保留在当前页面内存中）</label>
+  <input id="token" type="password" autocomplete="off" spellcheck="false" size="48">
+  <button id="read" type="button">读取 Todo</button>
+  <button id="create" type="button">创建 Todo</button>
+  <pre id="output" role="status" aria-live="polite">请粘贴本章生成的 editor 令牌。</pre>
+  <script type="module">
+    const token = document.querySelector('#token');
+    const output = document.querySelector('#output');
+
+    async function request(method) {
+      if (!token.value.trim()) {
+        output.textContent = '请先输入本地测试令牌。';
+        return;
+      }
+      const headers = { Authorization: `Bearer ${token.value.trim()}` };
+      const options = { method, headers, credentials: 'omit' };
+      if (method === 'POST') {
+        headers['Content-Type'] = 'application/json';
+        options.body = JSON.stringify({ title: 'Browser todo', categoryId: 1 });
+      }
+      try {
+        const response = await fetch('http://localhost:5080/todos', options);
+        const body = await response.text();
+        output.textContent = `HTTP ${response.status}\nLocation: ${response.headers.get('Location') ?? '(无)'}\n${body}`;
+      } catch {
+        output.textContent = '请求失败：请检查 API 是否运行，以及开发者工具中的网络和 CORS 错误。';
+      }
+    }
+
+    document.querySelector('#read').addEventListener('click', () => request('GET'));
+    document.querySelector('#create').addEventListener('click', () => request('POST'));
+  </script>
+</body>
+</html>

@@ -154,11 +154,13 @@ dotnet run
 
 ## 准备好 curl
 
-从下一章开始，我们会用 `curl` 向自己写的接口发请求。macOS、Linux 和 Windows 10 及以上版本都自带 curl，执行 `curl --version` 能看到版本号即可。
+从第 02 章开始，我们会用 `curl` 向自己写的接口发请求。先执行 `curl --version` 确认它已经安装；如果终端提示找不到命令，请先通过系统的包管理器安装 curl。
 
 ::: warning 注意
 在 **Windows PowerShell 5.1**（Windows 自带的蓝色 PowerShell）中，`curl` 是 `Invoke-WebRequest` 的别名，行为和真正的 curl 完全不同。请在命令中写成 `curl.exe`，或者改用 PowerShell 7、Git Bash、Windows Terminal 中的其他 shell。
 :::
+
+完成第 02 章后，可以阅读[可选附录：开发工具练习](./development-tools)，练习编译诊断和 `dotnet watch`，不必现在学习。
 
 ## 总结
 

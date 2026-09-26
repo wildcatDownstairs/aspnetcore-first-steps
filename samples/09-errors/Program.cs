@@ -41,7 +41,7 @@ app.MapPost("/todos/{id:int}/complete", Results<Ok<Todo>, NotFound, ProblemHttpR
     }
     todos[index] = todos[index] with { Done = true };
     return TypedResults.Ok(todos[index]);
-});
+}).ProducesProblem(StatusCodes.Status409Conflict);
 
 app.MapGet("/crash", () =>
 {

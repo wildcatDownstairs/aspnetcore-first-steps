@@ -203,7 +203,7 @@ warning ASP0022: Route '/users/{id}' conflicts with another handler route. An HT
 所以请求 `/files/docs/2026/report.pdf` 时，`path` 的值是 `docs/2026/report.pdf`。这种参数适合表示文件路径、多级分类之类层级不固定的数据。捕获全部参数只能出现在模板的最后一段。
 
 ::: warning 注意
-`path` 的类型是 `string`（不可为 null），所以它是**必填**的。请求 `/files/`（后面什么都没有）会得到 400 错误。如果希望允许为空，可以把参数类型改为 `string?`——问号表示"可以为 null"，这时 `path` 会收到 `null`。可空类型会在「C# 速览」中详细介绍。
+`path` 的类型是 `string`（不可为 null），所以它是**必填**的。请求 `/files/`（后面什么都没有）会得到 400 错误。如果希望允许为空，可以把参数类型改为 `string?`——问号表示"可以为 null"，这时 `path` 会收到 `null`。可空类型的说明可以回看[「C# 速览」](./csharp-tour)。
 :::
 
 ::: fastapi

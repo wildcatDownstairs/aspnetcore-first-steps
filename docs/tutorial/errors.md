@@ -1,13 +1,13 @@
 ---
 title: 状态码与错误处理
-description: 用 ProblemDetails 统一所有错误响应的格式：业务错误、空的 404、未匹配的路由、未处理的异常，都返回结构一致、不泄露内部信息的 JSON。
+description: 用 Problem Details 表达业务错误，并为符合条件的空错误响应和未处理异常生成不泄露内部信息的错误说明。
 ---
 
 # 状态码与错误处理
 
 上一章的 `404` 响应没有任何内容，客户端只知道"出错了"，不知道为什么。前几章里各种错误的格式也五花八门：绑定失败是一段纯文本，校验失败是一个 JSON，找不到路由则什么都没有。
 
-本节的新概念：**Problem Details**——一种标准的错误响应格式。我们会让应用中**所有**错误都使用它。
+本节的新概念：**问题详情**（Problem Details）——一种标准的错误响应格式。我们会用它表达业务错误，并统一处理符合条件的空错误响应和未处理异常。下面先用 curl 的默认请求验证 JSON 响应，再说明它的适用条件。
 
 <<< @/../samples/09-errors/Program.cs{7,11-12,28-49 cs:line-numbers} [09-errors/Program.cs]
 
@@ -66,7 +66,7 @@ Content-Type: application/problem+json
 | `detail` | 针对这一次错误的具体说明 |
 | `traceId` | 请求的追踪编号，ASP.NET Core 自动添加的扩展字段 |
 
-**为什么要用标准格式？**客户端只需要写**一套**错误处理逻辑：无论哪个端点、哪种错误，都去读 `status`、`title`、`detail`。很多 HTTP 客户端库和 API 工具也认识这个格式。「参数校验」一章中的校验错误其实也是这个格式的扩展，多了一个 `errors` 字段。
+**为什么要用标准格式？**客户端可以复用**一套**逻辑处理 Problem Details 响应，读取其中的 `status`、`title`、`detail` 等字段。客户端仍应检查响应类型，并为非 JSON 响应保留兜底处理。很多 HTTP 客户端库和 API 工具也认识这个格式。「参数校验」一章中的校验错误其实也是这个格式的扩展，多了一个 `errors` 字段。
 
 `traceId` 的用处是**定位问题**：用户报告错误时提供这个编号，你就能在服务器日志中找到对应的请求记录（「日志」一章会用到它）。
 
@@ -75,6 +75,8 @@ Content-Type: application/problem+json
 <<< @/../samples/09-errors/Program.cs{28-44 cs:line-numbers} [09-errors/Program.cs]
 
 第 35～41 行处理了一个业务规则：已经完成的待办事项不能再完成一次。`TypedResults.Problem(...)` 生成一个 Problem Details 响应，你可以指定状态码、`title` 和 `detail`。第 28 行的返回类型中相应地加入了 `ProblemHttpResult`。
+
+第 44 行的 `ProducesProblem(StatusCodes.Status409Conflict)` 为 OpenAPI 补充了 409 响应描述。为什么需要它？`ProblemHttpResult` 的状态码是在调用 `Problem(...)` 时指定的，单靠返回类型无法确定它是 409。打开 `/openapi/v1.json`，这个 POST 端点的 `responses` 会列出 `200`、`404`、`409`；其中 409 的媒体类型是 `application/problem+json`。`ProducesProblem` 只补充文档元数据，不会改变实际响应，也不会替你检查业务规则。
 
 **为什么是 409，而不是 400？**请求本身没有任何问题（格式正确、参数合法），是资源的**当前状态**不允许这个操作。`409 Conflict` 正是为这种情况准备的。选对状态码能让客户端不看 `detail` 就知道该怎么处理：400 表示"改改你的请求再试"，409 表示"资源状态变了，先刷新一下"。
 
@@ -113,7 +115,11 @@ Content-Type: application/problem+json
 响应体自动变成了 Problem Details。这是两行代码配合的结果：
 
 - **第 7 行** `AddProblemDetails()`：注册生成 Problem Details 的服务，其他组件需要生成错误响应时会使用它；
-- **第 12 行** `UseStatusCodePages()`：检查每个响应，如果状态码是 400～599 且**没有响应体**，就调用上面的服务补上一个。
+- **第 12 行** `UseStatusCodePages()`：为符合条件的 400～599 响应补充内容；这里的空 404 会交给 Problem Details 服务处理。
+
+::: info 技术细节
+状态码页只处理响应尚未开始、状态码在 400～599 之间，而且未设置 `Content-Length` 和 `Content-Type` 的响应。仅仅“响应体为空”还不够：即使没有写入正文，设置了 `Content-Type` 或 `Content-Length: 0` 也会让它跳过。它不会改写端点已经生成的错误内容。
+:::
 
 它甚至对根本不存在的路由也有效：
 
@@ -171,20 +177,24 @@ fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]
 - `UseExceptionHandler()` 会让应用在**启动时**直接失败，错误信息提示你配置 `AddProblemDetails()`；
 - `UseStatusCodePages()` 则**不会报错**，只是悄悄改用纯文本，空的 404 会变成 `Status Code: 404; Not Found`。
 
-后者更隐蔽。如果发现错误响应不是 JSON，先检查是否注册了 `AddProblemDetails()`。
+后者更隐蔽。如果发现错误响应不是 JSON，先检查是否注册了 `AddProblemDetails()`，再检查请求的 `Accept` 和响应是否满足状态码页的处理条件。
+:::
+
+::: info 技术细节
+中间件生成 Problem Details 时，还需要写入器支持客户端在 `Accept` 请求头中声明的媒体类型。这叫**内容协商**（content negotiation）。上面的 curl 命令默认发送 `Accept: */*`，可以得到 JSON；如果改成 `Accept: text/html`，本例的 `/nothing-here` 会回退为纯文本 404，`/crash` 则返回没有响应体的 500。注册 `AddProblemDetails()` 并不保证每个错误都能生成 JSON，也不会在协商失败时泄露异常详情。
 :::
 
 `app.UseXxx()` 这类调用叫**中间件**（middleware），它们会依次处理每个请求和响应。为什么它们写在 `MapGet` 之前、顺序是否重要，是「中间件」一章的主题。现在只需要记住：错误处理相关的中间件写在最前面。
 
 ::: fastapi
-`TypedResults.Problem(...)` 类似 FastAPI 中的 `raise HTTPException(status_code=409, detail=...)`，但 ASP.NET Core 推荐**返回**错误结果，而不是抛出异常：返回值会出现在返回类型里，编译器和文档都能看到；异常则留给真正意料之外的情况。未处理异常的全局处理相当于 FastAPI 的 `@app.exception_handler(Exception)`。
+`TypedResults.Problem(...)` 类似 FastAPI 中用 `raise HTTPException(...)` 表达业务错误，但这里通过返回结果表达，使用的响应格式也不同。未处理异常的全局处理类似 FastAPI 的 `@app.exception_handler(Exception)`。
 :::
 
 ## 总结
 
 - **Problem Details**（RFC 9457）是标准的错误响应格式，包含 `type`、`title`、`status`、`detail`，`Content-Type` 为 `application/problem+json`。
-- 业务错误用 `TypedResults.Problem(statusCode, title, detail)` 返回，并选择恰当的状态码（例如状态冲突用 409）。
-- `AddProblemDetails()` + `UseStatusCodePages()` 让所有空的错误响应（包括不存在的路由）自动变成 Problem Details。
+- 业务错误用 `TypedResults.Problem(statusCode, title, detail)` 返回，并选择恰当的状态码；用 `ProducesProblem` 为这类动态指定的状态码补充 OpenAPI 描述。
+- `AddProblemDetails()` + `UseStatusCodePages()` 为符合条件的空错误响应补充 Problem Details；生成 JSON 还取决于请求的 `Accept`。
 - `UseExceptionHandler()` 把未处理的异常转换成不含内部细节的 500 响应，异常详情只写进服务器日志，用 `traceId` 关联。
 - 预期内的错误**返回**结果，意料之外的错误才交给异常处理。
 

@@ -45,28 +45,28 @@ export const stages: Stage[] = [
     title: '应用骨架',
     summary: '让应用可配置、可观测，组件之间松耦合',
     chapters: [
-      { num: '11', slug: 'dependency-injection', title: '依赖注入', ready: false },
-      { num: '12', slug: 'configuration', title: '配置与 Options', ready: false },
-      { num: '13', slug: 'middleware', title: '中间件', ready: false },
-      { num: '14', slug: 'logging', title: '日志', ready: false },
+      { num: '11', slug: 'dependency-injection', title: '依赖注入', ready: true },
+      { num: '12', slug: 'configuration', title: '配置与 Options', ready: true },
+      { num: '13', slug: 'middleware', title: '中间件', ready: true },
+      { num: '14', slug: 'logging', title: '日志', ready: true },
     ],
   },
   {
     title: '数据访问',
     summary: '用 EF Core 把数据存进 SQLite，组合成完整的 API',
     chapters: [
-      { num: '15', slug: 'efcore-basics', title: 'EF Core 入门', ready: false },
-      { num: '16', slug: 'relations-queries', title: '关系与查询', ready: false },
-      { num: '17', slug: 'crud', title: '完整 CRUD', ready: false },
+      { num: '15', slug: 'efcore-basics', title: 'EF Core 入门', ready: true },
+      { num: '16', slug: 'relations-queries', title: '关系与查询', ready: true },
+      { num: '17', slug: 'crud', title: '完整 CRUD', ready: true },
     ],
   },
   {
     title: '安全',
     summary: '先确认"你是谁"，再决定"你能做什么"',
     chapters: [
-      { num: '18', slug: 'authentication', title: '认证（JWT）', ready: false },
-      { num: '19', slug: 'authorization', title: '授权', ready: false },
-      { num: '20', slug: 'cors', title: 'CORS', ready: false },
+      { num: '18', slug: 'authentication', title: '认证（JWT）', ready: true },
+      { num: '19', slug: 'authorization', title: '授权', ready: true },
+      { num: '20', slug: 'cors', title: 'CORS', ready: true },
     ],
   },
   {
