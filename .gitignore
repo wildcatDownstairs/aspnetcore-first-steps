@@ -1,0 +1,20 @@
+node_modules/
+docs/.vitepress/cache/
+docs/.vitepress/dist/
+docs/.vitepress/.temp/
+bin/
+obj/
+*.user
+.vs/
+.idea/
+*.db
+*.db-shm
+*.db-wal
+.playwright-mcp/
+.playwright-cli/
+.claude/
+
+# 本机环境变量及用户密钥
+.env
+.env.*
+!.env.example
