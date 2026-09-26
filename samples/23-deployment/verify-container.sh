@@ -31,7 +31,11 @@ docker cp "$work/before.db" "$container:/data/todos.db"
 "${compose[@]}" run --rm --user 0:0 --entrypoint sh migrate -c 'chown 1654:1654 /data/todos.db'
 "${compose[@]}" up -d api
 check_http() {
-  curl --fail --silent --show-error --retry 20 --retry-connrefused --retry-delay 1 http://127.0.0.1:5080/health
+  # 容器端口可能先于应用就绪；仅对无副作用的健康检查重试连接重置等瞬时错误。
+  if ! curl --fail --silent --show-error --retry 20 --retry-all-errors --retry-delay 1 --connect-timeout 2 --max-time 3 --retry-max-time 60 http://127.0.0.1:5080/health; then
+    "${compose[@]}" logs api
+    return 1
+  fi
   for path in /openapi/v1.json /scalar; do
     [ "$(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:5080$path")" = 404 ]
   done
