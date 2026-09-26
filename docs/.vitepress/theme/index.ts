@@ -4,6 +4,7 @@ import Layout from './Layout.vue'
 import LearningPath from './components/LearningPath.vue'
 import '@fontsource-variable/jetbrains-mono'
 import './style.css'
+import './locales.css'
 
 export default {
   extends: DefaultTheme,

@@ -1,0 +1,13 @@
+-- @categoryId='1'
+-- @p2='2'
+-- @p='0'
+SELECT t0."Id", t0."Title", c."Name" AS "Category"
+FROM (
+    SELECT t."Id", t."CategoryId", t."Title"
+    FROM "Todos" AS t
+    WHERE t."CategoryId" = @categoryId AND NOT (t."Done")
+    ORDER BY t."Title", t."Id"
+    LIMIT @p2 OFFSET @p
+) AS t0
+INNER JOIN "Categories" AS c ON t0."CategoryId" = c."Id"
+ORDER BY t0."Title", t0."Id"

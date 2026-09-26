@@ -1,17 +1,22 @@
 <script setup lang="ts">
-import { withBase } from 'vitepress'
-import { stages } from '../../nav'
+import { withBase, useData } from 'vitepress'
+import { computed } from 'vue'
+import { stagesFor } from '../../nav'
 
 defineProps<{ compact?: boolean }>()
 
-const total = stages.reduce((n, s) => n + s.chapters.length, 0)
-const done = stages.reduce((n, s) => n + s.chapters.filter((c) => c.ready).length, 0)
+const { lang } = useData()
+const english = computed(() => lang.value === 'en')
+const stages = computed(() => stagesFor(english.value ? 'en' : 'root'))
+const total = stages.value.reduce((n, s) => n + s.chapters.length, 0)
+const done = stages.value.reduce((n, s) => n + s.chapters.filter((c) => c.ready).length, 0)
 </script>
 
 <template>
   <div class="lp" :class="{ 'lp-compact': compact }">
     <p class="lp-meta">
-      共 {{ stages.length }} 个阶段、{{ total }} 章，已完成 {{ done }} 章。
+      <template v-if="english">{{ stages.length }} stages, {{ total }} chapters · {{ done }} available.</template>
+      <template v-else>共 {{ stages.length }} 个阶段、{{ total }} 章，已完成 {{ done }} 章。</template>
     </p>
     <ol class="lp-stages">
       <li
@@ -29,10 +34,10 @@ const done = stages.reduce((n, s) => n + s.chapters.filter((c) => c.ready).lengt
           </div>
           <ul class="lp-chapters">
             <li v-for="c in stage.chapters" :key="c.slug">
-              <a v-if="c.ready" class="lp-chip" :href="withBase(`/tutorial/${c.slug}`)">
+              <a v-if="c.ready" class="lp-chip" :href="withBase(`${english ? '/en' : ''}/tutorial/${c.slug}`)">
                 <span class="lp-chip-num">{{ c.num }}</span>{{ c.title }}
               </a>
-              <span v-else class="lp-chip is-soon" title="即将推出">
+              <span v-else class="lp-chip is-soon" :title="english ? 'Coming soon' : '即将推出'">
                 <span class="lp-chip-num">{{ c.num }}</span>{{ c.title }}
               </span>
             </li>

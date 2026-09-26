@@ -71,8 +71,10 @@ pageClass: page-cheatsheet
 | SQLAlchemy / SQLModel | EF Core | ORM；`DbContext` 跟踪并保存实体变化 | [EF Core 入门](/tutorial/efcore-basics) |
 | relationship / 查询表达式 | 导航属性、LINQ、`Include` | 区分关系声明、投影和关联对象加载 | [关系与查询](/tutorial/relations-queries) |
 | Session 中修改实体并提交 | 跟踪实体 + `SaveChangesAsync()` | 输入 DTO 与数据库实体分开 | [完整 CRUD](/tutorial/crud) |
-| Alembic | EF Core 迁移（`dotnet ef`） | 用于结构升级；本教程的 `EnsureCreated` 示例不执行迁移 | [迁移官方文档](https://learn.microsoft.com/en-us/ef/core/managing-schemas/migrations/) |
+| Alembic | EF Core 迁移（`dotnet ef`） | 用于结构升级；第 23 章使用迁移管理升级 | [数据库迁移](/advanced/efcore-migrations) |
 | `OAuth2PasswordBearer` + JWT 验证逻辑 | `AddJwtBearer` + `RequireAuthorization()` | FastAPI 的凭据提取不等于 JWT 验证；本地令牌用 `dotnet user-jwts` 生成 | [认证（JWT）](/tutorial/authentication) |
 | `Security()` / 依赖中检查权限 | 命名策略 + `RequireAuthorization()` | 本例按 editor 角色限制写入 | [授权](/tutorial/authorization) |
 | `CORSMiddleware` | `AddCors` + `UseCors` | 浏览器跨源许可，不代替认证授权 | [CORS](/tutorial/cors) |
-| `TestClient` | `WebApplicationFactory` | 在内存中启动应用做集成测试 | 测试（编写中） |
+| `TestClient` | `WebApplicationFactory` | 在内存中启动应用做集成测试 | [测试](/tutorial/testing) |
+
+熟悉 SQL 的话，也可以查看 [EF Core / LINQ ↔ PostgreSQL 速查](./efcore-sql-cheatsheet)，对照查询、分页、关联和增删改。

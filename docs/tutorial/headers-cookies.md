@@ -24,7 +24,7 @@ curl http://localhost:5080/whoami
 ```
 
 ```json
-{"userAgent":"curl/8.21.0","clientVersion":"未提供"}
+{"userAgent":"curl/8.21.0","clientVersion":"Not provided"}
 ```
 
 用 `-H` 自己设置请求头：
@@ -55,7 +55,7 @@ curl http://localhost:5080/whoami -H "X-Client-Version: 2.1.0" -H "User-Agent: M
   Microsoft.AspNetCore.Http.BadHttpRequestException: Required parameter "string userAgent" was not provided from header.
   ```
 
-- `string? clientVersion` 可为 null，不传时收到 `null`，第 19 行用 `??` 给出了默认显示值。
+- `string? clientVersion` 可为 null，不传时收到 `null`，第 19 行用 `??` 给出了默认显示值 `"Not provided"`。
 
 ::: tip 提示
 自定义请求头过去常用 `X-` 前缀（如 `X-Client-Version`）。现在的规范已经不再推荐这个前缀，但它在实际项目中仍然很常见，两种写法框架都能处理。

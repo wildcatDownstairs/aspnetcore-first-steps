@@ -73,9 +73,9 @@ export const stages: Stage[] = [
     title: '上线',
     summary: '测试、整理代码结构，然后发布出去',
     chapters: [
-      { num: '21', slug: 'testing', title: '测试', ready: false },
-      { num: '22', slug: 'project-structure', title: '组织更大的项目', ready: false },
-      { num: '23', slug: 'deployment', title: '部署', ready: false },
+      { num: '21', slug: 'testing', title: '测试', ready: true },
+      { num: '22', slug: 'project-structure', title: '按功能组织项目', ready: true },
+      { num: '23', slug: 'deployment', title: '发布与部署', ready: true },
     ],
   },
 ]
@@ -83,7 +83,14 @@ export const stages: Stage[] = [
 export const nav: DefaultTheme.NavItem[] = [
   { text: '教程', link: '/tutorial/', activeMatch: '^/tutorial/' },
   { text: '进阶', link: '/advanced/', activeMatch: '^/advanced/' },
-  { text: '对照速查', link: '/fastapi-cheatsheet', activeMatch: '^/fastapi-cheatsheet' },
+  {
+    text: '对照速查',
+    activeMatch: '^/(fastapi-cheatsheet|efcore-sql-cheatsheet)',
+    items: [
+      { text: 'FastAPI ↔ ASP.NET Core', link: '/fastapi-cheatsheet' },
+      { text: 'EF Core / LINQ ↔ PostgreSQL', link: '/efcore-sql-cheatsheet' },
+    ],
+  },
   { text: '关于', link: '/about', activeMatch: '^/about' },
 ]
 
@@ -100,4 +107,53 @@ export const tutorialSidebar: DefaultTheme.SidebarItem[] = [
       c.ready ? { text: label(c), link: `/tutorial/${c.slug}` } : { text: label(c) },
     ),
   })),
+]
+
+// 英文只提供文案映射，章节编号、顺序和发布状态仍由 stages 决定。
+const englishChapters: Record<string, string> = {
+  setup: 'Environment setup', 'csharp-tour': 'A quick tour of C#',
+  'first-steps': 'First steps', 'path-params': 'Path parameters',
+  'query-params': 'Query parameters', 'request-body': 'Request bodies',
+  validation: 'Validation', 'headers-cookies': 'Headers and cookies',
+  'response-types': 'Response types', errors: 'Status codes and errors',
+  'route-groups': 'Route groups', 'dependency-injection': 'Dependency injection',
+  configuration: 'Configuration and options', middleware: 'Middleware', logging: 'Logging',
+  'efcore-basics': 'EF Core basics', 'relations-queries': 'Relationships and queries',
+  crud: 'A complete CRUD API', authentication: 'Authentication (JWT)',
+  authorization: 'Authorization', cors: 'CORS', testing: 'Testing',
+  'project-structure': 'Organizing by feature', deployment: 'Publishing and deployment',
+}
+const englishStages = [
+  ['Getting started', 'Set up your tools, meet C#, and run your first endpoint'],
+  ['Requests and responses', 'Read request data and return useful responses'],
+  ['Application foundations', 'Connect services, manage configuration, and understand the pipeline'],
+  ['Data access', 'Store data in SQLite with EF Core and build a complete API'],
+  ['Security', 'Identify callers and decide what they can do'],
+  ['Going live', 'Test your API, organize its code, and deploy it'],
+]
+export function stagesFor(language: string): Stage[] {
+  if (language !== 'en') return stages
+  return stages.map((stage, i) => ({
+    ...stage, title: englishStages[i][0], summary: englishStages[i][1],
+    chapters: stage.chapters.map(c => ({ ...c, title: englishChapters[c.slug] })),
+  }))
+}
+export const englishSidebar: DefaultTheme.SidebarItem[] = [
+  { text: 'Learning path', link: '/en/tutorial/' },
+  ...stagesFor('en').map(stage => ({
+    text: stage.title, collapsed: false,
+    items: stage.chapters.map(c => ({
+      text: label(c).replace('即将推出', 'Coming soon'),
+      ...(c.ready ? { link: `/en/tutorial/${c.slug}` } : {}),
+    })),
+  })),
+]
+export const englishNav: DefaultTheme.NavItem[] = [
+  { text: 'Tutorial', link: '/en/tutorial/', activeMatch: '^/en/tutorial/' },
+  { text: 'Advanced', link: '/en/advanced/', activeMatch: '^/en/advanced/' },
+  { text: 'Cheat sheets', activeMatch: '^/en/(fastapi-cheatsheet|efcore-sql-cheatsheet)', items: [
+    { text: 'FastAPI ↔ ASP.NET Core', link: '/en/fastapi-cheatsheet' },
+    { text: 'EF Core / LINQ ↔ PostgreSQL', link: '/en/efcore-sql-cheatsheet' },
+  ] },
+  { text: 'About', link: '/en/about', activeMatch: '^/en/about' },
 ]

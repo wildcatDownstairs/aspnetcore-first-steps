@@ -28,7 +28,7 @@ curl http://localhost:5080/users/42
 ```
 
 ```json
-{"id":42,"name":"用户 42"}
+{"id":42,"name":"User 42"}
 ```
 
 ```bash
@@ -36,7 +36,7 @@ curl http://localhost:5080/users/me
 ```
 
 ```json
-{"id":0,"name":"当前登录用户"}
+{"id":0,"name":"Current user"}
 ```
 
 ```bash

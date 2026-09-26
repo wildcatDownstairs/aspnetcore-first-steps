@@ -70,7 +70,7 @@ curl -i http://localhost:5080/todos/1
 前一个响应是 204；后一个是 404，响应体如下，`traceId` 的值每次不同：
 
 ```json
-{"type":"https://tools.ietf.org/html/rfc9110#section-15.5.5","title":"Not Found","status":404,"traceId":"本次请求的追踪编号"}
+{"type":"https://tools.ietf.org/html/rfc9110#section-15.5.5","title":"Not Found","status":404,"traceId":"request-trace-id"}
 ```
 
 ## 请求中允许修改哪些字段
@@ -107,7 +107,7 @@ curl -i -X POST http://localhost:5080/todos -H "Content-Type: application/json" 
 响应为 400，正文如下：
 
 ```json
-{"type":"https://tools.ietf.org/html/rfc9110#section-15.5.1","title":"分类不存在","status":400,"traceId":"本次请求的追踪编号"}
+{"type":"https://tools.ietf.org/html/rfc9110#section-15.5.1","title":"Category not found","status":400,"traceId":"request-trace-id"}
 ```
 
 先查询是为了返回明确的“分类不存在”，数据库的外键约束仍会阻止写入无效编号。本例不能删除分类；以后若加上删除接口，还要处理“检查时存在，保存前被删掉”的情况。
@@ -122,6 +122,10 @@ curl -i -X POST http://localhost:5080/todos -H "Content-Type: application/json" 
 
 ::: fastapi
 这类似在 FastAPI 处理函数中查出 SQLAlchemy 实体、修改属性，然后提交 Session。DTO 与数据库实体分开，也对应 Pydantic 输入/输出模型与 ORM 模型各自负责一件事。
+:::
+
+::: tip 提示
+想对照 INSERT、UPDATE、DELETE，可以查阅 [EF Core / LINQ ↔ PostgreSQL 速查](../efcore-sql-cheatsheet#writes)，附可运行的对照示例。
 :::
 
 ## 总结

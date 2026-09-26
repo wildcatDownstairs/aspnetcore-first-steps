@@ -48,6 +48,21 @@ jobs:
             exit 1
           fi
 
+      - name: 运行测试章节的集成测试
+        shell: bash
+        run: |
+          set -euo pipefail
+          for project in samples/*/Tests/*.csproj; do
+            (cd "$(dirname "$project")" && dotnet test --project "$(basename "$project")" --configuration Release -p:TreatWarningsAsErrors=true)
+          done
+
+      - name: 验证容器发布与数据持久化
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet publish samples/23-deployment/Deployment.csproj --configuration Release --os linux --arch x64 /t:PublishContainer -p:TreatWarningsAsErrors=true
+          bash samples/23-deployment/verify-container.sh
+
   docs:
     name: 构建文档站点
     needs: samples
@@ -63,6 +78,10 @@ jobs:
           cache: npm
 
       - run: npm ci
+
+      - run: npm run test:site
+
+      - run: npm run docs:check-translations
 
       - run: npm run docs:build
 

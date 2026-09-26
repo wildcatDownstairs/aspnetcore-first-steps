@@ -91,9 +91,9 @@ curl http://localhost:5080/api/health
 
 <<< @/../samples/10-route-groups/Program.cs{21,41 cs:line-numbers} [10-route-groups/Program.cs]
 
-分组不只是路径前缀。第 21 行的 `.WithTags("待办事项")` 给分组加上了一个 OpenAPI **标签**，分组内的**所有端点**都会继承它。第 41 行则单独给健康检查端点加了"系统"标签。
+分组不只是路径前缀。第 21 行的 `.WithTags("Todos")` 给分组加上了一个 OpenAPI **标签**，分组内的**所有端点**都会继承它。第 41 行则单独给健康检查端点加了"System"标签。
 
-打开 `/scalar` 页面，左侧的端点列表会按标签分成两组："待办事项"下有四个端点，"系统"下有一个。在 `/openapi/v1.json` 中，这四个待办事项端点的 `tags` 都是 `["待办事项"]`，`/api/health` 的是 `["系统"]`。
+打开 `/scalar` 页面，左侧的端点列表会按标签分成两组："Todos"下有四个端点，"System"下有一个。在 `/openapi/v1.json` 中，这四个待办事项端点的 `tags` 都是 `["Todos"]`，`/api/health` 的是 `["System"]`。
 
 ::: info 技术细节
 之前的章节中没有设置标签，所以 Scalar 用项目名（例如 `FirstSteps`）作为所有端点的默认标签。
@@ -107,7 +107,7 @@ curl http://localhost:5080/api/health
 **配置一次，整组生效**，新加入分组的端点也会自动获得这些配置，不会因为忘记添加而出现安全漏洞。
 
 ::: fastapi
-`MapGroup` 相当于 FastAPI 的 `APIRouter(prefix="/todos", tags=["待办事项"])`。区别是 FastAPI 的 router 需要最后用 `app.include_router()` 挂载；ASP.NET Core 的分组从 `app.MapGroup()` 创建出来时就已经挂在应用上了，还可以像第 21 行这样继续嵌套。
+`MapGroup` 相当于 FastAPI 的 `APIRouter(prefix="/todos", tags=["Todos"])`。区别是 FastAPI 的 router 需要最后用 `app.include_router()` 挂载；ASP.NET Core 的分组从 `app.MapGroup()` 创建出来时就已经挂在应用上了，还可以像第 21 行这样继续嵌套。
 :::
 
 ## 总结

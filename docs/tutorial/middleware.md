@@ -15,7 +15,10 @@ description: 理解 ASP.NET Core 的请求处理管道：用 app.Use 编写中�
 
 ## 运行与验证
 
+先停止上一章的服务，从仓库根目录执行：
+
 ```bash
+cd samples/13-middleware
 dotnet run
 ```
 
@@ -30,17 +33,17 @@ HTTP/1.1 200 OK
 Content-Type: application/json; charset=utf-8
 X-Elapsed-Ms: 1
 
-{"message":"你好"}
+{"message":"Hello"}
 ```
 
 回到运行服务的终端，会看到这样的输出：
 
 ```text
-→ [1] 进入：GET /hello
-→ [2] 进入：开始计时
-● 端点：处理请求
-← [2] 离开
-← [1] 离开：200
+→ [1] Enter: GET /hello
+→ [2] Enter: start timing
+● Endpoint: handling request
+← [2] Leave
+← [1] Leave: 200
 ```
 
 再加上 `?maintenance` 参数请求一次：
@@ -56,11 +59,11 @@ X-Elapsed-Ms: 1
 ```
 
 ```text
-→ [1] 进入：GET /hello
-→ [2] 进入：开始计时
-■ [3] 维护中，请求被拦截
-← [2] 离开
-← [1] 离开：503
+→ [1] Enter: GET /hello
+→ [2] Enter: start timing
+■ [3] Maintenance mode; request intercepted
+← [2] Leave
+← [1] Leave: 503
 ```
 
 这次端点没有执行。`X-Elapsed-Ms` 的值取决于机器速度，可能是 0 或其他数字。

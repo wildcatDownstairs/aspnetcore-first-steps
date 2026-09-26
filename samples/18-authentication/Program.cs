@@ -9,7 +9,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddValidation();
 builder.Services.AddProblemDetails();
 var connectionString = builder.Configuration.GetConnectionString("Todos")
-    ?? throw new InvalidOperationException("缺少 ConnectionStrings:Todos 配置。");
+    ?? throw new InvalidOperationException("Missing ConnectionStrings:Todos configuration.");
 builder.Services.AddDbContext<TodoDbContext>(options => options.UseSqlite(connectionString));
 builder.Services.AddAuthentication("Bearer").AddJwtBearer();
 builder.Services.AddAuthorization();
@@ -27,7 +27,7 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
-// 仅用于独立的学习示例；已有表结构不会被 EnsureCreatedAsync 更新。
+// For standalone learning samples only; EnsureCreatedAsync does not update existing tables.
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<TodoDbContext>();
@@ -41,7 +41,7 @@ using (var scope = app.Services.CreateScope())
 
 app.MapGet("/me", (ClaimsPrincipal user) => new { Name = user.Identity?.Name }).RequireAuthorization();
 
-var todos = app.MapGroup("/todos").WithTags("待办事项").RequireAuthorization();
+var todos = app.MapGroup("/todos").WithTags("Todos").RequireAuthorization();
 
 todos.MapGet("/", async (TodoDbContext db) =>
     await db.Todos.AsNoTracking().OrderBy(t => t.Id)
@@ -58,7 +58,7 @@ todos.MapPost("/", async Task<Results<Created<TodoResponse>, ProblemHttpResult>>
 {
     if (!await db.Categories.AnyAsync(c => c.Id == input.CategoryId))
     {
-        return TypedResults.Problem(statusCode: 400, title: "分类不存在");
+        return TypedResults.Problem(statusCode: 400, title: "Category not found");
     }
     var todo = new Todo { Title = input.Title, CategoryId = input.CategoryId };
     db.Todos.Add(todo);
@@ -73,7 +73,7 @@ todos.MapPut("/{id:int}", async Task<Results<NoContent, NotFound, ProblemHttpRes
     if (todo is null) return TypedResults.NotFound();
     if (!await db.Categories.AnyAsync(c => c.Id == input.CategoryId))
     {
-        return TypedResults.Problem(statusCode: 400, title: "分类不存在");
+        return TypedResults.Problem(statusCode: 400, title: "Category not found");
     }
     todo.Title = input.Title;
     todo.Done = input.Done;

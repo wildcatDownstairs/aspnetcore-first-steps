@@ -13,15 +13,15 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
-// 中间件 1：记录请求进入和离开
+// Middleware 1: Log when a request enters and leaves
 app.Use(async (context, next) =>
 {
-    Console.WriteLine($"→ [1] 进入：{context.Request.Method} {context.Request.Path}");
+    Console.WriteLine($"→ [1] Enter: {context.Request.Method} {context.Request.Path}");
     await next(context);
-    Console.WriteLine($"← [1] 离开：{context.Response.StatusCode}");
+    Console.WriteLine($"← [1] Leave: {context.Response.StatusCode}");
 });
 
-// 中间件 2：在响应头中写入处理耗时
+// Middleware 2: Add elapsed time to the response header
 app.Use(async (context, next) =>
 {
     var stopwatch = Stopwatch.StartNew();
@@ -30,17 +30,17 @@ app.Use(async (context, next) =>
         context.Response.Headers["X-Elapsed-Ms"] = stopwatch.ElapsedMilliseconds.ToString();
         return Task.CompletedTask;
     });
-    Console.WriteLine("→ [2] 进入：开始计时");
+    Console.WriteLine("→ [2] Enter: start timing");
     await next(context);
-    Console.WriteLine("← [2] 离开");
+    Console.WriteLine("← [2] Leave");
 });
 
-// 中间件 3：维护模式，直接返回 503，不再往后传递
+// Middleware 3: In maintenance mode, return 503 without calling the next step
 app.Use(async (context, next) =>
 {
     if (context.Request.Query.ContainsKey("maintenance"))
     {
-        Console.WriteLine("■ [3] 维护中，请求被拦截");
+        Console.WriteLine("■ [3] Maintenance mode; request intercepted");
         context.Response.StatusCode = StatusCodes.Status503ServiceUnavailable;
         return;
     }
@@ -49,8 +49,8 @@ app.Use(async (context, next) =>
 
 app.MapGet("/hello", () =>
 {
-    Console.WriteLine("● 端点：处理请求");
-    return new { Message = "你好" };
+    Console.WriteLine("● Endpoint: handling request");
+    return new { Message = "Hello" };
 });
 
 app.Run();

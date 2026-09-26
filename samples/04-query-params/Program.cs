@@ -14,11 +14,11 @@ if (app.Environment.IsDevelopment())
 
 List<Todo> todos =
 [
-    new(1, "买牛奶", false),
-    new(2, "写周报", true),
-    new(3, "给猫铲屎", false),
-    new(4, "学习 ASP.NET Core", false),
-    new(5, "预约体检", true),
+    new(1, "Buy milk", false),
+    new(2, "Write weekly report", true),
+    new(3, "Clean the litter box", false),
+    new(4, "Learn ASP.NET Core", false),
+    new(5, "Schedule a checkup", true),
 ];
 
 app.MapGet("/todos", (bool? done, int page = 1, int pageSize = 2) =>

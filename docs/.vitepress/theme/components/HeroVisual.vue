@@ -16,7 +16,7 @@
       <div class="hv-line l2 hv-muted">Now listening on: http://localhost:5080</div>
       <div class="hv-line l3"><span class="hv-prompt">$</span> curl localhost:5080/users/42</div>
       <div class="hv-line l4">
-        <span class="hv-p">{</span><span class="hv-k">"id"</span><span class="hv-p">:</span><span class="hv-n">42</span><span class="hv-p">,</span><span class="hv-k">"name"</span><span class="hv-p">:</span><span class="hv-s">"用户 42"</span><span class="hv-p">}</span>
+        <span class="hv-p">{</span><span class="hv-k">"id"</span><span class="hv-p">:</span><span class="hv-n">42</span><span class="hv-p">,</span><span class="hv-k">"name"</span><span class="hv-p">:</span><span class="hv-s">"User 42"</span><span class="hv-p">}</span>
       </div>
       <div class="hv-line l5"><span class="hv-prompt">$</span> curl -i localhost:5080/users/abc</div>
       <div class="hv-line l6 hv-muted">HTTP/1.1 404 Not Found</div>

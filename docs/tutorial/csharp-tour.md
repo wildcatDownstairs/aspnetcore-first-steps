@@ -22,14 +22,14 @@ dotnet run
 预期输出：
 
 ```text
-小明 有 2 个待办事项
-昵称长度：0
-5 的平方是 25
-Todo { Id = 1, Title = 买牛奶, Done = False }
-Todo { Id = 1, Title = 买牛奶, Done = True }
-值相等：True
-未完成：买牛奶
-异步操作完成
+Alex has 2 todo items
+Nickname length: 0
+Square of 5 is 25
+Todo { Id = 1, Title = Buy milk, Done = False }
+Todo { Id = 1, Title = Buy milk, Done = True }
+Value equality: True
+Pending: Buy milk
+Async operation complete
 ```
 
 下面分三组来看。
@@ -94,7 +94,7 @@ Program.cs(10,19): warning CS8602: 解引用可能出现空引用。
 
 这种类型叫 **record**（记录类型）。本例使用的是位置式 `record class`（`class` 关键字可以省略），适合表示"一组数据"，有两个方便的特性：
 
-1. **值相等**：两个 record 的所有属性都相等，它们就相等。第 21 行 `milk == new Todo(1, "买牛奶", false)` 的结果是 `True`，即使它们是两个不同的对象。
+1. **值相等**：两个 record 的所有属性都相等，它们就相等。第 21 行 `milk == new Todo(1, "Buy milk", false)` 的结果是 `True`，即使它们是两个不同的对象。
 2. **初始化后不能重新赋值**：本例自动生成的 `init` 属性只能在初始化时赋值。想要"修改"，就用 **第 18 行** 的 `with` 表达式复制一份并替换部分属性，原来的 `milk` 保持不变。
 
 `record` 本身并不强制不可变：你仍然可以声明带 `set` 的属性。如果属性指向一个可变列表，`init` 也只限制替换这个列表，不会阻止修改列表中的元素。这叫**浅层不可变性**（shallow immutability）。
@@ -111,7 +111,7 @@ record 的角色类似 Pydantic 模型或 `@dataclass(frozen=True)`：用字段�
 
 ### 集合与 LINQ
 
-**第 24 行**的方括号 `[milk, new Todo(2, "写代码", true)]` 是**集合表达式**（collection expression），用来创建一个 `List<Todo>`。`List<Todo>` 中的 `<Todo>` 叫**泛型参数**，表示"这是一个只能装 `Todo` 的列表"，往里放其他类型的东西会编译失败。
+**第 24 行**的方括号 `[milk, new Todo(2, "Write code", true)]` 是**集合表达式**（collection expression），用来创建一个 `List<Todo>`。`List<Todo>` 中的 `<Todo>` 叫**泛型参数**，表示"这是一个只能装 `Todo` 的列表"，往里放其他类型的东西会编译失败。
 
 **第 25 行**是 **LINQ**（Language Integrated Query，语言集成查询）：
 

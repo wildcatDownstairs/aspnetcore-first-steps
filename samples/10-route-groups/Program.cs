@@ -18,7 +18,7 @@ var nextId = 2;
 
 var api = app.MapGroup("/api");
 
-var todosApi = api.MapGroup("/todos").WithTags("待办事项");
+var todosApi = api.MapGroup("/todos").WithTags("Todos");
 
 todosApi.MapGet("/", () => todos);
 
@@ -38,7 +38,7 @@ todosApi.MapPost("/", Created<Todo> (CreateTodo input) =>
 todosApi.MapDelete("/{id:int}", Results<NoContent, NotFound> (int id) =>
     todos.RemoveAll(t => t.Id == id) > 0 ? TypedResults.NoContent() : TypedResults.NotFound());
 
-api.MapGet("/health", () => new { Status = "ok" }).WithTags("系统");
+api.MapGet("/health", () => new { Status = "ok" }).WithTags("System");
 
 app.Run();
 

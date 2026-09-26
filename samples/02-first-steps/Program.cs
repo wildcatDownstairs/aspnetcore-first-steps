@@ -12,6 +12,6 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
-app.MapGet("/", () => new { Message = "你好，ASP.NET Core！" });
+app.MapGet("/", () => new { Message = "Hello, ASP.NET Core!" });
 
 app.Run();

@@ -1,29 +1,29 @@
-// 1. 静态类型与类型推断
+// 1. Static typing and type inference
 int count = 2;
-var owner = "小明";
+var owner = "Alex";
 
-// 2. 字符串插值
-Console.WriteLine($"{owner} 有 {count} 个待办事项");
+// 2. String interpolation
+Console.WriteLine($"{owner} has {count} todo items");
 
-// 3. 可空引用类型
+// 3. Nullable reference types
 string? nickname = null;
-Console.WriteLine($"昵称长度：{nickname?.Length ?? 0}");
+Console.WriteLine($"Nickname length: {nickname?.Length ?? 0}");
 
-// 4. Lambda 表达式
+// 4. Lambda expressions
 Func<int, int> square = x => x * x;
-Console.WriteLine($"5 的平方是 {square(5)}");
+Console.WriteLine($"Square of 5 is {square(5)}");
 
-// 5. record
-var milk = new Todo(1, "买牛奶", false);
+// 5. Records
+var milk = new Todo(1, "Buy milk", false);
 var milkDone = milk with { Done = true };
 Console.WriteLine(milk);
 Console.WriteLine(milkDone);
-Console.WriteLine($"值相等：{milk == new Todo(1, "买牛奶", false)}");
+Console.WriteLine($"Value equality: {milk == new Todo(1, "Buy milk", false)}");
 
-// 6. 集合与 LINQ
-List<Todo> todos = [milk, new Todo(2, "写代码", true)];
+// 6. Collections and LINQ
+List<Todo> todos = [milk, new Todo(2, "Write code", true)];
 var pending = todos.Where(t => !t.Done).Select(t => t.Title);
-Console.WriteLine($"未完成：{string.Join("、", pending)}");
+Console.WriteLine($"Pending: {string.Join(", ", pending)}");
 
 // 7. async / await
 var message = await LoadMessageAsync();
@@ -32,7 +32,7 @@ Console.WriteLine(message);
 static async Task<string> LoadMessageAsync()
 {
     await Task.Delay(100);
-    return "异步操作完成";
+    return "Async operation complete";
 }
 
 record Todo(int Id, string Title, bool Done);

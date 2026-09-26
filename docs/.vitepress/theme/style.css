@@ -729,6 +729,27 @@ html:root.theme-switching .VPSwitch .icon [class^='vpi-'] {
   .VPDoc {
     position: relative;
     isolation: isolate;
+    /* 比页脚（VitePress 中 z-index 为 --vp-z-index-footer）高一层：
+     * 收口节点有一半伸进页脚，否则会被页脚的背景盖住；仍低于本地导航、导航栏和侧边栏 */
+    z-index: calc(var(--vp-z-index-footer) + 1);
+    /* 框架的收口位置（距 .VPDoc 底部）与收口横线的粗细：
+     * 无侧边栏的页面接着页脚，收口就在页脚上边线，横线由页脚自己画；
+     * 有侧边栏的页面没有页脚，在底部上方 64px 处自己画一条收口线 */
+    --bp-close: 0px;
+    --bp-close-line: 0px;
+  }
+  .VPContent.has-sidebar .VPDoc {
+    --bp-close: 64px;
+    --bp-close-line: 1px;
+  }
+  /* 内容较短时 VitePress 会撑高 .VPContent 把页脚推到底部，但 .VPDoc 不跟着变高，
+   * 轨道会在页脚上方悬空断开；让 .VPDoc 填满剩余高度 */
+  .VPContent:not(.has-sidebar):has(> .VPDoc) {
+    display: flex;
+    flex-direction: column;
+  }
+  .VPContent:not(.has-sidebar) > .VPDoc {
+    flex-grow: 1;
   }
   /* 节点条左右各伸出 5px，在页面右缘会造成横向滚动；clip 不会建立滚动容器，不影响右侧目录的 sticky */
   .VPContent {
@@ -739,7 +760,10 @@ html:root.theme-switching .VPSwitch .icon [class^='vpi-'] {
   .VPDoc.bp-ready::before {
     content: '';
     position: absolute;
-    inset: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: var(--bp-close);
     z-index: -1;
     pointer-events: none;
     --bp-col-w: calc(100% - var(--bp-l) - var(--bp-r));
@@ -801,24 +825,23 @@ html:root.theme-switching .VPSwitch .icon [class^='vpi-'] {
       var(--app-node) right center / 10px 10px no-repeat;
   }
 
-  /* 无侧边栏的页面底部接着页脚，页脚上边线与轨道的交点也放节点 */
-  .VPContent:not(.has-sidebar) .VPDoc.bp-ready .content-container {
-    position: relative;
-  }
-  .VPContent:not(.has-sidebar) .VPDoc.bp-ready .content-container::after {
+  /* 收口：横线 + 与各条轨道的交点。
+   * .VPDoc > .container 没有定位，所以它的绝对定位伪元素以 .VPDoc 为包含块 */
+  .VPDoc.bp-ready > .container::after {
     content: '';
     position: absolute;
-    bottom: -133px;
-    left: calc(-24px - var(--bp-gl) - 4.5px);
-    right: calc(-24px - var(--bp-gr) - 4.5px);
+    bottom: calc(var(--bp-close) - 5.5px);
+    left: -5px;
+    right: -5px;
     height: 10px;
     z-index: 1;
     pointer-events: none;
     background:
-      var(--app-node) left center / 10px 10px no-repeat,
-      var(--app-node) left var(--bp-gl) center / 10px 10px no-repeat,
-      var(--app-node) right var(--bp-gr) center / 10px 10px no-repeat,
-      var(--app-node) right center / 10px 10px no-repeat;
+      var(--app-node) left calc(var(--bp-ol) + 0.5px) center / 10px 10px no-repeat,
+      var(--app-node) left calc(var(--bp-l) + 0.5px) center / 10px 10px no-repeat,
+      var(--app-node) right calc(var(--bp-r) + 0.5px) center / 10px 10px no-repeat,
+      var(--app-node) right calc(var(--bp-or) + 0.5px) center / 10px 10px no-repeat,
+      linear-gradient(var(--app-rule), var(--app-rule)) left calc(var(--bp-ol) + 5px) center / calc(100% - 5px - var(--bp-ol)) var(--bp-close-line) no-repeat;
   }
   .VPFooter {
     border-top-color: var(--app-rule) !important;

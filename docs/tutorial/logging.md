@@ -17,7 +17,10 @@ description: 通过依赖注入获取 ILogger<T>，用消息模板写出结构�
 
 ## 运行与验证
 
+先停止上一章的服务，从仓库根目录执行：
+
 ```bash
+cd samples/14-logging
 dotnet run
 ```
 
@@ -35,13 +38,13 @@ curl http://localhost:5080/todos/99
 
 ```text
 info: InMemoryTodoStore[0]
-      已创建待办事项 1，标题：Buy milk
+      Created Todo 1 with title: Buy milk
 dbug: InMemoryTodoStore[0]
-      查找待办事项 1，当前共 1 项
+      Looking up Todo 1; 1 item(s) currently exist
 dbug: InMemoryTodoStore[0]
-      查找待办事项 99，当前共 1 项
+      Looking up Todo 99; 1 item(s) currently exist
 warn: Program[0]
-      找不到待办事项 99
+      Todo 99 not found
 ```
 
 每条日志的第一行由三部分组成：`info` / `dbug` / `warn` 是**级别**，`InMemoryTodoStore`、`Program` 是**类别**，方括号里的 `0` 是事件编号（本节没有用到）。第二行是日志消息。
@@ -90,9 +93,9 @@ warn: Program[0]
 
 ```text
 info: InMemoryTodoStore[0]
-      已创建待办事项 1，标题：Buy milk
+      Created Todo 1 with title: Buy milk
 warn: Program[0]
-      找不到待办事项 99
+      Todo 99 not found
 ```
 
 排查问题时，可以在启动应用前用环境变量覆盖级别，不必修改代码。例如 `Logging__LogLevel__Default=Debug` 会改变默认规则，但不会覆盖更具体的类别规则。修改环境变量后，需要重启进程才能读到新值。
@@ -101,7 +104,7 @@ warn: Program[0]
 
 <<< @/../samples/14-logging/Program.cs{24,71 cs:line-numbers} [14-logging/Program.cs]
 
-注意日志消息的写法：`"找不到待办事项 {TodoId}"`，后面跟着参数 `id`。它**不是**字符串插值（前面没有 `$`），而是一个**消息模板**（message template）：花括号里是**占位符的名字**，参数按顺序填入。
+注意日志消息的写法：`"Todo {TodoId} not found"`，后面跟着参数 `id`。它**不是**字符串插值（前面没有 `$`），而是一个**消息模板**（message template）：花括号里是**占位符的名字**，参数按顺序填入。
 
 普通控制台输出看不出字段有没有保留。停止当前服务，改用 JSON 格式启动，再查看同一条日志：
 
@@ -109,22 +112,22 @@ warn: Program[0]
 dotnet run -- --Logging:Console:FormatterName=json --Logging:Console:FormatterOptions:JsonWriterOptions:Indented=true
 ```
 
-请求 `/todos/99` 后，Warning 日志变成了：
+请求 `/todos/99` 后，Warning 日志如下：
 
 ```json
 {
   "EventId": 0,
   "LogLevel": "Warning",
   "Category": "Program",
-  "Message": "找不到待办事项 99",
+  "Message": "Todo 99 not found",
   "State": {
     "TodoId": 99,
-    "{OriginalFormat}": "找不到待办事项 {TodoId}"
+    "{OriginalFormat}": "Todo {TodoId} not found"
   }
 }
 ```
 
-`State.TodoId` 是数字 `99`，可以交给日志平台按字段检索。若先用 `$"找不到待办事项 {id}"` 拼好字符串，日志系统拿到的就只有整句话，需要另外解析才能提取编号。
+`State.TodoId` 是数字 `99`，可以交给日志平台按字段检索。若先用 `$"Todo {id} not found"` 拼好字符串，日志系统拿到的就只有整句话，需要另外解析才能提取编号。
 
 ::: warning 注意
 这里应把 `id` 作为单独参数传给日志方法，保留 `TodoId` 字段。字符串插值会提前拼接文本，即使这条日志最终被过滤掉，也已经做了这一步工作。
@@ -135,7 +138,7 @@ dotnet run -- --Logging:Console:FormatterName=json --Logging:Console:FormatterOp
 :::
 
 ::: fastapi
-Python 的 `logging` 模块中 `logger.warning("找不到 %s", id)` 也是延迟格式化，但默认不保留结构化字段。ASP.NET Core 的 `ILogger` 从一开始就是结构化的，不需要额外的库。
+Python 的 `logging` 模块中 `logger.warning("Todo %s not found", id)` 也是延迟格式化，但默认不保留结构化字段。ASP.NET Core 的 `ILogger` 从一开始就是结构化的，不需要额外的库。
 :::
 
 ::: info 技术细节
@@ -145,7 +148,7 @@ Python 的 `logging` 模块中 `logger.warning("找不到 %s", id)` 也是延迟
 ## 总结
 
 - 通过依赖注入获取 `ILogger<T>`，`T` 决定日志的**类别**，日志服务由框架预先注册。
-- 六个**级别**从 Trace 到 Critical；按"谁需要看、什么时候看"选择级别。
+- 六个**级别**从 Trace 到 Critical，分别用于详细跟踪、调试信息、正常事件和不同程度的错误。
 - `Logging:LogLevel` 为每个类别设置最低输出级别，按前缀匹配；不同环境的配置文件让开发时更详细、生产时更简洁。
 - 使用**消息模板**（`"… {TodoId}", id`）而不是字符串插值，占位符会成为可查询的结构化字段。
 

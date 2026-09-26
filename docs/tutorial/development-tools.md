@@ -35,7 +35,7 @@ Program.cs(15,5): error CS1061: “WebApplication”未包含“MapGt”的定�
 dotnet watch
 ```
 
-它会运行项目并监视文件变化。启动后把第 15 行的文字改成 `"你好，热重载！"` 并保存，终端里会出现：
+它会运行项目并监视文件变化。启动后把第 15 行的文字改成 `"Hello, Hot Reload!"` 并保存，终端里会出现：
 
 ```text
 dotnet watch ⌚ File updated: .\Program.cs
@@ -49,12 +49,12 @@ curl http://localhost:5080/
 ```
 
 ```json
-{"message":"你好，热重载！"}
+{"message":"Hello, Hot Reload!"}
 ```
 
 这叫**热重载**（Hot Reload）：修改被直接应用到正在运行的程序中，日志中的耗时会因机器而异。无法热应用的修改可能触发重启提示；修改服务注册等启动配置后，应在 `dotnet watch` 终端按 `Ctrl+R` 重启，确保已经执行过的启动代码重新运行。
 
-验证完成后，将问候语改回 `"你好，ASP.NET Core！"`，再按 `Ctrl+C` 停止服务，避免影响后续章节的输出和端口。
+验证完成后，将问候语改回 `"Hello, ASP.NET Core!"`，再按 `Ctrl+C` 停止服务，避免影响后续章节的输出和端口。
 
 ::: fastapi
 `dotnet watch` 相当于 `fastapi dev` 或 `uvicorn --reload`。对于支持热应用的改动，.NET 可以保留进程和内存状态；发生重启时，内存状态仍会丢失。

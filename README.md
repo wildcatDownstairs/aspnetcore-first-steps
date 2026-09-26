@@ -13,7 +13,7 @@ docs/                    教程 Markdown（VitePress 站点）
   .vitepress/theme/      自定义主题：配色、动效、"FastAPI 对照"提示框等
   tutorial/              教程主线
 samples/NN-章节名/        每章对应一个可独立运行的完整项目
-.github/workflows/ci.yml 编译全部示例 → 构建站点 → 发布到 GitHub Pages
+.github/workflows/ci.yml 编译与测试示例 → 验证容器持久化 → 构建站点 → 发布到 GitHub Pages
 ```
 
 ## 本地运行
@@ -77,3 +77,18 @@ dotnet run
 ## 部署
 
 推送到 `main` 分支后，GitHub Actions 会先编译全部示例（任何一个失败都会中止），再构建站点并发布到 GitHub Pages。首次使用需要在仓库 **Settings → Pages** 中把 Source 设为 **GitHub Actions**。
+
+## 中英文内容同步
+
+中文 `docs/` 是内容基准，英文放在 `docs/en/`，路径逐页对应。两种语言共用 `samples/`：代码注释、示例数据和应用消息统一使用英文，两种正文引用同一份代码和预期输出。新增或更新中文页面时同步英文页面，导航只在 `nav.ts` 维护章节结构。提交前运行 `npm run docs:check-translations` 检查页面覆盖、代码引用、章节数量和语言链接，再运行站点构建；这些检查也已加入 CI。
+
+首次访问入口首页时，浏览器首选语言为中文则显示中文，匹配到英文或无受支持语言时显示英文。手动选择保存在本机，优先于浏览器偏好；直接访问章节或 `/en/` 地址时尊重链接指定的语言。`npm run test:site` 验证语言选择与跳转规则。
+
+第 21～23 章的测试从各章目录运行，例如：
+
+```bash
+cd samples/22-project-structure
+dotnet test --project Tests/TodoApi.Tests.csproj -c Release -p:TreatWarningsAsErrors=true
+```
+
+章节内的 `global.json` 选择 Microsoft.Testing.Platform；不要在仓库根目录绕过这项配置运行这些测试。

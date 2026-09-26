@@ -1,0 +1,13 @@
+Filter and projection: [{"id":1,"title":"Write report","category":"Work"}]
+Second page: [{"id":3,"title":"Buy milk"}]
+Incomplete count: 2
+Any incomplete tasks?: true
+First item: 1
+Missing ID: null
+Category and tasks: {"name":"Work","titles":["Write report","Review PR"]}
+Database Done before save: false
+Database Done after save: true
+Count after Add: 3
+New ID: 4
+Count after save: 4
+Count after delete: 3

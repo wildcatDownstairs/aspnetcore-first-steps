@@ -12,5 +12,5 @@ createServer((request, response) => {
     'Cache-Control': 'no-store',
   }).end(page);
 }).listen(5178, '127.0.0.1', () => {
-  console.log('打开 http://localhost:5178/');
+  console.log('Open http://localhost:5178/');
 });

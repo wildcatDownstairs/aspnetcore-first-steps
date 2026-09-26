@@ -142,7 +142,7 @@ curl "http://localhost:5080/todos?pageSize=100"
 `errors` 是一个字典：键是出错的字段名，值是该字段的所有错误消息。这个结构遵循一个名为 **Problem Details** 的标准格式，「状态码与错误处理」一章会详细介绍它，并用它统一常见错误响应。
 
 ::: tip 提示
-默认的错误消息是英文的。每个特性都可以通过 `ErrorMessage` 自定义消息，例如 `[Range(1, 5, ErrorMessage = "优先级必须在 1 到 5 之间")]`。
+默认的错误消息是英文的。每个特性都可以通过 `ErrorMessage` 自定义消息，例如 `[Range(1, 5, ErrorMessage = "Priority must be between 1 and 5")]`。
 :::
 
 ## 总结

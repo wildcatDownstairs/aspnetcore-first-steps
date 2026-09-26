@@ -37,7 +37,7 @@ curl -i -X POST http://localhost:5080/todos/1/complete
 HTTP/1.1 409 Conflict
 Content-Type: application/problem+json
 
-{"type":"https://tools.ietf.org/html/rfc9110#section-15.5.10","title":"待办事项已完成","status":409,"detail":"id 为 1 的待办事项已经是完成状态，不能重复完成。","traceId":"00-eb960df5537d54d0822d3270697c268f-9f6dbe4c8a52e820-00"}
+{"type":"https://tools.ietf.org/html/rfc9110#section-15.5.10","title":"Todo is already completed","status":409,"detail":"Todo with id 1 is already complete and cannot be completed again.","traceId":"00-eb960df5537d54d0822d3270697c268f-9f6dbe4c8a52e820-00"}
 ```
 
 `traceId` 每次请求都不同，你看到的值会不一样。
@@ -49,9 +49,9 @@ Content-Type: application/problem+json
 ```json
 {
   "type": "https://tools.ietf.org/html/rfc9110#section-15.5.10",
-  "title": "待办事项已完成",
+  "title": "Todo is already completed",
   "status": 409,
-  "detail": "id 为 1 的待办事项已经是完成状态，不能重复完成。",
+  "detail": "Todo with id 1 is already complete and cannot be completed again.",
   "traceId": "00-eb960df5537d54d0822d3270697c268f-9f6dbe4c8a52e820-00"
 }
 ```
@@ -154,15 +154,15 @@ Cache-Control: no-cache,no-store
 {"type":"https://tools.ietf.org/html/rfc9110#section-15.6.1","title":"An error occurred while processing your request.","status":500,"traceId":"00-4a7b5bf94fc135b5b5c01580b95299c7-862cabea5a9180c8-00"}
 ```
 
-**第 11 行** `UseExceptionHandler()` 捕获了这个异常，返回一个 500 的 Problem Details。注意响应里**没有**异常消息"数据库连接字符串未配置"，也没有堆栈信息。
+**第 11 行** `UseExceptionHandler()` 捕获了这个异常，返回一个 500 的 Problem Details。注意响应里**没有**异常消息"Database connection string is not configured"，也没有堆栈信息。
 
 **这是有意的安全设计。**异常消息和堆栈可能包含文件路径、数据库结构、配置项名称，这些对攻击者都是有价值的线索。客户端只需要知道"服务器出错了"和 `traceId`；详细信息写在服务器的日志里。看看运行 `dotnet run` 的终端：
 
 ```text
 fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]
       An unhandled exception has occurred while executing the request.
-      System.InvalidOperationException: 数据库连接字符串未配置
-         at Program.<>c.<<Main>$>b__0_2() in /你的路径/09-errors/Program.cs:line 48
+      System.InvalidOperationException: Database connection string is not configured
+         at Program.<>c.<<Main>$>b__0_2() in /your/path/09-errors/Program.cs:line 48
 ```
 
 ::: info 技术细节

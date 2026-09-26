@@ -17,7 +17,10 @@ description: 用 appsettings.json、环境变量、命令行和 User Secrets 提
 
 ## 运行与验证
 
+先停止上一章的服务，从仓库根目录执行：
+
 ```bash
+cd samples/12-configuration
 dotnet run
 ```
 
@@ -26,10 +29,10 @@ curl http://localhost:5080/settings
 ```
 
 ```json
-{"welcomeMessage":"欢迎使用待办事项 API（开发环境）","maxItems":5,"adminKeyConfigured":false}
+{"welcomeMessage":"Welcome to the Todo API (Development)","maxItems":5,"adminKeyConfigured":false}
 ```
 
-注意欢迎语后面多了"（开发环境）"，而 `appsettings.json` 里并没有这几个字。它来自另一个文件：
+注意欢迎语后面多了"(Development)"，而 `appsettings.json` 里并没有这几个字。它来自另一个文件：
 
 <<< @/../samples/12-configuration/appsettings.Development.json{8-10 json:line-numbers} [12-configuration/appsettings.Development.json]
 
@@ -45,11 +48,13 @@ ASP.NET Core 的配置由多个**配置源**（configuration source）叠加而�
 | 4 | 环境变量 | 部署时由服务器、容器、云平台注入 |
 | 5 | 命令行参数 | 临时覆盖，调试时方便 |
 
-所以在开发环境中，`WelcomeMessage` 先从第 1 层读到"欢迎使用待办事项 API"，又被第 2 层覆盖了；`MaxItems` 只在第 1 层出现，保持为 5。
+所以在开发环境中，`WelcomeMessage` 先从第 1 层读到"Welcome to the Todo API"，又被第 2 层覆盖了；`MaxItems` 只在第 1 层出现，保持为 5。
 
 这样可以把默认值留在文件里，部署时用环境变量覆盖，临时实验再用命令行覆盖。不必为了改一个值而复制整份配置文件。
 
 ### 用环境变量覆盖
+
+下面每次切换启动参数，都先按 `Ctrl+C` 停止服务，重新启动后再用另一个终端请求 `/settings`。
 
 环境变量用**双下划线** `__` 表示层级（因为有些系统的环境变量名不允许冒号）：
 
@@ -66,7 +71,7 @@ $env:Todo__MaxItems = "20"; dotnet run
 :::
 
 ```json
-{"welcomeMessage":"欢迎使用待办事项 API（开发环境）","maxItems":20,"adminKeyConfigured":false}
+{"welcomeMessage":"Welcome to the Todo API (Development)","maxItems":20,"adminKeyConfigured":false}
 ```
 
 ### 用命令行覆盖
@@ -78,7 +83,7 @@ dotnet run -- --Todo:MaxItems=30
 ```
 
 ```json
-{"welcomeMessage":"欢迎使用待办事项 API（开发环境）","maxItems":30,"adminKeyConfigured":false}
+{"welcomeMessage":"Welcome to the Todo API (Development)","maxItems":30,"adminKeyConfigured":false}
 ```
 
 即使同时设置了环境变量 `Todo__MaxItems=20`，结果也是 30。
@@ -152,7 +157,7 @@ Successfully saved Todo:AdminKey to the secret store.
 重新运行后，`adminKeyConfigured` 变成了 `true`：
 
 ```json
-{"welcomeMessage":"欢迎使用待办事项 API（开发环境）","maxItems":5,"adminKeyConfigured":true}
+{"welcomeMessage":"Welcome to the Todo API (Development)","maxItems":5,"adminKeyConfigured":true}
 ```
 
 机密保存在用户目录中，不随项目提交到 Git。用 `dotnet user-secrets list` 查看；实验后用 `dotnet user-secrets remove "Todo:AdminKey"` 删除这一项，不影响其他密钥。

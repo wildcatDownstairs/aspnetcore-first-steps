@@ -16,7 +16,7 @@ if (app.Environment.IsDevelopment())
 app.MapGet("/whoami", (
     [FromHeader(Name = "User-Agent")] string userAgent,
     [FromHeader(Name = "X-Client-Version")] string? clientVersion) =>
-    new { UserAgent = userAgent, ClientVersion = clientVersion ?? "未提供" });
+    new { UserAgent = userAgent, ClientVersion = clientVersion ?? "Not provided" });
 
 app.MapPost("/preferences/theme/{theme}", (string theme, HttpResponse response) =>
 {

@@ -36,13 +36,13 @@ dotnet run
 ::: code-group
 
 ```powershell [PowerShell 7]
-$READER_TOKEN = "粘贴 alice 的令牌"
-$EDITOR_TOKEN = "粘贴 bob 的令牌"
+$READER_TOKEN = "paste-Alice-token-here"
+$EDITOR_TOKEN = "paste-Bob-token-here"
 ```
 
 ```bash [Bash / zsh]
-READER_TOKEN="粘贴 alice 的令牌"
-EDITOR_TOKEN="粘贴 bob 的令牌"
+READER_TOKEN="paste-Alice-token-here"
+EDITOR_TOKEN="paste-Bob-token-here"
 ```
 
 :::
@@ -71,7 +71,7 @@ curl -i -X POST http://localhost:5080/todos -H "Authorization: Bearer $READER_TO
 HTTP/1.1 403 Forbidden
 Content-Type: application/problem+json
 
-{"type":"https://tools.ietf.org/html/rfc9110#section-15.5.4","title":"Forbidden","status":403,"traceId":"本次请求的追踪编号"}
+{"type":"https://tools.ietf.org/html/rfc9110#section-15.5.4","title":"Forbidden","status":403,"traceId":"request-trace-id"}
 ```
 
 把令牌换成 bob 的，其他请求内容保持一致：

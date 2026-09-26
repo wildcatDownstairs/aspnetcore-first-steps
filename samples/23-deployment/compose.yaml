@@ -1,0 +1,34 @@
+name: todo-chapter23
+services:
+  init-data:
+    image: todo-api:chapter23
+    user: "0:0"
+    entrypoint: ["sh", "-c"]
+    command: ["mkdir -p /data && chown 1654:1654 /data"]
+    volumes:
+      - todo-data:/data
+
+  migrate:
+    image: todo-api:chapter23
+    command: ["--migrate"]
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__Todos: Data Source=/data/todos.db
+    volumes:
+      - todo-data:/data
+
+  api:
+    image: todo-api:chapter23
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_HTTP_PORTS: "8080"
+      ConnectionStrings__Todos: Data Source=/data/todos.db
+    ports:
+      - "127.0.0.1:5080:8080"
+    volumes:
+      - todo-data:/data
+
+volumes:
+  todo-data:

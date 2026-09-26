@@ -61,18 +61,18 @@ node browser/serve.mjs
 预期输出：
 
 ```text
-打开 http://localhost:5178/
+Open http://localhost:5178/
 ```
 
-必须通过这个 HTTP 地址打开页面，不要双击 HTML 以 `file://` 打开。把令牌粘贴到页面的输入框，点击“读取 Todo”，首次运行得到：
+必须通过这个 HTTP 地址打开页面，不要双击 HTML 以 `file://` 打开。把令牌粘贴到页面的输入框，点击“Read Todos”，首次运行得到：
 
 ```text
 HTTP 200
-Location: (无)
+Location: (none)
 []
 ```
 
-再点击“创建 Todo”，得到：
+再点击“Create Todo”，得到：
 
 ```text
 HTTP 201
@@ -114,7 +114,7 @@ Access-Control-Allow-Headers: Authorization,Content-Type
 
 **为什么请求头和响应头要分开配置？**允许发送 Authorization，不代表可以读取任意响应头。`Location` 不属于默认向跨源脚本暴露的响应头，因此需要额外声明；否则网络面板里可能看得到，但 `response.headers.get('Location')` 返回 `null`。
 
-本例手动发送 Bearer 请求头，使用 `credentials: 'omit'` 避免浏览器附带 Cookie，因此不需要 `AllowCredentials()`。如果以后改用 Cookie 登录，需要另外配置凭据和 CSRF 防护。[ASP.NET Core CORS 文档](https://learn.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-10.0)
+本例手动发送 Bearer 请求头，使用 `credentials: 'omit'` 避免浏览器附带 Cookie，因此不需要 `AllowCredentials()`。如果以后改用 Cookie 登录，需要另外配置凭据，并防范**跨站请求伪造**（cross-site request forgery，CSRF）。[ASP.NET Core CORS 文档](https://learn.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-10.0)
 
 ## 不允许的源不一定得到 403
 
@@ -140,4 +140,4 @@ curl 不执行浏览器的同源策略。带着有效令牌，用 curl 直接发
 - 不允许的源可能仍得到 HTTP 响应，但没有许可头；curl 成功不能证明浏览器 CORS 配置正确。
 - CORS 不提供用户权限或数据隔离，也不能替代 CSRF 防护。
 
-本章完成「安全」阶段。下一阶段将从「测试」（即将推出）开始，用自动化检查保护这些行为。上一章：[授权](./authorization)。
+本章完成「安全」阶段。下一章：[测试](./testing)，用自动化检查保护这些行为。上一章：[授权](./authorization)。

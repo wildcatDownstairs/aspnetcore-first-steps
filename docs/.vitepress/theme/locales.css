@@ -1,0 +1,43 @@
+/* 独立于视觉主题：中英文共用同一导航交互和布局。 */
+.VPNavBarTranslations, .VPNavScreenTranslations,
+.VPNavBarExtra .group.translations { display: none !important; }
+.VPNavBar .content-body > .appearance,
+.VPNavBar .content-body > .social-links,
+.VPNavBar .content-body > .extra,
+.VPNavBar .content-body > .hamburger { order: 2; }
+.language-switch { position: relative; order: 1; flex-shrink: 0; margin-left: 12px; }
+.language-trigger { display: flex; align-items: center; gap: 7px; min-height: 36px; padding: 0 10px; border: 1px solid var(--vp-c-divider); border-radius: 6px; color: var(--vp-c-text-1); background: var(--vp-c-bg-soft); font-size: 12px; font-weight: 600; cursor: pointer; }
+.language-trigger:hover, .language-trigger[aria-expanded='true'] { border-color: var(--vp-c-brand-1); color: var(--vp-c-brand-1); }
+.language-trigger:focus-visible, .language-options a:focus-visible { outline: 2px solid var(--vp-c-brand-1); outline-offset: 3px; }
+.language-chevron { transition: transform .15s ease; }
+.language-chevron.expanded { transform: rotate(180deg); }
+.language-options { position: absolute; top: calc(100% + 12px); right: 0; width: 208px; padding: 8px; border: 1px solid var(--vp-c-divider); border-radius: 10px; background: var(--vp-c-bg-elv); box-shadow: var(--vp-shadow-3); z-index: 50; }
+.language-caption { padding: 4px 10px 8px; font-size: 11px; color: var(--vp-c-text-2); }
+.language-options a { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 9px 10px; border-radius: 5px; line-height: 20px; }
+.language-options a:hover, .language-options a[aria-current='true'] { background: var(--vp-c-brand-soft); }
+.language-options a[aria-current='true'] { color: var(--vp-c-brand-1); }
+.language-options strong { display: block; font-size: 14px; font-weight: 600; }
+.language-options small { display: block; font-size: 11px; color: var(--vp-c-text-2); }
+@media (max-width: 1279px) {
+  .VPNavBarSearch { padding-right: 12px; }
+  html[lang='en'] .VPNavBarMenuLink, html[lang='en'] .VPNavBarMenuGroup .button { padding-left: 8px; padding-right: 8px; }
+}
+@media (min-width: 768px) and (max-width: 959px) {
+  html[lang='en'] .VPNavBarTitle .title { font-size: 14px; }
+  html[lang='en'] .VPNavBarMenuLink, html[lang='en'] .VPNavBarMenuGroup .button { padding-left: 4px; padding-right: 4px; }
+  .VPNavBarSearch { min-width: 48px; padding-left: 12px; }
+  .VPNavBarSearch .DocSearch-Button-Keys, .VPNavBarSearch .DocSearch-Button-Placeholder { display: none; }
+}
+@media (max-width: 767px) {
+  .language-switch { margin-left: 0; }
+  .language-trigger { min-height: 40px; padding: 0 7px; gap: 4px; }
+  .language-icon { display: none; }
+  .VPNavBar .container > .title { min-width: 0; flex-shrink: 1; }
+  .VPNavBarTitle .title > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .VPNavBarTitle .logo { flex-shrink: 0; }
+  .VPNavBar .content { flex-shrink: 0; flex-grow: 0; }
+  .VPNavBar .content-body { column-gap: 4px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .language-chevron { transition: none; }
+}

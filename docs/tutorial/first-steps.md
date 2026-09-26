@@ -65,7 +65,7 @@ info: Microsoft.Hosting.Lifetime[0]
 info: Microsoft.Hosting.Lifetime[0]
       Hosting environment: Development
 info: Microsoft.Hosting.Lifetime[0]
-      Content root path: /你的路径/FirstSteps
+      Content root path: /your/path/FirstSteps
 ```
 
 程序不会退出，它在等待请求。**另开一个终端**，发送一个请求：
@@ -83,7 +83,7 @@ Date: Sat, 26 Sep 2026 08:56:22 GMT
 Server: Kestrel
 Transfer-Encoding: chunked
 
-{"message":"你好，ASP.NET Core！"}
+{"message":"Hello, ASP.NET Core!"}
 ```
 
 也可以直接在浏览器中打开 <http://localhost:5080/>。回到运行服务的终端，按 `Ctrl+C` 可以停止它。

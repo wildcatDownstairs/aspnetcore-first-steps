@@ -36,8 +36,8 @@ app.MapPost("/todos/{id:int}/complete", Results<Ok<Todo>, NotFound, ProblemHttpR
     {
         return TypedResults.Problem(
             statusCode: StatusCodes.Status409Conflict,
-            title: "待办事项已完成",
-            detail: $"id 为 {id} 的待办事项已经是完成状态，不能重复完成。");
+            title: "Todo is already completed",
+            detail: $"Todo with id {id} is already complete and cannot be completed again.");
     }
     todos[index] = todos[index] with { Done = true };
     return TypedResults.Ok(todos[index]);
@@ -45,7 +45,7 @@ app.MapPost("/todos/{id:int}/complete", Results<Ok<Todo>, NotFound, ProblemHttpR
 
 app.MapGet("/crash", () =>
 {
-    throw new InvalidOperationException("数据库连接字符串未配置");
+    throw new InvalidOperationException("Database connection string is not configured");
 });
 
 app.Run();

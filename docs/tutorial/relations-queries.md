@@ -118,6 +118,10 @@ EF Core 根据这些名称和类型识别关系。`CategoryId` 是不可空的 `
 这类似用 SQLAlchemy 的关系属性建立对象关联，再通过查询表达式筛选和选择列。`Include` 接近预先加载关系的思路，不代表访问任何导航属性都会自动执行 SQL。
 :::
 
+::: tip 提示
+记不清 LINQ 方法时，可以查阅 [EF Core / LINQ ↔ PostgreSQL 速查](../efcore-sql-cheatsheet#queries)，附可运行的对照示例。
+:::
+
 ## 总结
 
 - 外键保存关联编号，导航属性表达对象之间的关系；声明导航属性不等于已经加载对象。

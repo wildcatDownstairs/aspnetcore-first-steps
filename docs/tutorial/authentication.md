@@ -65,7 +65,7 @@ HTTP/1.1 401 Unauthorized
 WWW-Authenticate: Bearer
 Content-Type: application/problem+json
 
-{"type":"https://tools.ietf.org/html/rfc9110#section-15.5.2","title":"Unauthorized","status":401,"traceId":"本次请求的追踪编号"}
+{"type":"https://tools.ietf.org/html/rfc9110#section-15.5.2","title":"Unauthorized","status":401,"traceId":"request-trace-id"}
 ```
 
 在这个发请求的终端里，把刚才复制的完整令牌放入变量。根据使用的 shell 选择一种：
@@ -73,11 +73,11 @@ Content-Type: application/problem+json
 ::: code-group
 
 ```powershell [PowerShell 7]
-$TOKEN = "粘贴刚才的完整令牌"
+$TOKEN = "paste-the-complete-token-here"
 ```
 
 ```bash [Bash / zsh]
-TOKEN="粘贴刚才的完整令牌"
+TOKEN="paste-the-complete-token-here"
 ```
 
 :::

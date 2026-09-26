@@ -12,9 +12,9 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
-app.MapGet("/users/{id:int}", (int id) => new { Id = id, Name = $"用户 {id}" });
+app.MapGet("/users/{id:int}", (int id) => new { Id = id, Name = $"User {id}" });
 
-app.MapGet("/users/me", () => new { Id = 0, Name = "当前登录用户" });
+app.MapGet("/users/me", () => new { Id = 0, Name = "Current user" });
 
 app.MapGet("/files/{*path}", (string path) => new { Path = path });
 

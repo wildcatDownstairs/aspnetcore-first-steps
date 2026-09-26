@@ -17,7 +17,7 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
-var todosApi = app.MapGroup("/todos").WithTags("待办事项");
+var todosApi = app.MapGroup("/todos").WithTags("Todos");
 
 todosApi.MapGet("/", (ITodoStore store) => store.GetAll());
 
@@ -35,7 +35,7 @@ app.MapGet("/lifetimes", (
         Singleton = new[] { singleton1.Id, singleton2.Id },
         Scoped = new[] { scoped1.Id, scoped2.Id },
         Transient = new[] { transient1.Id, transient2.Id },
-    }).WithTags("演示");
+    }).WithTags("Demo");
 
 app.Run();
 

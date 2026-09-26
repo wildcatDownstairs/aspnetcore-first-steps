@@ -13,7 +13,10 @@ description: 把数据存取封装成服务并注册到容器，由框架在需�
 
 ## 运行与验证
 
+先停止上一章的服务，从仓库根目录执行：
+
 ```bash
+cd samples/11-dependency-injection
 dotnet run
 ```
 
@@ -160,7 +163,7 @@ Unhandled exception. System.AggregateException: Some services are not able to be
 - **依赖注入**：处理程序通过参数声明需要的服务，由容器创建并传入，而不是自己 `new`。
 - 用 `builder.Services.AddSingleton<接口, 实现>()` 等方法注册服务，也可以直接注册具体类，不必为每个服务创建接口。
 - 已注册的服务类型会被自动识别为"来自容器"的参数，不会出现在 OpenAPI 文档中；忘记注册会被当成请求体而报错。
-- 三种生命周期：**Singleton** 全局一个（必须线程安全），**Scoped** 每个请求一个，**Transient** 每次新建。
+- 三种生命周期：**Singleton** 在同一容器中共享（必须线程安全），**Scoped** 每个作用域一个，**Transient** 每次获取时新建。
 - `AddDbContext` 默认用 Scoped 注册数据库上下文；不要直接把 Scoped 服务注入 Singleton，开发环境会检查这类错误。
 
 下一章：[配置与 Options](./configuration)——把可变的设置从代码中分离出来。上一章：[路由分组](./route-groups)。

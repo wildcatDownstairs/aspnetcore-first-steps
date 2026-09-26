@@ -12,9 +12,9 @@ description: 安装 .NET 10 SDK 和 VS Code + C# Dev Kit，认识 dotnet 命令�
 如果你运行它之后看到了类似下面的输出，这一节就完成了：
 
 ```text
-你好，.NET！
-.NET 运行时版本：10.0.12
-操作系统：Microsoft Windows 10.0.26200
+Hello, .NET!
+.NET runtime version: 10.0.12
+Operating system: Microsoft Windows 10.0.26200
 ```
 
 下面一步一步来。
@@ -139,9 +139,9 @@ dotnet run
 第一次运行会先编译，稍等几秒后看到：
 
 ```text
-你好，.NET！
-.NET 运行时版本：10.0.12
-操作系统：Microsoft Windows 10.0.26200
+Hello, .NET!
+.NET runtime version: 10.0.12
+Operating system: Microsoft Windows 10.0.26200
 ```
 
 版本号和操作系统会因机器而异，只要运行时版本以 `10.0` 开头就对了。

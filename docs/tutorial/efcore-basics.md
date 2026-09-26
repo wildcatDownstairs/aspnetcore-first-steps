@@ -117,11 +117,15 @@ POST 中的三步需要分清：
 本例的 `EnsureCreatedAsync()` 适合独立学习项目：数据库没有表时创建模型所需的表，已有表时不会替你升级结构。
 
 ::: warning 注意
-修改实体后，`EnsureCreatedAsync()` 不会自动添加列。要升级已有数据库，应使用**迁移**（migration）；它和 `EnsureCreated` 不能直接混用。本教程每章使用独立文件。需要保留并升级已有数据时，见 [EF Core 迁移文档](https://learn.microsoft.com/en-us/ef/core/managing-schemas/migrations/)。
+修改实体后，`EnsureCreatedAsync()` 不会自动添加列。要升级已有数据库，应使用**迁移**（migration）；它和 `EnsureCreated` 不能直接混用。本教程每章使用独立文件。需要保留并升级已有数据时，见 [数据库迁移附录](../advanced/efcore-migrations)。
 :::
 
 ::: fastapi
 EF Core 的角色接近 SQLAlchemy；`DbContext` 可类比一次工作范围内的 Session，`SaveChangesAsync()` 写入已跟踪的变更。它们的 API 和事务细节不完全相同。
+:::
+
+::: tip 提示
+想从 SQL 的角度理解查询与保存，可以查阅 [EF Core / LINQ ↔ PostgreSQL 速查](../efcore-sql-cheatsheet#execution)，附可运行的对照示例。
 :::
 
 ## 总结

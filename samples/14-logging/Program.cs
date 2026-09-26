@@ -14,14 +14,14 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
-var todosApi = app.MapGroup("/todos").WithTags("待办事项");
+var todosApi = app.MapGroup("/todos").WithTags("Todos");
 
 todosApi.MapGet("/{id:int}", Results<Ok<Todo>, NotFound> (int id, ITodoStore store, ILogger<Program> logger) =>
 {
     var todo = store.Find(id);
     if (todo is null)
     {
-        logger.LogWarning("找不到待办事项 {TodoId}", id);
+        logger.LogWarning("Todo {TodoId} not found", id);
         return TypedResults.NotFound();
     }
     return TypedResults.Ok(todo);
@@ -55,7 +55,7 @@ class InMemoryTodoStore(ILogger<InMemoryTodoStore> logger) : ITodoStore
     {
         lock (_lock)
         {
-            logger.LogDebug("查找待办事项 {TodoId}，当前共 {Count} 项", id, _todos.Count);
+            logger.LogDebug("Looking up Todo {TodoId}; {Count} item(s) currently exist", id, _todos.Count);
             return _todos.Find(t => t.Id == id);
         }
     }
@@ -68,7 +68,7 @@ class InMemoryTodoStore(ILogger<InMemoryTodoStore> logger) : ITodoStore
             todo = new Todo(_nextId++, title, Done: false);
             _todos.Add(todo);
         }
-        logger.LogInformation("已创建待办事项 {TodoId}，标题：{Title}", todo.Id, todo.Title);
+        logger.LogInformation("Created Todo {TodoId} with title: {Title}", todo.Id, todo.Title);
         return todo;
     }
 }

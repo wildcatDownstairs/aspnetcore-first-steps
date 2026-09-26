@@ -1,7 +1,7 @@
 import { defineConfig } from 'vitepress'
 import container from 'markdown-it-container'
 import cjkFriendly from 'markdown-it-cjk-friendly'
-import { nav, tutorialSidebar } from './nav'
+import { nav, tutorialSidebar, englishNav, englishSidebar } from './nav'
 
 // CI 中由 GitHub Actions 自动提供（owner/repo），本地开发时为空，相关链接会隐藏
 const repo = process.env.GITHUB_REPOSITORY
@@ -23,6 +23,27 @@ export default defineConfig({
   description: '写给有编程经验者的中文 ASP.NET Core 渐进式教程：.NET 10 + Minimal API，从第一个接口到数据库、认证、测试与部署。',
   base: '/aspnetcore-first-steps/',
   cleanUrls: true,
+  locales: {
+    root: { label: '简体中文', lang: 'zh-CN' },
+    en: {
+      label: 'English', lang: 'en', title: 'ASP.NET Core First Steps',
+      description: 'A step-by-step ASP.NET Core tutorial for developers new to C#: .NET 10, Minimal APIs, EF Core, authentication, testing, and deployment.',
+      head: [['meta', { property: 'og:locale', content: 'en_US' }]],
+      themeConfig: {
+        nav: englishNav,
+        sidebar: { '/en/tutorial/': englishSidebar },
+        outline: { level: [2, 3], label: 'On this page' },
+        docFooter: { prev: 'Previous page', next: 'Next page' },
+        lastUpdated: { text: 'Last updated' },
+        editLink: repoUrl ? { pattern: `${repoUrl}/edit/main/docs/:path`, text: 'Edit this page on GitHub' } : undefined,
+        darkModeSwitchLabel: 'Appearance', lightModeSwitchTitle: 'Switch to light theme',
+        darkModeSwitchTitle: 'Switch to dark theme', sidebarMenuLabel: 'Contents',
+        returnToTopLabel: 'Back to top', langMenuLabel: 'Change language',
+        notFound: { title: 'Page not found', quote: 'This page may have moved, or the address may be incorrect.', linkLabel: 'Go home', linkText: 'Go home' },
+        footer: { message: 'Built with .NET 10 and Minimal APIs · Runnable examples in every chapter', copyright: 'Original writing and sample code' },
+      },
+    },
+  },
   lastUpdated: true,
   srcExclude: ['README.md'],
   // 教程里有大量 http://localhost:5080 链接，它们只在读者本机运行示例时有效
@@ -112,6 +133,16 @@ export default defineConfig({
     search: {
       provider: 'local',
       options: {
+        locales: {
+          en: { translations: {
+            button: { buttonText: 'Search tutorials…', buttonAriaLabel: 'Search tutorials' },
+            modal: {
+              displayDetails: 'Display detailed list', resetButtonTitle: 'Clear search',
+              backButtonTitle: 'Close search', noResultsText: 'No results found',
+              footer: { selectText: 'Select', navigateText: 'Navigate', closeText: 'Close' },
+            },
+          } },
+        },
         miniSearch: {
           options: { tokenize },
           searchOptions: { fuzzy: 0.1, prefix: true, combineWith: 'AND', tokenize },

@@ -13,7 +13,7 @@ description: 用处理程序的普通参数接收 URL 查询字符串，理解�
 
 <<< @/../samples/04-query-params/Program.cs{24-34 cs:line-numbers} [04-query-params/Program.cs]
 
-第 15～22 行准备了一个内存中的待办事项列表作为演示数据。它用了「C# 速览」中介绍的集合表达式，`new(1, "买牛奶", false)` 省略了类型名，因为编译器能从 `List<Todo>` 推断出来。
+第 15～22 行准备了一个内存中的待办事项列表作为演示数据。它用了「C# 速览」中介绍的集合表达式，`new(1, "Buy milk", false)` 省略了类型名，因为编译器能从 `List<Todo>` 推断出来。
 
 ## 运行与验证
 
@@ -28,7 +28,7 @@ curl http://localhost:5080/todos
 ```
 
 ```json
-[{"id":1,"title":"买牛奶","done":false},{"id":2,"title":"写周报","done":true}]
+[{"id":1,"title":"Buy milk","done":false},{"id":2,"title":"Write weekly report","done":true}]
 ```
 
 翻到第 2 页：
@@ -38,7 +38,7 @@ curl "http://localhost:5080/todos?page=2"
 ```
 
 ```json
-[{"id":3,"title":"给猫铲屎","done":false},{"id":4,"title":"学习 ASP.NET Core","done":false}]
+[{"id":3,"title":"Clean the litter box","done":false},{"id":4,"title":"Learn ASP.NET Core","done":false}]
 ```
 
 只看未完成的，每页 10 条：
@@ -48,7 +48,7 @@ curl "http://localhost:5080/todos?done=false&pageSize=10"
 ```
 
 ```json
-[{"id":1,"title":"买牛奶","done":false},{"id":3,"title":"给猫铲屎","done":false},{"id":4,"title":"学习 ASP.NET Core","done":false}]
+[{"id":1,"title":"Buy milk","done":false},{"id":3,"title":"Clean the litter box","done":false},{"id":4,"title":"Learn ASP.NET Core","done":false}]
 ```
 
 ::: warning 注意
@@ -146,29 +146,29 @@ curl "http://localhost:5080/todos/batch?id=1&id=3&id=5"
 ```
 
 ```json
-[{"id":1,"title":"买牛奶","done":false},{"id":3,"title":"给猫铲屎","done":false},{"id":5,"title":"预约体检","done":true}]
+[{"id":1,"title":"Buy milk","done":false},{"id":3,"title":"Clean the litter box","done":false},{"id":5,"title":"Schedule a checkup","done":true}]
 ```
 
 一个 `id` 都不传时，`id` 是一个空数组，结果也是空的 `[]`。数组参数总是可选的。
 
 注意这里的参数名用的是单数 `id` 而不是 `ids`，因为它决定了 URL 里写的是 `?id=1&id=3`。命名时要从调用方的角度考虑。
 
-## 中文与特殊字符
+## 空格与 URL 编码
 
-搜索中文关键字时，需要先对它做 **URL 编码**（URL encoding）：URL 只允许有限的 ASCII 字符，其他字符要转成 `%` 加十六进制的形式。"猫"编码后是 `%E7%8C%AB`：
+搜索带空格的关键字时，需要先做 **URL 编码**（URL encoding）：空格会编码为 `%20`，所以 `ASP.NET Core` 在 URL 中写作 `ASP.NET%20Core`：
 
 ```bash
-curl "http://localhost:5080/todos/search?keyword=%E7%8C%AB"
+curl "http://localhost:5080/todos/search?keyword=ASP.NET%20Core"
 ```
 
 ```json
-[{"id":3,"title":"给猫铲屎","done":false}]
+[{"id":4,"title":"Learn ASP.NET Core","done":false}]
 ```
 
-框架在绑定参数前会自动解码，所以处理程序收到的 `keyword` 就是 `"猫"`。浏览器和 Scalar 文档页面会自动完成编码，直接在 `/scalar` 里输入中文测试最方便。
+框架会在绑定参数前自动解码，所以处理程序收到的 `keyword` 是 `"ASP.NET Core"`。浏览器和 Scalar 文档页面会自动完成编码，在 `/scalar` 中直接输入带空格的关键字即可测试。
 
 ::: warning 注意
-在 Windows 的终端里直接写 `keyword=猫`，中文可能在传给 curl 之前就被转换成了错误的编码，结果搜不到任何东西。遇到这种情况，请使用上面的编码形式，或者在 `/scalar` 页面中测试。
+本例中的关键字只包含 ASCII 字符和空格。空格必须按上面的形式写成 `%20`；直接将空格放入 URL 可能导致解析错误。也可以在 `/scalar` 页面中输入原始关键字，让浏览器处理编码。
 :::
 
 ## 总结

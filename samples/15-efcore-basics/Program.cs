@@ -8,7 +8,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddValidation();
 builder.Services.AddProblemDetails();
 var connectionString = builder.Configuration.GetConnectionString("Todos")
-    ?? throw new InvalidOperationException("缺少 ConnectionStrings:Todos 配置。");
+    ?? throw new InvalidOperationException("Missing ConnectionStrings:Todos configuration.");
 builder.Services.AddDbContext<TodoDbContext>(options => options.UseSqlite(connectionString));
 
 var app = builder.Build();
@@ -22,7 +22,7 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
-// 仅用于独立的学习示例；已有表结构不会被 EnsureCreatedAsync 更新。
+// For standalone learning samples only; EnsureCreatedAsync does not update existing tables.
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<TodoDbContext>();
