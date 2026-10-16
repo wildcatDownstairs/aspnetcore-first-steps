@@ -1,15 +1,15 @@
 # ASP.NET Core 第一步
 
-写给有编程经验者的 ASP.NET Core 渐进式教程，基于 **.NET 10 + Minimal API**，从第一个接口到数据库、认证、测试与部署。以中文为内容基准，提供英文与日文译文，三种语言共用可运行的示例代码。
+写给有编程经验者的 ASP.NET Core 渐进式教程，基于 **.NET 10 + Minimal API**，从第一个接口到数据库、认证、测试与部署。以中文为内容基准，提供繁体中文（台湾）、英文与日文译文，四种语言共用可运行的示例代码。
 
 ## 在线阅读
 
-| 简体中文 | English | 日本語 |
-| --- | --- | --- |
-| [中文首页](https://aspnetcore-first-steps.pages.dev/zh/) | [English home](https://aspnetcore-first-steps.pages.dev/en/) | [日本語ホーム](https://aspnetcore-first-steps.pages.dev/ja/) |
-| [开始学习](https://aspnetcore-first-steps.pages.dev/zh/tutorial/setup) | [Get started](https://aspnetcore-first-steps.pages.dev/en/tutorial/setup) | [学習を始める](https://aspnetcore-first-steps.pages.dev/ja/tutorial/setup) |
+| 简体中文 | 繁體中文（台灣） | English | 日本語 |
+| --- | --- | --- | --- |
+| [中文首页](https://aspnetcore-first-steps.pages.dev/zh/) | [繁體中文首頁](https://aspnetcore-first-steps.pages.dev/zh-tw/) | [English home](https://aspnetcore-first-steps.pages.dev/en/) | [日本語ホーム](https://aspnetcore-first-steps.pages.dev/ja/) |
+| [开始学习](https://aspnetcore-first-steps.pages.dev/zh/tutorial/setup) | [開始學習](https://aspnetcore-first-steps.pages.dev/zh-tw/tutorial/setup) | [Get started](https://aspnetcore-first-steps.pages.dev/en/tutorial/setup) | [学習を始める](https://aspnetcore-first-steps.pages.dev/ja/tutorial/setup) |
 
-站点托管于 **Cloudflare Pages**。[统一入口](https://aspnetcore-first-steps.pages.dev/)优先使用手动选择的语言，其次匹配浏览器语言，未匹配时进入英文版。分享具体页面时建议使用带 `/zh/`、`/en/` 或 `/ja/` 的地址。
+站点托管于 **Cloudflare Pages**。[统一入口](https://aspnetcore-first-steps.pages.dev/)优先使用手动选择的语言，其次匹配浏览器语言，未匹配时进入英文版。分享具体页面时建议使用带 `/zh/`、`/zh-tw/`、`/en/` 或 `/ja/` 的地址。
 
 ## 教程内容
 
@@ -28,6 +28,7 @@ docs/                    教程 Markdown（VitePress 站点）
   .vitepress/nav.ts      顶部导航 + 按学习阶段分组的侧边栏（章节唯一数据源）
   .vitepress/theme/      自定义主题：配色、动效、"FastAPI 对照"提示框等
   zh/                    中文基准内容
+  zh-tw/                 繁体中文（台湾）译文
   en/                    英文译文
   ja/                    日文译文
 functions/index.js       Cloudflare Pages 根路径语言分流
@@ -104,8 +105,8 @@ dotnet test --project Tests/TodoApi.Tests.csproj -c Release -p:TreatWarningsAsEr
 ### 新增一章
 
 1. 在 `samples/NN-章节名/` 创建项目（`launchSettings.json` 统一使用 `http://localhost:5080`）；
-2. 在 `docs/zh/tutorial/` 新建 Markdown，并同步英文和日文；
-3. 在 `docs/.vitepress/nav.ts` 维护章节结构与两种译文标题，章节完成后设置 `ready: true`；
+2. 在 `docs/zh/tutorial/` 新建 Markdown，并同步繁体中文（台湾）、英文和日文；
+3. 在 `docs/.vitepress/nav.ts` 维护章节结构与三种译文标题，章节完成后设置 `ready: true`；
 4. 执行 `dotnet build -warnaserror` 与 `npm run docs:build`，确认示例与文档检查通过；每章聚焦一个新概念，解释“为什么”，给出预期输出，并在末尾总结。
 
 ## Cloudflare Pages 部署
@@ -124,18 +125,18 @@ dotnet test --project Tests/TodoApi.Tests.csproj -c Release -p:TreatWarningsAsEr
 
 站点使用根路径 `/`，适用于 Pages 域名和自定义域名。`GITHUB_REPOSITORY` 可覆盖仓库及页面编辑链接；未设置时默认使用 `wildcatDownstairs/aspnetcore-first-steps`，本地预览也会显示 GitHub 入口。
 
-GitHub Actions 负责编译和测试示例、验证容器持久化、检查中英日同步并构建站点。Cloudflare 的自动部署与 GitHub Actions 独立运行，不会等待这些检查完成。
+GitHub Actions 负责编译和测试示例、验证容器持久化、检查四语言同步并构建站点。Cloudflare 的自动部署与 GitHub Actions 独立运行，不会等待这些检查完成。
 
-## 中英日内容同步
+## 四语言内容同步
 
-中文 `docs/zh/` 是内容基准，英文放在 `docs/en/`，日文放在 `docs/ja/`，路径逐页对应。三种语言共用 `samples/`：代码注释、示例数据和应用消息统一使用英文，正文引用同一份代码和预期输出。新增或更新中文页面时同步两种译文，导航只在 `nav.ts` 维护章节结构。
+中文 `docs/zh/` 是内容基准，繁体中文（台湾）放在 `docs/zh-tw/`，英文放在 `docs/en/`，日文放在 `docs/ja/`，路径逐页对应。四种语言共用 `samples/`：代码注释、示例数据和应用消息统一使用英文，正文引用同一份代码和预期输出。新增或更新中文页面时同步三种译文，导航只在 `nav.ts` 维护章节结构。
 
 `npm run docs:check-translations` 检查页面覆盖、示例引用、章节数量和语言链接。`npm run docs:build` 会先运行翻译检查和站点单元测试，再构建并检查 HTML，因此 Cloudflare Git 构建也会执行这些检查。
 
 ## 语言 URL 与边缘分流
 
-- 中文：`/zh/`，英文：`/en/`，日文：`/ja/`；正文沿用相同 slug，例如 `/ja/tutorial/first-steps`。
-- 只有根路径 `/` 的 GET/HEAD 请求经过 Pages Function：有效的 `site_language` Cookie 优先，其次按 `Accept-Language` 的 q 权重匹配 zh/en/ja；无匹配或请求头缺失时默认英文。地区变体如 ja-JP、zh-TW 归入对应语言，当前中文内容为简体。
+- 简体中文：`/zh/`，繁体中文（台湾）：`/zh-tw/`，英文：`/en/`，日文：`/ja/`；正文沿用相同 slug，例如 `/ja/tutorial/first-steps`。
+- 只有根路径 `/` 的 GET/HEAD 请求经过 Pages Function：有效的 `site_language` Cookie 优先，其次按 `Accept-Language` 的 q 权重匹配 zh/zh-tw/en/ja；无匹配或请求头缺失时默认英文。ja-JP 归入日文；zh-TW、zh-Hant 以及未指定 Hans 的台港澳地区归入台湾繁体；zh、zh-CN、zh-Hans 归入简体。显式字形优先于地区（例如 zh-Hans-TW 仍使用简体）。
 - 语言按钮切换到对应章节并保存手动选择一年。直接访问任何明确的语言 URL 都不会被改写，也不会因浏览器语言而跳转。没有 Cookie 时会重新按浏览器偏好判断，不使用 IP 国家识别。
 - 个性化入口返回 302 和 `Cache-Control: private, no-store`，保留查询参数。不要用 CDN Cache Rules 强制缓存根入口，也不能只依赖 Vary 自动隔离缓存。
 - 构建根据中文页面生成 `_redirects`，将旧的 `/tutorial/…`、`/advanced/…` 和速查页逐页 301 到 `/zh/…`；根地址保留给语言分流。
@@ -148,12 +149,12 @@ npm run docs:build
 npm run docs:edge       # http://127.0.0.1:5179/；包含 Functions 与旧地址重定向
 ```
 
-`docs:dev` / `docs:preview` 只提供 VitePress 页面，不执行 Pages Functions 或旧 URL 重定向。根入口的静态备用页会默认跳到 `/en/`，三语言页面也可直接访问。
+`docs:dev` / `docs:preview` 只提供 VitePress 页面，不执行 Pages Functions 或旧 URL 重定向。根入口的静态备用页会默认跳到 `/en/`，四语言页面也可直接访问。
 
-## 三语言 SEO
+## 四语言 SEO
 
-正式域名在 `docs/.vitepress/seo.mts` 中统一维护。每页生成本语言的独立标题和描述、自引用 canonical、中英日双向 hreflang、Open Graph / Twitter 分享信息及 WebSite / WebPage 结构化数据。首页的 x-default 指向根入口，章节指向对应英文版。根备用页 canonical 指向英文首页，不作为重复内容列入 sitemap。
+正式域名在 `docs/.vitepress/seo.mts` 中统一维护。每页生成本语言的独立标题和描述、自引用 canonical、四语言双向 hreflang、Open Graph / Twitter 分享信息及 WebSite / WebPage 结构化数据。首页的 x-default 指向根入口，章节指向对应英文版。根备用页 canonical 指向英文首页，不作为重复内容列入 sitemap。
 
-构建生成 [sitemap.xml](https://aspnetcore-first-steps.pages.dev/sitemap.xml)（三种语言及已有 Git 更新时间）和 [robots.txt](https://aspnetcore-first-steps.pages.dev/robots.txt)，404 标记为不收录。更换正式域名时更新 `siteOrigin`、本文件站点链接和 GitHub 仓库 About 中的 Website。`npm run docs:check-seo` 检查全部页面的实际 HTML、语言对应关系、正文链接与锚点、站点地图、Function 路由范围和旧地址映射。
+构建生成 [sitemap.xml](https://aspnetcore-first-steps.pages.dev/sitemap.xml)（四种语言及已有 Git 更新时间）和 [robots.txt](https://aspnetcore-first-steps.pages.dev/robots.txt)，404 标记为不收录。更换正式域名时更新 `siteOrigin`、本文件站点链接和 GitHub 仓库 About 中的 Website。`npm run docs:check-seo` 检查全部页面的实际 HTML、语言对应关系、正文链接与锚点、站点地图、Function 路由范围和旧地址映射。
 
 上线后可在 Google Search Console / Bing Webmaster Tools 验证站点并提交 `https://aspnetcore-first-steps.pages.dev/sitemap.xml`。生成元信息和站点地图不代表搜索引擎已经收录。

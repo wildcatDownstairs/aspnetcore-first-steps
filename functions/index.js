@@ -17,7 +17,7 @@ export function onRequest(context) {
       'Cache-Control': 'private, no-store',
       Vary: 'Accept-Language, Cookie',
       Link: [
-        ...[['zh', 'zh-CN'], ['en', 'en'], ['ja', 'ja']].map(([path, lang]) => `<${origin}/${path}/>; rel="alternate"; hreflang="${lang}"`),
+        ...[['zh', 'zh-CN'], ['zh-tw', 'zh-TW'], ['en', 'en'], ['ja', 'ja']].map(([path, lang]) => `<${origin}/${path}/>; rel="alternate"; hreflang="${lang}"`),
         `<${origin}/>; rel="alternate"; hreflang="x-default"`,
       ].join(', '),
     },

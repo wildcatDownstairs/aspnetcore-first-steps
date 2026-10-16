@@ -123,16 +123,36 @@ const japaneseStages = [
   ['セキュリティ', '呼び出し元を識別し、許可する操作を決める'],
   ['公開に向けて', 'テストし、コードを整理してデプロイする'],
 ]
+const taiwanChapters: Record<string, string> = {
+  setup: '環境準備', 'csharp-tour': 'C# 速覽', 'first-steps': '第一步',
+  'path-params': '路由參數', 'query-params': '查詢參數', 'request-body': '請求本文',
+  validation: '參數驗證', 'headers-cookies': 'Header 與 Cookie', 'response-types': '回應型別',
+  errors: '狀態碼與錯誤處理', 'route-groups': '路由群組', 'dependency-injection': '相依性注入',
+  configuration: '設定與 Options', middleware: '中介軟體', logging: '記錄',
+  'efcore-basics': 'EF Core 入門', 'relations-queries': '關聯與查詢', crud: '完整 CRUD',
+  authentication: '身分驗證（JWT）', authorization: '授權', cors: 'CORS', testing: '測試',
+  'project-structure': '依功能組織專案', deployment: '發佈與部署',
+}
+const taiwanStages = [
+  ['入門', '裝好工具，認識 C#，執行第一個 API'],
+  ['請求與回應', '從 HTTP 請求中取得資料，再正確地回傳結果'],
+  ['應用程式骨架', '讓應用程式可設定、可觀測，元件之間維持低耦合'],
+  ['資料存取', '用 EF Core 將資料存進 SQLite，組合成完整的 API'],
+  ['安全', '先確認「你是誰」，再決定「你能做什麼」'],
+  ['上線', '測試、整理程式碼結構，然後發佈'],
+]
 export function stagesFor(language: string): Stage[] {
   if (language === 'zh' || language === 'zh-CN') return stages
-  const translatedStages = language === 'ja' ? japaneseStages : englishStages
-  const chapters = language === 'ja' ? japaneseChapters : englishChapters
+  const taiwan = language === 'zh-tw' || language === 'zh-TW'
+  const translatedStages = taiwan ? taiwanStages : language === 'ja' ? japaneseStages : englishStages
+  const chapters = taiwan ? taiwanChapters : language === 'ja' ? japaneseChapters : englishChapters
   return stages.map((stage, i) => ({
     ...stage, title: translatedStages[i][0], summary: translatedStages[i][1],
     chapters: stage.chapters.map(c => ({ ...c, title: chapters[c.slug] })),
   }))
 }
 const labels = {
+  'zh-tw': ['教學', '進階', '對照速查', '關於', '學習路線', '即將推出'],
   zh: ['教程', '进阶', '对照速查', '关于', '学习路线', '即将推出'],
   en: ['Tutorial', 'Advanced', 'Cheat sheets', 'About', 'Learning path', 'Coming soon'],
   ja: ['チュートリアル', '応用', '早見表', '概要', '学習ロードマップ', '近日公開'],

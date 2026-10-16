@@ -9,7 +9,7 @@ defineProps<{ compact?: boolean }>()
 const { lang } = useData()
 const locale = computed(() => localeForLang(lang.value))
 const stages = computed(() => stagesFor(locale.value))
-const soon = computed(() => ({ en: 'Coming soon', zh: '即将推出', ja: '近日公開' })[locale.value])
+const soon = computed(() => ({ en: 'Coming soon', zh: '即将推出', 'zh-tw': '即將推出', ja: '近日公開' })[locale.value])
 const total = stages.value.reduce((n, s) => n + s.chapters.length, 0)
 const done = stages.value.reduce((n, s) => n + s.chapters.filter((c) => c.ready).length, 0)
 </script>
@@ -19,6 +19,7 @@ const done = stages.value.reduce((n, s) => n + s.chapters.filter((c) => c.ready)
     <p class="lp-meta">
       <template v-if="locale === 'en'">{{ stages.length }} stages, {{ total }} chapters · {{ done }} available.</template>
       <template v-else-if="locale === 'ja'">全 {{ stages.length }} 段階・{{ total }} 章、{{ done }} 章を公開中。</template>
+      <template v-else-if="locale === 'zh-tw'">共 {{ stages.length }} 個階段、{{ total }} 章，已完成 {{ done }} 章。</template>
       <template v-else>共 {{ stages.length }} 个阶段、{{ total }} 章，已完成 {{ done }} 章。</template>
     </p>
     <ol class="lp-stages">

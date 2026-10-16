@@ -14,6 +14,6 @@ head:
 
 # ASP.NET Core First Steps
 
-Continue in [English](/en/), [简体中文](/zh/), or [日本語](/ja/).
+Continue in [English](/en/), [简体中文](/zh/), [繁體中文（台灣）](/zh-tw/), or [日本語](/ja/).
 
 </div>

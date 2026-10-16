@@ -30,12 +30,12 @@ export default defineConfig({
   cleanUrls: true,
   sitemap: {
     hostname: siteOrigin,
-    transformItems: items => items.filter(item => /^(zh|en|ja)\//.test(item.url)).map(item => ({
+    transformItems: items => items.filter(item => /^(zh|zh-tw|en|ja)\//.test(item.url)).map(item => ({
       ...item,
       // VitePress 会把根入口也归为英文；剔除该重复项后补上 x-default。
       links: [
-        ...(item.links || []).filter(link => /^(zh|en|ja)\//.test(link.url)),
-        { lang: 'x-default', url: /^(zh|en|ja)\/$/.test(item.url) ? '/' : item.url.replace(/^(zh|ja)\//, 'en/') },
+        ...(item.links || []).filter(link => /^(zh|zh-tw|en|ja)\//.test(link.url)),
+        { lang: 'x-default', url: /^(zh|zh-tw|en|ja)\/$/.test(item.url) ? '/' : item.url.replace(/^(zh|zh-tw|ja)\//, 'en/') },
       ],
     })),
   },

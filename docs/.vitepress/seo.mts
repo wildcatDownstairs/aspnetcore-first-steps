@@ -14,7 +14,7 @@ export function applySeo(page: PageData, pages: string[]) {
   const siteName = locale.title
   const entry = page.relativePath === 'index.md'
   const canonical = siteOrigin + (entry ? '/en/' : pagePath(page.relativePath))
-  const source = page.relativePath.replace(/^(zh|en|ja)\//, '')
+  const source = page.relativePath.replace(/^(zh|zh-tw|en|ja)\//, '')
   const title = page.titleTemplate === false ? page.title
     : page.title === siteName && !page.titleTemplate ? siteName
     : `${page.title} | ${page.titleTemplate || siteName}`

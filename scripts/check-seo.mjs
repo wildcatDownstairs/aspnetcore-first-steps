@@ -52,7 +52,7 @@ for (const file of await htmlFiles(root)) {
   assert.ok(description && !descriptions.has(description), `${name}: missing or duplicate description`)
   titles.add(title)
   descriptions.add(description)
-  const sourcePath = path.replace(/^\/(zh|en|ja)\//, '/')
+  const sourcePath = path.replace(/^\/(zh|zh-tw|en|ja)\//, '/')
   for (const alternative of localeCodes) assert.equal(one('hreflang', locales[alternative].lang, 'href'), origin + '/' + alternative + sourcePath)
   assert.equal(one('hreflang', 'x-default', 'href'), origin + (sourcePath === '/' ? '/' : '/en' + sourcePath))
   assert.equal(decode(one('property', 'og:title')), title)
@@ -72,7 +72,7 @@ for (const file of await htmlFiles(root)) {
 assert.ok(canonicals.length > 0, 'No pages checked')
 assert.deepEqual([...sitemapUrls].sort(), [...canonicals].sort(), 'Sitemap must match all indexable canonical URLs')
 for (const entry of sitemap.matchAll(/<url>([\s\S]*?)<\/url>/g)) {
-  for (const lang of ['zh-CN', 'en', 'ja', 'x-default']) {
+  for (const lang of [...localeCodes.map(code => locales[code].lang), 'x-default']) {
     assert.equal([...entry[1].matchAll(new RegExp(`hreflang="${lang}"`, 'g'))].length, 1, `sitemap: ${lang} must occur once`)
   }
 }
@@ -81,7 +81,7 @@ for (const [path, doc] of documents) {
   for (const match of doc.html.matchAll(/<a\b[^>]*\bhref="([^"]+)"/g)) {
     const url = new URL(decode(match[1]), origin + path)
     if (url.origin !== origin || url.pathname === '/') continue
-    if (!/^\/(zh|en|ja)(\/|$)/.test(url.pathname)) {
+    if (!/^\/(zh|zh-tw|en|ja)(\/|$)/.test(url.pathname)) {
       assert.ok(!/^\/(tutorial|advanced|about|fastapi-cheatsheet|efcore-sql-cheatsheet)(\/|$)/.test(url.pathname), `${doc.name}: old Chinese link ${url.pathname}`)
       continue
     }

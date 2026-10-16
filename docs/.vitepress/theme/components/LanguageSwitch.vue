@@ -7,6 +7,7 @@ import { languagePreferenceCookie } from '../../../../shared/language.mjs'
 const { lang, page } = useData()
 const current = computed(() => localeForLang(lang.value))
 const texts = {
+  'zh-tw': { change: '切換語言', reading: '閱讀語言', source: '基準內容', translation: '譯文' },
   zh: { change: '切换语言', reading: '阅读语言', source: '基准内容', translation: '译文' },
   en: { change: 'Change language', reading: 'Reading language', source: 'Source', translation: 'Translation' },
   ja: { change: '言語を変更', reading: '表示言語', source: '原文', translation: '翻訳' },
@@ -16,7 +17,7 @@ const open = ref(false)
 const root = ref<HTMLElement>()
 const button = ref<HTMLButtonElement>()
 // 相同文件路径对应相同章节；标题的翻译会改变锚点，所以切换时回到该章开头。
-const chapter = computed(() => (page.value.isNotFound ? 'index.md' : page.value.relativePath).replace(/^(zh|en|ja)\//, '')
+const chapter = computed(() => (page.value.isNotFound ? 'index.md' : page.value.relativePath).replace(/^(zh|zh-tw|en|ja)\//, '')
   .replace(/(^|\/)index\.md$/, '$1').replace(/\.md$/, ''))
 const languages = computed(() => localeCodes.map(code => ({
   code, lang: locales[code].lang, label: locales[code].label,

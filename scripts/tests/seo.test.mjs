@@ -7,6 +7,7 @@ test('canonical routes distinguish directory homepages from clean chapter URLs',
   assert.equal(pagePath('en/index.md'), '/en/')
   assert.equal(pagePath('zh/tutorial/index.md'), '/zh/tutorial/')
   assert.equal(pagePath('ja/index.md'), '/ja/')
+  assert.equal(pagePath('zh-tw/tutorial/index.md'), '/zh-tw/tutorial/')
   assert.equal(pagePath('en/tutorial/first-steps.md'), '/en/tutorial/first-steps')
 })
 
@@ -27,20 +28,20 @@ test('structured data safely escapes HTML while preserving the description', () 
   assert.equal(JSON.parse(json).inLanguage, 'en')
 })
 
-test('three language variants have self canonicals and reciprocal alternatives', () => {
-  const pages = ['zh/about.md', 'en/about.md', 'ja/about.md']
+test('four language variants have self canonicals and reciprocal alternatives', () => {
+  const pages = ['zh/about.md', 'zh-tw/about.md', 'en/about.md', 'ja/about.md']
   for (const file of pages) {
     const page = { relativePath: file, title: 'About', description: 'Description', frontmatter: {} }
     applySeo(page, pages)
     const links = page.frontmatter.head.filter(([tag]) => tag === 'link').map(([, attrs]) => attrs)
     assert.ok(links.find(link => link.rel === 'canonical').href.endsWith('/' + file.replace('.md', '')))
-    assert.deepEqual(links.filter(link => link.rel === 'alternate').map(link => link.hreflang), ['zh-CN', 'en', 'ja', 'x-default'])
+    assert.deepEqual(links.filter(link => link.rel === 'alternate').map(link => link.hreflang), ['zh-CN', 'zh-TW', 'en', 'ja', 'x-default'])
     assert.ok(links.find(link => link.hreflang === 'x-default').href.endsWith('/en/about'))
   }
 })
 
 test('homepage x-default is the edge entry and the static fallback canonical is English', () => {
-  const pages = ['index.md', 'zh/index.md', 'en/index.md', 'ja/index.md']
+  const pages = ['index.md', 'zh/index.md', 'zh-tw/index.md', 'en/index.md', 'ja/index.md']
   for (const file of pages) {
     const page = { relativePath: file, title: 'Home', description: 'Description', frontmatter: {} }
     applySeo(page, pages)
