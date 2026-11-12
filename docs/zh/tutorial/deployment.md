@@ -74,7 +74,7 @@ dotnet publish -c Release --os linux --arch x64 /t:PublishContainer
 
 这条命令默认把 `todo-api:chapter23` 写入本机容器运行时。后续步骤需要已启动的 Docker，并使用 Linux 容器。目标机器是 ARM64 时，把 `x64` 改成 `arm64`，在相应机器上运行。
 
-镜像基于 `mcr.microsoft.com/dotnet/aspnet:10.0`，应用以非 root 用户运行。本示例使用的默认用户 ID 是 `1654`。SDK 也支持直接推送到镜像仓库或生成归档，见[官方容器发布说明](https://learn.microsoft.com/en-us/dotnet/core/containers/sdk-publish)。
+镜像基于 `mcr.microsoft.com/dotnet/aspnet:11.0`，应用以非 root 用户运行。本示例使用的默认用户 ID 是 `1654`。SDK 也支持直接推送到镜像仓库或生成归档，见[官方容器发布说明](https://learn.microsoft.com/en-us/dotnet/core/containers/sdk-publish)。
 
 ## 配置生产环境
 
@@ -168,7 +168,7 @@ docker compose up -d --force-recreate api
 
 这里的端口映射是 `127.0.0.1:5080:8080`，只允许宿主机访问。把镜像和 Compose 配置放到有 Docker 的服务器后，在同一台机器的反向代理上配置域名与 HTTPS，再把请求转发到 `127.0.0.1:5080`。前端的实际源也要加入 CORS 配置。
 
-如果代理改变了请求的协议、主机名或客户端地址，应用需要按[代理与转发头文档](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/proxy-load-balancer?view=aspnetcore-10.0)配置受信任的代理。不要无条件信任公网发来的转发头。
+如果代理改变了请求的协议、主机名或客户端地址，应用需要按[代理与转发头文档](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/proxy-load-balancer?view=aspnetcore-11.0)配置受信任的代理。不要无条件信任公网发来的转发头。
 
 Cloudflare Pages 托管的是本教程生成的静态网页，不能直接运行这个 ASP.NET Core API。API 需要能运行 .NET 或容器的主机。
 

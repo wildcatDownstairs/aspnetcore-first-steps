@@ -33,7 +33,7 @@ FastAPI を使ったことがあれば、ASP.NET Core Minimal API にも共通�
 | `@app.get("/")` | `app.MapGet("/", ...)` | デコレーターではなくメソッド呼び出しでエンドポイントを登録します | [はじめの一歩](/ja/tutorial/first-steps) |
 | `dict` を返す | 匿名型 `new { ... }` または `record` を返す | JSON に自動シリアライズされ、プロパティ名は camelCase に変換されます | [はじめの一歩](/ja/tutorial/first-steps) |
 | `/docs` | `/scalar`（Scalar.AspNetCore） | 対話型ドキュメントです。.NET では生成と表示が別々のパッケージに分かれています | [はじめの一歩](/ja/tutorial/first-steps) |
-| `/openapi.json` | `/openapi/v1.json` | OpenAPI ドキュメントです。.NET 10 は既定で OpenAPI 3.1 を生成します | [はじめの一歩](/ja/tutorial/first-steps) |
+| `/openapi.json` | `/openapi/v1.json` | OpenAPI ドキュメントです。.NET 11 は既定で OpenAPI 3.2 を生成します | [はじめの一歩](/ja/tutorial/first-steps) |
 
 ## リクエストパラメーター
 
@@ -44,7 +44,7 @@ FastAPI を使ったことがあれば、ASP.NET Core Minimal API にも共通�
 | `{file_path:path}` | `{*path}` | `/` を含む残りのパスに一致します | [ルートパラメーター](/ja/tutorial/path-params) |
 | クエリパラメーター `q: str \| None = None` | `string? q` | nullable 型で省略可能なパラメーターを表します | [クエリパラメーター](/ja/tutorial/query-params) |
 | リクエスト本文に Pydantic モデル | リクエスト本文に `record` | JSON を強い型付けのオブジェクトに自動バインドします | [リクエスト本文](/ja/tutorial/request-body) |
-| `Field(ge=1)` などの検証 | Data Annotations と .NET 10 の組み込み検証 | | [パラメーター検証](/ja/tutorial/validation) |
+| `Field(ge=1)` などの検証 | Data Annotations と .NET 11 の組み込み検証 | | [パラメーター検証](/ja/tutorial/validation) |
 | `Header()` / `Cookie()` | `[FromHeader]` / `HttpRequest.Cookies` | .NET に `[FromCookie]` 属性はありません。Cookie はリクエストオブジェクトから読み取ります | [ヘッダーと Cookie](/ja/tutorial/headers-cookies) |
 
 ## レスポンスとエラー

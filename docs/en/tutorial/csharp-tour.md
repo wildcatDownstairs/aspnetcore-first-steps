@@ -1,6 +1,6 @@
 ---
 title: C# Tour
-description: 'The C# features used in this tutorial: static typing and var, string interpolation, nullable reference types, lambdas, records, LINQ, and async/await.'
+description: 'The C# features used in this tutorial: static typing and var, string interpolation, nullable reference types, lambdas, records, LINQ, async/await, union types, and the other new C# 15 syntax.'
 ---
 
 # C# Tour
@@ -30,9 +30,16 @@ Todo { Id = 1, Title = Buy milk, Done = True }
 Value equality:True
 Pending: Buy milk
 Async operation complete
+Todo 3 not found
+High priority: Due today
+Distinct tags: 2
+Visited 1
+Visited 2
+Visited 3
+Found by title: Todo { Id = 2, Title = Write code, Done = True }
 ```
 
-We’ll look at the code in three groups.
+We’ll look at the code in five groups.
 
 ## Types, nullability, and lambdas
 
@@ -83,11 +90,11 @@ This is like Python’s `lambda x: x * x`, but a C# lambda can contain multiple 
 
 ## Records and LINQ
 
-<<< @/../samples/01-csharp-tour/Program.cs{17-21,24-26,38 cs:line-numbers} [01-csharp-tour/Program.cs]
+<<< @/../samples/01-csharp-tour/Program.cs{17-21,24-26,77 cs:line-numbers} [01-csharp-tour/Program.cs]
 
 ### record
 
-**Line 38** defines a type named `Todo` in one line:
+**Line 77** defines a type named `Todo` in one line:
 
 - The `int Id, string Title, bool Done` values in parentheses are both constructor parameters and automatically generated `init` properties with the same names. They can be assigned only during initialization.
 - The compiler also generates `ToString()` (so line 19 can print `Todo { Id = 1, ... }`) and value-based equality.
@@ -142,12 +149,69 @@ Line 25 is equivalent to Python’s `[t.title for t in todos if not t.done]`.
 The idea is the same as Python’s `async def` / `await`. ASP.NET Core can mix synchronous and asynchronous handlers and the framework handles both correctly. There is no equivalent to “calling blocking synchronous code in an async function stalls the event loop,” but blocking calls still waste threads, so use asynchronous APIs for I/O.
 :::
 
+## Union types
+
+<<< @/../samples/01-csharp-tour/Program.cs{39-45,78-79 cs:line-numbers} [01-csharp-tour/Program.cs]
+
+**Line 79** uses `union` to declare a **union type**: a `TodoResult` value is either a `Todo` or a `NotFound`, and nothing else. This syntax is new in C# 15.
+
+- **Line 39** assigns a `NotFound` directly to a `TodoResult` variable; the compiler performs the conversion.
+- **Lines 40–44** use a `switch` expression to choose a branch by the actual type. `Todo todo =>` means “if it contains a `Todo`, take it out and name it `todo`.”
+
+**The compiler checks that every case is handled.** Delete line 43 and build again, and you get a warning:
+
+```text
+Program.cs(40,22): warning CS8509: The switch expression does not handle all possible values of its input type (it is not exhaustive). For example, the pattern 'NotFound' is not covered.
+```
+
+When you later add a third case to `TodoResult`, every `switch` that hasn’t been updated is reported the same way.
+
+“Return the data if found, otherwise return 404” is a very common result in a Web API. The Response Types chapter expresses the same idea with ASP.NET Core’s own `Results<Ok<Todo>, NotFound>`. It predates `union` in C#, so the syntax differs, but the idea is the same.
+
+::: fastapi
+This is like `Todo | NotFound` in a Python type hint, and the `switch` expression corresponds to a `match` statement. The difference is that the C# compiler checks whether the branches are complete.
+:::
+
+## Other new syntax in C# 15
+
+Besides union types, C# 15 adds a few more pieces of syntax. Later chapters don’t depend on them, but you will meet them when reading other code.
+
+<<< @/../samples/01-csharp-tour/Program.cs{48-54,57,62,68,75,80-82,86-89 cs:line-numbers} [01-csharp-tour/Program.cs]
+
+### Closed hierarchies
+
+`closed` on **line 80** means that only types in the same **assembly** (for now, read this as “the same project”) can derive from `Priority`. Lines 81 and 82 are all of its derived types. A `closed` type can’t be instantiated directly.
+
+Because the derived types are fixed, once the `switch` expression on **lines 49–53** lists `Low` and `High`, the compiler knows every case is handled and no catch-all branch is needed. If you miss a branch, you get the same CS8509 warning as with a union type.
+
+How do you choose between a union type and a closed hierarchy? Use `union` when the cases are existing, unrelated types such as `Todo` and `NotFound`. Use `closed` when the cases naturally share a base type.
+
+### Collection expression arguments
+
+The first item inside the brackets on **line 57**, `with(...)`, is not an element of the collection. It is an argument passed to the collection’s constructor. Here it passes `StringComparer.OrdinalIgnoreCase`, so the `HashSet<string>` ignores case when comparing. `"home"` and `"Home"` count as the same element, and the program prints `Distinct tags: 2`.
+
+Before C# 15, you couldn’t use the bracket syntax when you needed a constructor argument; you had to write `new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ... }`.
+
+### Labeled break and continue
+
+**Line 62** puts the label `outer:` in front of the outer loop. `break outer;` on **line 68** exits that outer loop directly; a `break` without a label exits only the innermost loop. So the output stops at `Visited 3`, and 5 and 6 are never visited.
+
+`continue outer;` works the same way and moves straight to the next iteration of the outer loop.
+
+### Extension indexers
+
+**Lines 86–89** are an **extension block**: `extension(List<Todo> todos)` means “add members to `List<Todo>`” without changing `List<T>` itself. Extension blocks were introduced in C# 14, and C# 15 lets you declare an **indexer** inside one (`this[...]`, which defines what bracket access does).
+
+That is why **line 75** can write `todos["Write code"]` to find a todo by title. The built-in access by position, such as `todos[0]`, is unaffected. The return type is `Todo?`, so the result is `null` when nothing matches.
+
 ## Summary
 
 - C# is **statically typed**. `var` asks the compiler to infer a type; the type is still determined at compile time.
 - `$"..."` is **string interpolation**. `string?` means **nullable** and works with `?.` and `??` to handle `null` safely. Nullability checks happen only at compile time.
 - A **lambda** such as `x => ...` is an anonymous function used as a handler by methods such as `MapGet`.
 - A **positional record** concisely defines a data type with value equality and `with` copying. This example uses `init` properties, but records do not make every member immutable.
+- A **union type** declared with `union` lists the types a value can be. The compiler warns when a `switch` expression misses a case.
+- C# 15 also adds `closed` hierarchies, collection expression arguments with `with(...)`, labeled `break` / `continue`, and extension indexers.
 - **LINQ** chains methods such as `Where` and `Select` to process collections. **async/await** avoids occupying a thread while waiting for I/O.
 
 Next: [First Steps](./first-steps), where you’ll write your first Web API. Previous: [Setup](./setup).

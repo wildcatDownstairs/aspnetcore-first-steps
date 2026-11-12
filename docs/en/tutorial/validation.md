@@ -1,6 +1,6 @@
 ---
 title: Validation
-description: 'Use built-in .NET 10 Minimal API validation: declare rules on records and parameters with data annotations, and reject invalid requests before handlers run.'
+description: 'Use built-in .NET 11 Minimal API validation: declare rules on records and parameters with data annotations, and reject invalid requests before handlers run.'
 ---
 
 # Validation
@@ -95,7 +95,7 @@ This is similar to Pydantic’s `Field(min_length=1, max_length=50)`, `Field(ge=
 :::
 
 ::: warning
-**`CreateTodo` must be declared `public`** (line 31). .NET 10 validation uses a **source generator** to generate code for types being validated at compile time, and it processes only public types.
+**`CreateTodo` must be declared `public`** (line 31). .NET 11 validation uses a **source generator** to generate code for types being validated at compile time, and it processes only public types.
 
 If you remove `public` and write `record CreateTodo(...)`, the project still compiles, but the request body is **not validated at all**—there is no error, warning, or log. This is an easy pitfall: if validation rules don’t run, first check whether the type is `public`.
 :::
@@ -114,7 +114,7 @@ If you remove `public` and write `record CreateTodo(...)`, the project still com
 Notice the difference between steps 2 and the previous chapter: **binding** checks “is the format correct?” (can `"high"` be converted to `int`?), while **validation** checks “is the content acceptable?” (is `9` between 1 and 5?). If binding fails, the framework cannot construct the `CreateTodo` object, so validation never gets a chance to run.
 
 ::: info Technical detail
-Built-in validation was added in .NET 10; earlier versions required a third-party library or custom code. The source generator discovers validatable types and generates metadata at compile time, and the validation component runs the rules at runtime. It still uses **reflection** (reading type and property information at runtime) to retrieve properties and validation attributes; it does not eliminate reflection entirely. Generated metadata and trimming support make it usable with native AOT (ahead-of-time compilation to native code, discussed in the Advanced section). AOT does not mean reflection is completely unavailable.
+Built-in validation was added in .NET 10; earlier versions required a third-party library or custom code. .NET 11 adds asynchronous validation (`AsyncValidationAttribute` and `IAsyncValidatableObject`), so a rule can `await` work such as a database query. The rules in this chapter are all synchronous and don’t need it. The source generator discovers validatable types and generates metadata at compile time, and the validation component runs the rules at runtime. It still uses **reflection** (reading type and property information at runtime) to retrieve properties and validation attributes; it does not eliminate reflection entirely. Generated metadata and trimming support make it usable with native AOT (ahead-of-time compilation to native code, discussed in the Advanced section). AOT does not mean reflection is completely unavailable.
 :::
 
 ## Validate query parameters
@@ -147,7 +147,7 @@ Default validation messages are in English. You can customize each message with 
 
 ## Summary
 
-- `builder.Services.AddValidation()` enables built-in .NET 10 validation, which runs **before** the handler.
+- `builder.Services.AddValidation()` enables built-in .NET 11 validation, which runs **before** the handler.
 - Declare rules with **data annotations** such as `[Required]`, `[StringLength]`, and `[Range]` on record properties or handler parameters.
 - Validation failures return 400, with all field errors listed in the response’s `errors` field. The handler is not called.
 - **Binding** checks the format; **validation** checks the content. Rules also appear in OpenAPI documentation.

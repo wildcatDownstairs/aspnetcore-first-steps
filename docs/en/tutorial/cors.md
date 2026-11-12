@@ -114,7 +114,7 @@ The preflight does not carry the actual request's Bearer token, so it must be ha
 
 **Why configure request and response headers separately?** Allowing a request to send Authorization does not allow it to read any response header. `Location` is not exposed to cross-origin scripts by default, so it must be declared separately. Otherwise, the browser's Network panel may show it, but `response.headers.get('Location')` returns `null`.
 
-This example manually sends a Bearer header and uses `credentials: 'omit'` to prevent the browser from attaching a Cookie, so `AllowCredentials()` is not needed. If you later use Cookie-based sign-in, configure credentials separately and defend against **cross-site request forgery (CSRF)**. [ASP.NET Core CORS documentation](https://learn.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-10.0)
+This example manually sends a Bearer header and uses `credentials: 'omit'` to prevent the browser from attaching a Cookie, so `AllowCredentials()` is not needed. If you later use Cookie-based sign-in, configure credentials separately and defend against **cross-site request forgery (CSRF)**. [ASP.NET Core CORS documentation](https://learn.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-11.0)
 
 ## A disallowed origin does not necessarily get a 403
 

@@ -138,7 +138,7 @@ X-Elapsed-Ms: 1
 第 09 章把异常处理放在靠前的位置，是为了捕获后续处理中的异常。认证和授权的完整顺序会在第 18～20 章用到。
 
 ::: warning 注意
-顺序写错不一定会在启动时暴露。例如，放在异常处理中间件之前的代码抛出异常，它就捕获不到。添加内置中间件时，请对照[官方推荐顺序](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/?view=aspnetcore-10.0#middleware-order)。
+顺序写错不一定会在启动时暴露。例如，放在异常处理中间件之前的代码抛出异常，它就捕获不到。添加内置中间件时，请对照[官方推荐顺序](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/?view=aspnetcore-11.0#middleware-order)。
 :::
 
 ::: info 技术细节

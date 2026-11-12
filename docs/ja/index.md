@@ -2,12 +2,12 @@
 layout: home
 title: ASP.NET Core はじめの一歩
 titleTemplate: 日本語版 ASP.NET Core ステップアップチュートリアル
-description: C# と ASP.NET Core をゼロから学びます。.NET 10 と Minimal API を使い、ルーティング、EF Core データベース、JWT 認証、テスト、Docker デプロイを段階的に習得できます。各章には実行可能なサンプルがあります。
+description: C# と ASP.NET Core をゼロから学びます。.NET 11 と Minimal API を使い、ルーティング、EF Core データベース、JWT 認証、テスト、Docker デプロイを段階的に習得できます。各章には実行可能なサンプルがあります。
 
 hero:
   name: ASP.NET Core はじめの一歩
   text: 最初のエンドポイントから本番公開まで
-  tagline: プログラミング経験はあるけれど、C# は初めてという方へ。.NET 10 と Minimal API を使い、一度に一つの概念を学びます。各章はそのまま dotnet run できる完成したプロジェクトです。
+  tagline: プログラミング経験はあるけれど、C# は初めてという方へ。.NET 11 と Minimal API を使い、一度に一つの概念を学びます。各章はそのまま dotnet run できる完成したプロジェクトです。
   actions:
     - theme: brand
       text: 学習を始める →

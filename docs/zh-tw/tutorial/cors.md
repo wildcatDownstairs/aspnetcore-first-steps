@@ -114,7 +114,7 @@ Access-Control-Allow-Headers: Authorization,Content-Type
 
 **為什麼請求標頭和回應標頭要分開設定？**允許傳送 Authorization，不代表可以讀取任意回應標頭。`Location` 不屬於預設向跨源指令碼暴露的回應標頭，因此需要額外宣告；否則網路面板裡可能看得到，但 `response.headers.get('Location')` 回傳 `null`。
 
-本例手動傳送 Bearer 請求標頭，使用 `credentials: 'omit'` 避免瀏覽器附帶 Cookie，因此不需要 `AllowCredentials()`。如果以後改用 Cookie 登入，需要另外設定認證資訊，並防範**跨站請求偽造**（cross-site request forgery，CSRF）。[ASP.NET Core CORS 文件](https://learn.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-10.0)
+本例手動傳送 Bearer 請求標頭，使用 `credentials: 'omit'` 避免瀏覽器附帶 Cookie，因此不需要 `AllowCredentials()`。如果以後改用 Cookie 登入，需要另外設定認證資訊，並防範**跨站請求偽造**（cross-site request forgery，CSRF）。[ASP.NET Core CORS 文件](https://learn.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-11.0)
 
 ## 不允許的源不一定得到 403
 

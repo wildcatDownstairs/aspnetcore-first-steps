@@ -1,6 +1,6 @@
 ---
 title: C# の概要
-description: このチュートリアルで使う C# の構文を紹介します。静的型付けと var、文字列補間、nullable 参照型、Lambda、record、LINQ、async/await を扱います。
+description: このチュートリアルで使う C# の構文を紹介します。静的型付けと var、文字列補間、nullable 参照型、Lambda、record、LINQ、async/await、ユニオン型と、C# 15 のそのほかの新しい構文を扱います。
 ---
 
 # C# の概要
@@ -30,9 +30,16 @@ Todo { Id = 1, Title = Buy milk, Done = True }
 Value equality: True
 Pending: Buy milk
 Async operation complete
+Todo 3 not found
+High priority: Due today
+Distinct tags: 2
+Visited 1
+Visited 2
+Visited 3
+Found by title: Todo { Id = 2, Title = Write code, Done = True }
 ```
 
-三つのグループに分けて見ていきましょう。
+五つのグループに分けて見ていきましょう。
 
 ## 型、nullable、Lambda
 
@@ -83,11 +90,11 @@ Python の `lambda x: x * x` に相当します。ただし C# の Lambda は複
 
 ## record と LINQ
 
-<<< @/../samples/01-csharp-tour/Program.cs{17-21,24-26,38 cs:line-numbers} [01-csharp-tour/Program.cs]
+<<< @/../samples/01-csharp-tour/Program.cs{17-21,24-26,77 cs:line-numbers} [01-csharp-tour/Program.cs]
 
 ### record
 
-**38 行目**では、一行で `Todo` 型を定義しています。
+**77 行目**では、一行で `Todo` 型を定義しています。
 
 - 丸括弧内の `int Id, string Title, bool Done` はコンストラクターの引数であり、同名の `init` プロパティも自動生成します。値を設定できるのは初期化時だけです。
 - コンパイラーは `ToString()`（そのため 19 行目では `Todo { Id = 1, ... }` と表示されます）と、値に基づく等価比較も自動生成します。
@@ -142,12 +149,69 @@ record は Pydantic モデルや `@dataclass(frozen=True)` に近く、フィー
 概念は Python の `async def` / `await` と同じです。ASP.NET Core では同期と非同期のハンドラーを混在させてもフレームワークが正しく処理します。「async 関数内で同期ブロッキング処理を呼ぶとイベントループが止まる」という種類の問題はありません。ただし、ブロッキング呼び出しはスレッドを浪費するため、I/O には引き続き非同期 API を使うべきです。
 :::
 
+## ユニオン型
+
+<<< @/../samples/01-csharp-tour/Program.cs{39-45,78-79 cs:line-numbers} [01-csharp-tour/Program.cs]
+
+**79 行目**では `union` で**ユニオン型**（union type）を宣言しています。`TodoResult` の値は `Todo` か `NotFound` のどちらかで、それ以外にはなりません。これは C# 15 で追加された構文です。
+
+- **39 行目**では `NotFound` をそのまま `TodoResult` 型の変数に代入しています。変換はコンパイラーが行います。
+- **40～44 行目**の `switch` 式は、実際の型に応じて分岐を選びます。`Todo todo =>` は「中身が `Todo` なら取り出して `todo` と名付ける」という意味です。
+
+**コンパイラーは分岐がすべて書かれているかを検査します。**43 行目を削除してビルドすると、次の警告が出ます。
+
+```text
+Program.cs(40,22): warning CS8509: この switch 式では入力型の可能な値がすべて扱われるわけではありません (すべてが網羅されているわけではありません)。たとえば、パターン 'NotFound' がカバーされていません。
+```
+
+あとで `TodoResult` に 3 つ目のケースを追加したときも、更新していない `switch` はすべて同じように指摘されます。
+
+「見つかればデータを返し、見つからなければ 404 を返す」は Web API でよくある結果です。「レスポンス型」の章では、ASP.NET Core に備わっている `Results<Ok<Todo>, NotFound>` で同じことを表します。C# に `union` が入る前からある型なので書き方は異なりますが、考え方は同じです。
+
+::: fastapi
+Python の型ヒントの `Todo | NotFound` に相当し、`switch` 式は `match` 文に対応します。違いは、C# のコンパイラーが分岐の網羅性を検査することです。
+:::
+
+## C# 15 のそのほかの新しい構文
+
+ユニオン型のほかにも、C# 15 ではいくつかの構文が追加されました。後の章では使いませんが、ほかのコードを読むときに出会うことがあります。
+
+<<< @/../samples/01-csharp-tour/Program.cs{48-54,57,62,68,75,80-82,86-89 cs:line-numbers} [01-csharp-tour/Program.cs]
+
+### クローズド階層
+
+**80 行目**の `closed` は、同じ**アセンブリ**（assembly、ここでは「同じプロジェクト」と考えてかまいません）の型だけが `Priority` を継承できることを表します。81、82 行目がその派生型のすべてです。`closed` を付けた型そのもののインスタンスは直接作成できません。
+
+派生型が固定されているため、**49～53 行目**の `switch` 式で `Low` と `High` を書けば、コンパイラーは分岐がそろっていると判断でき、その他すべてを受ける分岐は不要です。分岐が漏れると、ユニオン型と同じ CS8509 の警告が出ます。
+
+ユニオン型とクローズド階層はどう使い分けるのでしょうか。`Todo` と `NotFound` のように、互いに関係のない既存の型を並べる場合は `union` を使います。もともと共通の基底型を持つ場合は `closed` を使います。
+
+### コレクション式の引数
+
+**57 行目**の角かっこ内の先頭にある `with(...)` はコレクションの要素ではなく、コレクションのコンストラクターに渡す引数です。ここでは `StringComparer.OrdinalIgnoreCase` を渡して、`HashSet<string>` が大文字と小文字を区別せずに比較するようにしています。そのため `"home"` と `"Home"` は同じ要素として扱われ、プログラムは `Distinct tags: 2` を出力します。
+
+C# 15 より前は、コンストラクター引数が必要な場合に角かっこの書き方は使えず、`new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ... }` と書く必要がありました。
+
+### ラベル付きの break と continue
+
+**62 行目**では、外側のループの前にラベル `outer:` を書いています。**68 行目**の `break outer;` は、この外側のループを直接抜けます。ラベルのない `break` は最も内側のループしか抜けられません。そのため出力は `Visited 3` で止まり、後ろの 5 と 6 は処理されません。
+
+`continue outer;` も同じ書き方で、外側のループの次の繰り返しに直接進みます。
+
+### 拡張インデクサー
+
+**86～89 行目**は**拡張ブロック**（extension block）です。`extension(List<Todo> todos)` は「`List<Todo>` にメンバーを追加する」という意味で、`List<T>` 自体を変更する必要はありません。拡張ブロックは C# 14 で導入され、C# 15 ではその中に**インデクサー**（indexer、`this[...]` のことで、角かっこでアクセスしたときの動作を決めます）を宣言できるようになりました。
+
+これにより、**75 行目**では `todos["Write code"]` と書いて、タイトルから Todo を検索できます。`List<T>` にもともとある位置によるアクセス（`todos[0]` など）には影響しません。戻り値の型は `Todo?` で、見つからない場合の結果は `null` です。
+
 ## まとめ
 
 - C# は**静的型付け**言語です。`var` はコンパイラーに型を推論させるだけで、型はコンパイル時に確定します。
 - `$"..."` は**文字列補間**です。`string?` は**null 許容**を示し、`?.` と `??` を組み合わせると `null` を安全に扱えます。nullable の検査はコンパイル時のみです。
 - `x => ...` の **Lambda** 式は無名関数です。`MapGet` などのメソッドでハンドラーとして使います。
 - **位置指定 record** はデータ型を簡潔に定義でき、値による等価比較と `with` によるコピーが可能です。この例のプロパティは `init` を使いますが、`record` がすべてのメンバーを不変にするわけではありません。
+- `union` で宣言する**ユニオン型**は、値が取りうる型を列挙します。`switch` 式に分岐の漏れがあるとコンパイラーが警告します。
+- C# 15 では、`closed` によるクローズド階層、コレクション式の引数 `with(...)`、ラベル付きの `break` / `continue`、拡張インデクサーも追加されました。
 - **LINQ** は `Where`、`Select` などを連結してコレクションを処理します。**async/await** は I/O 待機中にスレッドを占有しないようにします。
 
 次の章は[最初の一歩](./first-steps)です。最初の Web API を作ります。前の章：[開発環境の準備](./setup)。

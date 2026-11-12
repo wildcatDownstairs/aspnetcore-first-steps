@@ -1,6 +1,6 @@
 ---
 title: C# 速覽
-description: 只講本教學會用到的 C#：靜態型別與 var、字串插值、可空引用型別、Lambda、record、LINQ、async/await。
+description: 只講本教學會用到的 C#：靜態型別與 var、字串插值、可空引用型別、Lambda、record、LINQ、async/await、聯合型別，以及 C# 15 的其他新語法。
 ---
 
 # C# 速覽
@@ -30,9 +30,16 @@ Todo { Id = 1, Title = Buy milk, Done = True }
 Value equality: True
 Pending: Buy milk
 Async operation complete
+Todo 3 not found
+High priority: Due today
+Distinct tags: 2
+Visited 1
+Visited 2
+Visited 3
+Found by title: Todo { Id = 2, Title = Write code, Done = True }
 ```
 
-下面分三組來看。
+下面分五組來看。
 
 ## 型別、可空與 Lambda
 
@@ -83,11 +90,11 @@ Program.cs(10,19): warning CS8602: 解引用可能出现空引用。
 
 ## record 與 LINQ
 
-<<< @/../samples/01-csharp-tour/Program.cs{17-21,24-26,38 cs:line-numbers} [01-csharp-tour/Program.cs]
+<<< @/../samples/01-csharp-tour/Program.cs{17-21,24-26,77 cs:line-numbers} [01-csharp-tour/Program.cs]
 
 ### record
 
-**第 38 行**一行程式碼定義了一個型別 `Todo`：
+**第 77 行**一行程式碼定義了一個型別 `Todo`：
 
 - 圓括號中的 `int Id, string Title, bool Done` 既是建構函式的參數，也自動產生同名的 `init` 屬性，只能在初始化時賦值；
 - 編譯器還自動產生了 `ToString()`（所以第 19 行能列印出 `Todo { Id = 1, ... }`）和基於值的相等比較。
@@ -142,12 +149,69 @@ record 的角色類似 Pydantic 模型或 `@dataclass(frozen=True)`：用欄位�
 和 Python 的 `async def` / `await` 概念一致。區別是 ASP.NET Core 中同步和非同步的處理常式可以混用，框架都能正確處理，不存在"在 async 函式裡呼叫同步阻塞程式碼會卡住事件迴圈"這類問題——但阻塞呼叫仍會浪費執行緒，所以涉及 I/O 時仍應使用非同步 API。
 :::
 
+## 聯合型別
+
+<<< @/../samples/01-csharp-tour/Program.cs{39-45,78-79 cs:line-numbers} [01-csharp-tour/Program.cs]
+
+**第 79 行**用 `union` 宣告了一個**聯合型別**（union type）：`TodoResult` 的值要麼是 `Todo`，要麼是 `NotFound`，沒有別的可能。這是 C# 15 新增的語法。
+
+- **第 39 行**把一個 `NotFound` 直接指派給 `TodoResult` 變數，編譯器自動完成轉換；
+- **第 40～44 行**的 `switch` 運算式按實際型別選擇分支。`Todo todo =>` 的意思是"如果裡面是 `Todo`，就把它取出來，命名為 `todo`"。
+
+**編譯器會檢查分支是否寫全。**刪掉第 43 行再編譯，會得到警告：
+
+```text
+Program.cs(40,22): warning CS8509: switch 運算式未處理其輸入類型的所有可能值 (未徹底處理)。例如，未涵蓋模式 'NotFound'。
+```
+
+以後給 `TodoResult` 增加第三種情況時，所有沒有更新的 `switch` 都會被這樣指出來。
+
+"找到了就回傳資料，沒找到就回傳 404"是 Web API 裡很常見的結果。「回應型別」一章會用 ASP.NET Core 自帶的 `Results<Ok<Todo>, NotFound>` 表達同樣的意思：它出現在 C# 有 `union` 之前，寫法不同，思路一致。
+
+::: fastapi
+相當於 Python 型別標註裡的 `Todo | NotFound`，`switch` 運算式對應 `match` 陳述式。區別是 C# 編譯器會檢查分支是否完整。
+:::
+
+## C# 15 的其他新語法
+
+除了聯合型別，C# 15 還增加了幾種語法。後面的章節不依賴它們，但你在別處讀程式碼時會遇到。
+
+<<< @/../samples/01-csharp-tour/Program.cs{48-54,57,62,68,75,80-82,86-89 cs:line-numbers} [01-csharp-tour/Program.cs]
+
+### 封閉階層
+
+**第 80 行**的 `closed` 表示：只有同一個**組件**（assembly，可以先理解為"同一個專案"）裡的型別可以繼承 `Priority`。第 81、82 行就是它全部的衍生型別。`closed` 型別本身不能直接建立執行個體。
+
+衍生型別是固定的，所以**第 49～53 行**的 `switch` 運算式列出 `Low` 和 `High` 之後，編譯器就知道分支已經寫全，不需要再寫一個兜底分支。漏掉一個分支時，會得到和聯合型別相同的 CS8509 警告。
+
+聯合型別和封閉階層怎麼選？幾種情況是互不相關的現成型別（如 `Todo` 和 `NotFound`）時用 `union`；幾種情況本來就有共同的基底型別時用 `closed`。
+
+### 集合運算式引數
+
+**第 57 行**方括號裡的第一項 `with(...)` 不是集合的元素，而是傳給集合建構函式的引數。這裡傳入 `StringComparer.OrdinalIgnoreCase`，讓 `HashSet<string>` 比較時忽略大小寫，所以 `"home"` 和 `"Home"` 算同一個元素，程式輸出 `Distinct tags: 2`。
+
+在 C# 15 之前，需要傳建構函式引數時不能用方括號寫法，只能寫成 `new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ... }`。
+
+### 帶標籤的 break 與 continue
+
+**第 62 行**在外層迴圈前寫了標籤 `outer:`。**第 68 行**的 `break outer;` 直接跳出這個外層迴圈；不帶標籤的 `break` 只能跳出最內層的迴圈。所以輸出停在 `Visited 3`，後面的 5 和 6 不會被存取。
+
+`continue outer;` 的用法相同，表示直接進入外層迴圈的下一輪。
+
+### 擴充索引子
+
+**第 86～89 行**是一個**擴充區塊**（extension block）：`extension(List<Todo> todos)` 表示"給 `List<Todo>` 新增成員"，不需要修改 `List<T>` 本身。擴充區塊是 C# 14 引入的，C# 15 允許在裡面宣告**索引子**（indexer，即 `this[...]`，它決定用方括號存取時的行為）。
+
+於是**第 75 行**可以寫 `todos["Write code"]`，按標題查找待辦。`List<T>` 自帶的按位置存取（如 `todos[0]`）不受影響。回傳型別是 `Todo?`，找不到時結果為 `null`。
+
 ## 總結
 
 - C# 是**靜態型別**語言，`var` 只是讓編譯器推斷型別，型別本身在編譯期確定。
 - `$"..."` 是**字串插值**；`string?` 表示**可為空**，配合 `?.` 和 `??` 安全地處理 `null`。可空檢查只發生在編譯期。
 - **Lambda** 表示式 `x => ...` 是匿名函式，`MapGet` 等方法用它作為處理常式。
 - **位置式 record** 能簡潔地定義資料型別，自帶值相等和 `with` 複製；本例的屬性使用 `init`，但 `record` 並不強制所有成員不可變。
+- **聯合型別** `union` 列出一個值可能的幾種型別，`switch` 運算式漏掉分支時編譯器會警告。
+- C# 15 還新增了 `closed` 封閉階層、集合運算式引數 `with(...)`、帶標籤的 `break` / `continue` 和擴充索引子。
 - **LINQ** 用 `Where`、`Select` 等方法鏈式處理集合；**async/await** 讓等待 I/O 時不佔用執行緒。
 
 下一章：[第一步](./first-steps)——寫出你的第一個 Web API。上一章：[環境準備](./setup)。

@@ -38,7 +38,7 @@ dotnet user-jwts create --name alice --valid-for 1h --output token
 
 <<< @/../samples/18-authentication/appsettings.Development.json{2-11 json:line-numbers} [18-authentication/appsettings.Development.json]
 
-`ValidIssuer` 是接受的**签发者**（issuer），`ValidAudiences` 是接受的**受众**（audience，即令牌面向的 API 标识）。配置和测试密钥由 `AddJwtBearer()` 的配置机制读取；源码里没有固定签名密钥。[本地 JWT 工具说明](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/jwt-authn?view=aspnetcore-10.0)
+`ValidIssuer` 是接受的**签发者**（issuer），`ValidAudiences` 是接受的**受众**（audience，即令牌面向的 API 标识）。配置和测试密钥由 `AddJwtBearer()` 的配置机制读取；源码里没有固定签名密钥。[本地 JWT 工具说明](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/jwt-authn?view=aspnetcore-11.0)
 
 ::: warning 注意
 这些令牌和签名密钥只用于本地开发。User Secrets 不加密保存的内容，也不要把它提交到仓库，详见[第 12 章](./configuration)。上线时应接入可信身份服务，按其文档配置令牌验证，并通过 HTTPS 传输令牌。
@@ -129,7 +129,7 @@ curl -i -X POST http://localhost:5080/todos -H "Authorization: Bearer $TOKEN" -H
 
 本例的 JWT 载荷不是加密数据：能读出其中的用户名，不代表它是真的。服务端要校验签名、签发者、受众和有效期，不能只做 Base64 解码就相信客户端。
 
-令牌被篡改、签发者或受众不符，都会验证失败。过期检查还允许一定的时钟偏差，所以到期后可能有短暂宽限。[JWT Bearer 验证说明](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/configure-jwt-bearer-authentication?view=aspnetcore-10.0)
+令牌被篡改、签发者或受众不符，都会验证失败。过期检查还允许一定的时钟偏差，所以到期后可能有短暂宽限。[JWT Bearer 验证说明](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/configure-jwt-bearer-authentication?view=aspnetcore-11.0)
 
 `ClaimsPrincipal` 是验证后建立的用户对象，其中的**声明**（claim）是描述身份的键值信息。本地工具生成的用户名经过默认映射后，可以通过 `user.Identity?.Name` 读取。不同身份服务的声明名称和映射规则可能不同，不能假设所有 JWT 都有相同的用户名字段。
 

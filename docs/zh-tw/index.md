@@ -2,12 +2,12 @@
 layout: home
 title: ASP.NET Core 第一步
 titleTemplate: 繁體中文（台灣） ASP.NET Core 漸進式教學
-description: 從零學習 C# 與 ASP.NET Core：基於 .NET 10 和 Minimal API，逐步掌握路由、EF Core 資料庫、JWT 身分驗證、測試與 Docker 部署，每章都有可執行範例。
+description: 從零學習 C# 與 ASP.NET Core：基於 .NET 11 和 Minimal API，逐步掌握路由、EF Core 資料庫、JWT 身分驗證、測試與 Docker 部署，每章都有可執行範例。
 
 hero:
   name: ASP.NET Core 第一步
   text: 從第一個 API 到上線
-  tagline: 寫給有程式設計經驗、但沒碰過 C# 的你。基於 .NET 10 與 Minimal API，一步只學一個概念，每一章都是能直接 dotnet run 的完整專案。
+  tagline: 寫給有程式設計經驗、但沒碰過 C# 的你。基於 .NET 11 與 Minimal API，一步只學一個概念，每一章都是能直接 dotnet run 的完整專案。
   actions:
     - theme: brand
       text: 開始學習 →

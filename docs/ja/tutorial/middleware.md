@@ -138,7 +138,7 @@ FastAPI の `@app.middleware("http")` とほぼ同じです。`response = await 
 第 09 章では後続の処理で発生する例外を捕捉するため、例外処理を前の方に置きました。認証と認可の順序は第 18～20 章で使います。
 
 ::: warning 注意
-順序の誤りは起動時に必ず分かるとは限りません。例外処理ミドルウェアより前に置いたコードで例外が発生しても、そのミドルウェアは捕捉できません。組み込みミドルウェアを追加するときは[推奨される順序](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/?view=aspnetcore-10.0#middleware-order)を確認してください。
+順序の誤りは起動時に必ず分かるとは限りません。例外処理ミドルウェアより前に置いたコードで例外が発生しても、そのミドルウェアは捕捉できません。組み込みミドルウェアを追加するときは[推奨される順序](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/?view=aspnetcore-11.0#middleware-order)を確認してください。
 :::
 
 ::: info 技術詳細

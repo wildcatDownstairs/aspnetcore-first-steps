@@ -114,7 +114,7 @@ POST、PUT、DELETE 都调用 `RequireAuthorization("CanWriteTodos")`，授权�
 | 有效的 alice 令牌访问 POST / PUT / DELETE | 403 | 身份有效，但不满足写入策略 |
 | 有效的 bob 令牌执行合法写入 | 对应的 201 或 204 | 身份与权限都满足要求 |
 
-**403 不是重新登录就一定能解决的问题。**如果签发者没有给这个用户 editor 角色，再拿到一枚相同权限的令牌，结果仍然是 403。[角色授权说明](https://learn.microsoft.com/en-us/aspnet/core/security/authorization/roles?view=aspnetcore-10.0)
+**403 不是重新登录就一定能解决的问题。**如果签发者没有给这个用户 editor 角色，再拿到一枚相同权限的令牌，结果仍然是 403。[角色授权说明](https://learn.microsoft.com/en-us/aspnet/core/security/authorization/roles?view=aspnetcore-11.0)
 
 角色名称要与策略一致，本例使用小写 `editor`。角色应由身份服务根据用户权限签发，不能直接相信客户端提交的 `role` 字段。
 

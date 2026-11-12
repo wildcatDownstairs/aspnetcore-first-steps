@@ -48,7 +48,7 @@ dotnet test --project Tests/TodoApi.Tests.csproj
   已跳过: 0
 ```
 
-範例使用 **xUnit** 測試框架，並在本章 `global.json` 中選擇 .NET 10 的 **Microsoft Testing Platform（MTP）** 測試執行器。因此指令使用 `--project` 指定測試專案；請從本章目錄執行，讓 SDK 找到這份設定。xUnit 套件名稱中的 `v3` 是產品系列名，與套件版本號不必相同。[xUnit 入門](https://xunit.net/docs/getting-started/v3/getting-started)
+範例使用 **xUnit** 測試框架，並在本章 `global.json` 中選擇 .NET 11 的 **Microsoft Testing Platform（MTP）** 測試執行器。因此指令使用 `--project` 指定測試專案；請從本章目錄執行，讓 SDK 找到這份設定。xUnit 套件名稱中的 `v3` 是產品系列名，與套件版本號不必相同。[xUnit 入門](https://xunit.net/docs/getting-started/v3/getting-started)
 
 ## 一條測試檢查什麼
 
@@ -68,7 +68,7 @@ dotnet test --project Tests/TodoApi.Tests.csproj
 
 `WebApplicationFactory<Program>` 建立測試宿主，用測試伺服器處理 `HttpClient` 發出的請求，不佔用真實的 5080 連接埠。`Program` 指應用程式入口；`TestAccess.cs` 中的公開部分宣告讓另一個專案能引用這個型別，不會新增 HTTP 端點。
 
-`Microsoft.AspNetCore.Mvc.Testing` 雖然名字裡有 Mvc，同樣可以測試 Minimal API，不需要引入控制器。[ASP.NET Core 整合測試](https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests?view=aspnetcore-10.0)
+`Microsoft.AspNetCore.Mvc.Testing` 雖然名字裡有 Mvc，同樣可以測試 Minimal API，不需要引入控制器。[ASP.NET Core 整合測試](https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests?view=aspnetcore-11.0)
 
 測試工廠替換了兩項設定：
 

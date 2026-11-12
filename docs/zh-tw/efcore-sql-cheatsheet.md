@@ -141,7 +141,7 @@ dotnet run -- --postgres-sql
 你可以看到，提供者用了子查詢，並把分類編號和分頁值變成參數，而不是機械地照著上面的表拼接 SQL。
 
 ::: warning 注意
-`ToQueryString()` 是除錯預覽。開頭的參數註釋不是 PostgreSQL 的變數宣告，不能把帶 `@categoryId` 的整段文字直接粘進 psql 執行；最終執行的指令應透過記錄觀察，見[第 16 章](./tutorial/relations-queries)。[ToQueryString 說明](https://learn.microsoft.com/en-us/dotnet/api/microsoft.entityframeworkcore.entityframeworkqueryableextensions.toquerystring?view=efcore-10.0)
+`ToQueryString()` 是除錯預覽。開頭的參數註釋不是 PostgreSQL 的變數宣告，不能把帶 `@categoryId` 的整段文字直接粘進 psql 執行；最終執行的指令應透過記錄觀察，見[第 16 章](./tutorial/relations-queries)。[ToQueryString 說明](https://learn.microsoft.com/en-us/dotnet/api/microsoft.entityframeworkcore.entityframeworkqueryableextensions.toquerystring?view=efcore-11.0)
 :::
 
 同名 C# 方法不保證在不同資料庫中採用相同翻譯。例如 PostgreSQL 的 `ILIKE` 可以透過 Npgsql 的 `EF.Functions.ILike` 使用，它不是本教學 SQLite 提供者的通用能力。[Npgsql 翻譯表](https://www.npgsql.org/efcore/mapping/translations.html)

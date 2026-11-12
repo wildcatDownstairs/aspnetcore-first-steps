@@ -33,7 +33,7 @@ pageClass: page-cheatsheet
 | `@app.get("/")` | `app.MapGet("/", ...)` | 调用方法注册端点，而不是用装饰器 | [第一步](/zh/tutorial/first-steps) |
 | 返回 `dict` | 返回匿名类型 `new { ... }` 或 `record` | 自动序列化为 JSON，属性名转为 camelCase | [第一步](/zh/tutorial/first-steps) |
 | `/docs` | `/scalar`（Scalar.AspNetCore） | 交互式文档；.NET 中生成与展示分属两个包 | [第一步](/zh/tutorial/first-steps) |
-| `/openapi.json` | `/openapi/v1.json` | OpenAPI 文档，.NET 10 默认生成 OpenAPI 3.1 | [第一步](/zh/tutorial/first-steps) |
+| `/openapi.json` | `/openapi/v1.json` | OpenAPI 文档，.NET 11 默认生成 OpenAPI 3.2 | [第一步](/zh/tutorial/first-steps) |
 
 ## 请求参数
 
@@ -44,7 +44,7 @@ pageClass: page-cheatsheet
 | `{file_path:path}` | `{*path}` | 匹配包含 `/` 的剩余路径 | [路由参数](/zh/tutorial/path-params) |
 | 查询参数 `q: str \| None = None` | `string? q` | 可空类型表示可选参数 | [查询参数](/zh/tutorial/query-params) |
 | Pydantic 模型作为请求体 | `record` 作为请求体 | JSON 自动绑定到强类型对象 | [请求体](/zh/tutorial/request-body) |
-| `Field(ge=1)` 等校验 | 数据注解 + .NET 10 内置校验 | | [参数校验](/zh/tutorial/validation) |
+| `Field(ge=1)` 等校验 | 数据注解 + .NET 11 内置校验 | | [参数校验](/zh/tutorial/validation) |
 | `Header()` / `Cookie()` | `[FromHeader]` / `HttpRequest.Cookies` | .NET 没有 `[FromCookie]` 特性，Cookie 从请求对象读取 | [Header 与 Cookie](/zh/tutorial/headers-cookies) |
 
 ## 响应与错误

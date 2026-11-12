@@ -13,7 +13,7 @@ next: false
 
 ## 技术范围
 
-- **.NET 10（LTS）与 C# 14**：所有代码都基于 .NET 10 的写法，不涉及 `Startup.cs` 等旧模式；
+- **.NET 11 与 C# 15**：所有代码都基于 .NET 11 的写法，不涉及 `Startup.cs` 等旧模式；
 - **只讲 Minimal API**：不讲 MVC Controller、Razor Pages 和 Blazor，把篇幅集中在一条路线上；
 - **EF Core + SQLite**：数据库零安装，克隆仓库就能运行；
 - **内置 OpenAPI + Scalar**：每个示例都自带交互式 API 文档。

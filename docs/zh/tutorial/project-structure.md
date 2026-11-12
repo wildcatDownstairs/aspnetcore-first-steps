@@ -114,7 +114,7 @@ curl -H "Authorization: Bearer $TOKEN" http://localhost:5080/todos
 
 `TodoEndpoints` 是一个静态类。`MapTodoEndpoints` 的第一个参数写成 `this WebApplication app`，这是**扩展方法**（extension method）：于是入口可以写 `app.MapTodoEndpoints()`，里面仍然是熟悉的 `MapGroup`、`MapGet`、`MapPost`。
 
-处理方法可以直接作为参数传给 `MapGet` 等方法，不必都写成长 lambda。第 11 行的 `GetAsync` 就是本文件里的方法名。[Minimal API 路由处理方法](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/route-handlers?view=aspnetcore-10.0)
+处理方法可以直接作为参数传给 `MapGet` 等方法，不必都写成长 lambda。第 11 行的 `GetAsync` 就是本文件里的方法名。[Minimal API 路由处理方法](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/route-handlers?view=aspnetcore-11.0)
 
 `namespace TodoApi.Features.Todos;` 是**命名空间**（namespace）声明，用来区分类型所属位置。入口通过 `using TodoApi.Features.Todos` 使用这些类型和扩展方法。目录与命名空间保持对应，便于查找；C# 不要求二者必须一致。
 

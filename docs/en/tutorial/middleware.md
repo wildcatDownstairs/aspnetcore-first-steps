@@ -138,7 +138,7 @@ For built-in middleware, order directly affects correctness and security:
 Chapter 09 placed exception handling early so it could catch exceptions from later processing. Chapters 18–20 use the full authentication and authorization order.
 
 ::: warning Note
-An incorrect order may not cause a startup error. For example, code that throws before the exception-handling middleware runs cannot be caught by it. When adding built-in middleware, check the [recommended order in the official documentation](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/?view=aspnetcore-10.0#middleware-order).
+An incorrect order may not cause a startup error. For example, code that throws before the exception-handling middleware runs cannot be caught by it. When adding built-in middleware, check the [recommended order in the official documentation](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/?view=aspnetcore-11.0#middleware-order).
 :::
 
 ::: info Technical detail

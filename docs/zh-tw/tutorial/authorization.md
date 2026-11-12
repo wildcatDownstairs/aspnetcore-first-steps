@@ -114,7 +114,7 @@ POST、PUT、DELETE 都呼叫 `RequireAuthorization("CanWriteTodos")`，授權�
 | 有效的 alice 權杖存取 POST / PUT / DELETE | 403 | 身分有效，但不滿足寫入策略 |
 | 有效的 bob 權杖執行合法寫入 | 對應的 201 或 204 | 身分與權限都滿足要求 |
 
-**403 不是重新登入就一定能解決的問題。**如果簽發者沒有給這個使用者 editor 角色，再拿到一枚相同權限的權杖，結果仍然是 403。[角色授權說明](https://learn.microsoft.com/en-us/aspnet/core/security/authorization/roles?view=aspnetcore-10.0)
+**403 不是重新登入就一定能解決的問題。**如果簽發者沒有給這個使用者 editor 角色，再拿到一枚相同權限的權杖，結果仍然是 403。[角色授權說明](https://learn.microsoft.com/en-us/aspnet/core/security/authorization/roles?view=aspnetcore-11.0)
 
 角色名稱要與策略一致，本例使用小寫 `editor`。角色應由身分服務根據使用者權限簽發，不能直接相信用戶端提交的 `role` 欄位。
 

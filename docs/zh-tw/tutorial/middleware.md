@@ -138,7 +138,7 @@ X-Elapsed-Ms: 1
 第 09 章把例外狀況處理放在靠前的位置，是為了捕獲後續處理中的例外狀況。身分驗證和授權的完整順序會在第 18～20 章用到。
 
 ::: warning 注意
-順序寫錯不一定會在啟動時暴露。例如，放在例外狀況處理中介軟體之前的程式碼丟擲例外狀況，它就捕獲不到。新增內建中介軟體時，請對照[官方推薦順序](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/?view=aspnetcore-10.0#middleware-order)。
+順序寫錯不一定會在啟動時暴露。例如，放在例外狀況處理中介軟體之前的程式碼丟擲例外狀況，它就捕獲不到。新增內建中介軟體時，請對照[官方推薦順序](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/?view=aspnetcore-11.0#middleware-order)。
 :::
 
 ::: info 技術細節

@@ -74,7 +74,7 @@ dotnet publish -c Release --os linux --arch x64 /t:PublishContainer
 
 By default, this command writes `todo-api:chapter23` to the local container runtime. The next steps require Docker to be running and use Linux containers. For an ARM64 target machine, change `x64` to `arm64` and run the image on a matching machine.
 
-The image is based on `mcr.microsoft.com/dotnet/aspnet:10.0`, and the app runs as a non-root user. The default user ID in this example is `1654`. The SDK can also push directly to a container registry or create an archive; see the [official container publishing documentation](https://learn.microsoft.com/en-us/dotnet/core/containers/sdk-publish).
+The image is based on `mcr.microsoft.com/dotnet/aspnet:11.0`, and the app runs as a non-root user. The default user ID in this example is `1654`. The SDK can also push directly to a container registry or create an archive; see the [official container publishing documentation](https://learn.microsoft.com/en-us/dotnet/core/containers/sdk-publish).
 
 ## Configure production
 
@@ -168,7 +168,7 @@ Before upgrading the app, back up the database and publish the new image. Stop t
 
 The port mapping is `127.0.0.1:5080:8080`, which only allows access from the host machine. Put the image and Compose configuration on a server with Docker, configure a domain and HTTPS in a reverse proxy on that server, and forward requests to `127.0.0.1:5080`. Add the frontend's actual origin to the CORS configuration too.
 
-If the proxy changes the request scheme, host name, or client address, configure trusted proxies in the app as described in the [proxy and forwarded headers documentation](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/proxy-load-balancer?view=aspnetcore-10.0). Do not unconditionally trust forwarded headers from the public internet.
+If the proxy changes the request scheme, host name, or client address, configure trusted proxies in the app as described in the [proxy and forwarded headers documentation](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/proxy-load-balancer?view=aspnetcore-11.0). Do not unconditionally trust forwarded headers from the public internet.
 
 Cloudflare Pages hosts the static website generated for this tutorial; it cannot directly run the ASP.NET Core API. The API needs a host that can run .NET or containers.
 

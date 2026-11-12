@@ -79,7 +79,7 @@ The first response is 204; the second is 404, with this body. The `traceId` diff
 
 **Why not use `Todo` directly as the request type?** If the entity gains internal fields in the future, accepting the whole entity could allow clients to change those fields too. A separate request type makes the allowed fields explicit.
 
-`[Required]`, `[StringLength]`, and `[Range]` on the inputs use the mechanism from Chapter 06. The input record remains `public` so the .NET 10 validation generator can process it.
+`[Required]`, `[StringLength]`, and `[Range]` on the inputs use the mechanism from Chapter 06. The input record remains `public` so the .NET 11 validation generator can process it.
 
 Here, PUT means replacing the complete client-editable state, so send all three fields: `title`, `done`, and `categoryId`. It does not mean “update only the fields that appear in the JSON.” For example, if `done` is omitted, deserialization supplies `false`, replacing the current completion state with `false`.
 

@@ -141,7 +141,7 @@ dotnet run -- --postgres-sql
 你可以看到，提供程序用了子查询，并把分类编号和分页值变成参数，而不是机械地照着上面的表拼接 SQL。
 
 ::: warning 注意
-`ToQueryString()` 是调试预览。开头的参数注释不是 PostgreSQL 的变量声明，不能把带 `@categoryId` 的整段文本直接粘进 psql 执行；最终执行的命令应通过日志观察，见[第 16 章](./tutorial/relations-queries)。[ToQueryString 说明](https://learn.microsoft.com/en-us/dotnet/api/microsoft.entityframeworkcore.entityframeworkqueryableextensions.toquerystring?view=efcore-10.0)
+`ToQueryString()` 是调试预览。开头的参数注释不是 PostgreSQL 的变量声明，不能把带 `@categoryId` 的整段文本直接粘进 psql 执行；最终执行的命令应通过日志观察，见[第 16 章](./tutorial/relations-queries)。[ToQueryString 说明](https://learn.microsoft.com/en-us/dotnet/api/microsoft.entityframeworkcore.entityframeworkqueryableextensions.toquerystring?view=efcore-11.0)
 :::
 
 同名 C# 方法不保证在不同数据库中采用相同翻译。例如 PostgreSQL 的 `ILIKE` 可以通过 Npgsql 的 `EF.Functions.ILike` 使用，它不是本教程 SQLite 提供程序的通用能力。[Npgsql 翻译表](https://www.npgsql.org/efcore/mapping/translations.html)

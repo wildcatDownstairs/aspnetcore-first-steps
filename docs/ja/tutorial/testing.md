@@ -48,7 +48,7 @@ Test run summary: Passed!
   skipped: 0
 ```
 
-この例では **xUnit** テストフレームワークを使い、本章の `global.json` で .NET 10 の **Microsoft Testing Platform（MTP）** テストランナーを選んでいます。そのため `--project` でテストプロジェクトを指定します。SDK がこの構成を見つけられるよう、本章のディレクトリから実行してください。xUnit パッケージ名の `v3` は製品シリーズ名で、パッケージのバージョン番号と必ずしも同じではありません。[xUnit の入門](https://xunit.net/docs/getting-started/v3/getting-started)
+この例では **xUnit** テストフレームワークを使い、本章の `global.json` で .NET 11 の **Microsoft Testing Platform（MTP）** テストランナーを選んでいます。そのため `--project` でテストプロジェクトを指定します。SDK がこの構成を見つけられるよう、本章のディレクトリから実行してください。xUnit パッケージ名の `v3` は製品シリーズ名で、パッケージのバージョン番号と必ずしも同じではありません。[xUnit の入門](https://xunit.net/docs/getting-started/v3/getting-started)
 
 ## 1 つのテストで何を確認するか
 
@@ -68,7 +68,7 @@ Test run summary: Passed!
 
 `WebApplicationFactory<Program>` はテストホストを作り、`HttpClient` のリクエストをテストサーバーで処理します。実際のポート 5080 は使用しません。`Program` はアプリケーションのエントリーポイントを表します。`TestAccess.cs` で宣言した公開部分により、HTTP エンドポイントを増やさずに別プロジェクトからこの型を参照できます。
 
-名前に Mvc が含まれる `Microsoft.AspNetCore.Mvc.Testing` は Minimal API のテストにも使え、コントローラーを追加する必要はありません。[ASP.NET Core の統合テスト](https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests?view=aspnetcore-10.0)
+名前に Mvc が含まれる `Microsoft.AspNetCore.Mvc.Testing` は Minimal API のテストにも使え、コントローラーを追加する必要はありません。[ASP.NET Core の統合テスト](https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests?view=aspnetcore-11.0)
 
 テストファクトリーでは 2 つの構成を差し替えます。
 

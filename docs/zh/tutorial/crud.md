@@ -79,7 +79,7 @@ curl -i http://localhost:5080/todos/1
 
 **为什么不用 Todo 直接接收请求？**如果将来实体增加内部字段，直接接收整个实体可能让客户端也能修改它。单独定义请求类型，就能明确限制可修改的字段。
 
-输入上的 `[Required]`、`[StringLength]`、`[Range]` 沿用第 06 章的机制。输入 record 保持 `public`，让 .NET 10 校验生成器处理它。
+输入上的 `[Required]`、`[StringLength]`、`[Range]` 沿用第 06 章的机制。输入 record 保持 `public`，让 .NET 11 校验生成器处理它。
 
 PUT 在这里表示替换客户端可编辑的完整状态，请发送 `title`、`done`、`categoryId` 三个字段。它不是“只修改 JSON 中出现的字段”：例如省略 `done`，反序列化后的值是 `false`，就会把当前完成状态替换成 false。
 

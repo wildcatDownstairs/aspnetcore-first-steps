@@ -38,7 +38,7 @@ dotnet user-jwts create --name alice --valid-for 1h --output token
 
 <<< @/../samples/18-authentication/appsettings.Development.json{2-11 json:line-numbers} [18-authentication/appsettings.Development.json]
 
-`ValidIssuer` 是接受的**簽發者**（issuer），`ValidAudiences` 是接受的**受眾**（audience，即權杖面向的 API 標識）。設定和測試金鑰由 `AddJwtBearer()` 的設定機制讀取；原始碼裡沒有固定簽名金鑰。[本地 JWT 工具說明](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/jwt-authn?view=aspnetcore-10.0)
+`ValidIssuer` 是接受的**簽發者**（issuer），`ValidAudiences` 是接受的**受眾**（audience，即權杖面向的 API 標識）。設定和測試金鑰由 `AddJwtBearer()` 的設定機制讀取；原始碼裡沒有固定簽名金鑰。[本地 JWT 工具說明](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/jwt-authn?view=aspnetcore-11.0)
 
 ::: warning 注意
 這些權杖和簽名金鑰只用於本地開發。User Secrets 不加密儲存的內容，也不要把它提交到儲存庫，詳見[第 12 章](./configuration)。上線時應接入可信身分服務，按其文件設定權杖驗證，並透過 HTTPS 傳輸權杖。
@@ -129,7 +129,7 @@ curl -i -X POST http://localhost:5080/todos -H "Authorization: Bearer $TOKEN" -H
 
 本例的 JWT 載荷不是加密資料：能讀出其中的使用者名稱，不代表它是真的。伺服器端要驗證簽名、簽發者、受眾和有效期，不能只做 Base64 解碼就相信用戶端。
 
-權杖被篡改、簽發者或受眾不符，都會驗證失敗。過期檢查還允許一定的時鐘偏差，所以到期後可能有短暫寬限。[JWT Bearer 驗證說明](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/configure-jwt-bearer-authentication?view=aspnetcore-10.0)
+權杖被篡改、簽發者或受眾不符，都會驗證失敗。過期檢查還允許一定的時鐘偏差，所以到期後可能有短暫寬限。[JWT Bearer 驗證說明](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/configure-jwt-bearer-authentication?view=aspnetcore-11.0)
 
 `ClaimsPrincipal` 是驗證後建立的使用者物件，其中的**宣告**（claim）是描述身分的索引鍵和值資訊。本地工具產生的使用者名稱經過預設對應後，可以透過 `user.Identity?.Name` 讀取。不同身分服務的宣告名稱和對應規則可能不同，不能假設所有 JWT 都有相同的使用者名稱欄位。
 

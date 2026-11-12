@@ -79,7 +79,7 @@ curl -i http://localhost:5080/todos/1
 
 **為什麼不用 Todo 直接接收請求？**如果將來實體增加內部欄位，直接接收整個實體可能讓用戶端也能修改它。單獨定義請求型別，就能明確限制可修改的欄位。
 
-輸入上的 `[Required]`、`[StringLength]`、`[Range]` 沿用第 06 章的機制。輸入 record 保持 `public`，讓 .NET 10 驗證產生器處理它。
+輸入上的 `[Required]`、`[StringLength]`、`[Range]` 沿用第 06 章的機制。輸入 record 保持 `public`，讓 .NET 11 驗證產生器處理它。
 
 PUT 在這裡表示替換用戶端可編輯的完整狀態，請傳送 `title`、`done`、`categoryId` 三個欄位。它不是“只修改 JSON 中出現的欄位”：例如省略 `done`，反序列化後的值是 `false`，就會把目前完成狀態替換成 false。
 

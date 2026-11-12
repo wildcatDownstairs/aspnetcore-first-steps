@@ -114,7 +114,7 @@ Request-field validation still happens through the built-in validation on the en
 
 `TodoEndpoints` is a static class. Its `MapTodoEndpoints` method takes `this WebApplication app` as its first parameter. This is an **extension method**, so the entry point can call `app.MapTodoEndpoints()` while the implementation still uses familiar methods such as `MapGroup`, `MapGet`, and `MapPost`.
 
-You can pass a handler method directly to methods such as `MapGet` instead of writing every handler as a long lambda. `GetAsync` on line 11 is a method in this file. See [Minimal API route handlers](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/route-handlers?view=aspnetcore-10.0).
+You can pass a handler method directly to methods such as `MapGet` instead of writing every handler as a long lambda. `GetAsync` on line 11 is a method in this file. See [Minimal API route handlers](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/route-handlers?view=aspnetcore-11.0).
 
 `namespace TodoApi.Features.Todos;` declares a **namespace** that identifies where a type belongs. The entry point uses `using TodoApi.Features.Todos` to access these types and extension methods. Keeping directories and namespaces aligned makes code easier to find, though C# does not require them to match.
 

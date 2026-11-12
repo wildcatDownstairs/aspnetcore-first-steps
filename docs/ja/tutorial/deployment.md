@@ -74,7 +74,7 @@ dotnet publish -c Release --os linux --arch x64 /t:PublishContainer
 
 既定では `todo-api:chapter23` がローカルのコンテナーランタイムに作られます。以降の手順では起動済みの Docker と Linux コンテナーを使います。対象マシンが ARM64 なら `x64` を `arm64` に替え、対応するマシンで実行してください。
 
-イメージは `mcr.microsoft.com/dotnet/aspnet:10.0` をベースにし、アプリケーションは root 以外のユーザーで実行されます。この例で使う既定のユーザー ID は `1654` です。SDK からイメージレジストリに直接 push したり、アーカイブを作成したりすることもできます。[公式のコンテナー公開手順](https://learn.microsoft.com/en-us/dotnet/core/containers/sdk-publish)
+イメージは `mcr.microsoft.com/dotnet/aspnet:11.0` をベースにし、アプリケーションは root 以外のユーザーで実行されます。この例で使う既定のユーザー ID は `1654` です。SDK からイメージレジストリに直接 push したり、アーカイブを作成したりすることもできます。[公式のコンテナー公開手順](https://learn.microsoft.com/en-us/dotnet/core/containers/sdk-publish)
 
 ## 本番環境を構成する
 
@@ -168,7 +168,7 @@ docker compose up -d --force-recreate api
 
 ここでのポートマッピング `127.0.0.1:5080:8080` はホストマシンからのアクセスに限られます。Docker があるサーバーにイメージと Compose 構成を置き、同じマシンのリバースプロキシでドメインと HTTPS を設定して、`127.0.0.1:5080` に転送します。実際のフロントエンドオリジンも CORS 構成に追加してください。
 
-プロキシによってリクエストのプロトコル、ホスト名、クライアントアドレスが変わる場合は、[プロキシと転送ヘッダーのドキュメント](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/proxy-load-balancer?view=aspnetcore-10.0)に従って信頼するプロキシを設定します。インターネットから届いた転送ヘッダーを無条件に信頼しないでください。
+プロキシによってリクエストのプロトコル、ホスト名、クライアントアドレスが変わる場合は、[プロキシと転送ヘッダーのドキュメント](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/proxy-load-balancer?view=aspnetcore-11.0)に従って信頼するプロキシを設定します。インターネットから届いた転送ヘッダーを無条件に信頼しないでください。
 
 Cloudflare Pages はこのチュートリアルで作った静的ページのホスティング向けで、ASP.NET Core API を直接実行することはできません。API には .NET またはコンテナーを実行できるホストが必要です。
 

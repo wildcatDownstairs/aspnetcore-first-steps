@@ -114,7 +114,7 @@ Access-Control-Allow-Headers: Authorization,Content-Type
 
 **为什么请求头和响应头要分开配置？**允许发送 Authorization，不代表可以读取任意响应头。`Location` 不属于默认向跨源脚本暴露的响应头，因此需要额外声明；否则网络面板里可能看得到，但 `response.headers.get('Location')` 返回 `null`。
 
-本例手动发送 Bearer 请求头，使用 `credentials: 'omit'` 避免浏览器附带 Cookie，因此不需要 `AllowCredentials()`。如果以后改用 Cookie 登录，需要另外配置凭据，并防范**跨站请求伪造**（cross-site request forgery，CSRF）。[ASP.NET Core CORS 文档](https://learn.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-10.0)
+本例手动发送 Bearer 请求头，使用 `credentials: 'omit'` 避免浏览器附带 Cookie，因此不需要 `AllowCredentials()`。如果以后改用 Cookie 登录，需要另外配置凭据，并防范**跨站请求伪造**（cross-site request forgery，CSRF）。[ASP.NET Core CORS 文档](https://learn.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-11.0)
 
 ## 不允许的源不一定得到 403
 

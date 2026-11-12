@@ -141,7 +141,7 @@ dotnet run -- --postgres-sql
 プロバイダーがサブクエリを使い、カテゴリー ID やページングの値をパラメーターにしていることが分かります。上の表にある SQL を機械的に組み合わせているわけではありません。
 
 ::: warning 注意
-`ToQueryString()` の結果はデバッグ用プレビューです。冒頭のパラメーターコメントは PostgreSQL の変数宣言ではありません。`@categoryId` を含むテキスト全体を psql に貼り付けて実行することはできません。実際に実行されたコマンドはログで確認してください。詳しくは[第16章](./tutorial/relations-queries)を参照してください。[ToQueryString の説明](https://learn.microsoft.com/en-us/dotnet/api/microsoft.entityframeworkcore.entityframeworkqueryableextensions.toquerystring?view=efcore-10.0)
+`ToQueryString()` の結果はデバッグ用プレビューです。冒頭のパラメーターコメントは PostgreSQL の変数宣言ではありません。`@categoryId` を含むテキスト全体を psql に貼り付けて実行することはできません。実際に実行されたコマンドはログで確認してください。詳しくは[第16章](./tutorial/relations-queries)を参照してください。[ToQueryString の説明](https://learn.microsoft.com/en-us/dotnet/api/microsoft.entityframeworkcore.entityframeworkqueryableextensions.toquerystring?view=efcore-11.0)
 :::
 
 同じ名前の C# メソッドでも、異なるデータベースで同じ変換が行われるとは限りません。たとえば PostgreSQL の `ILIKE` は、Npgsql の `EF.Functions.ILike` で利用できますが、このチュートリアルで使う SQLite プロバイダー共通の機能ではありません。[Npgsql の変換一覧](https://www.npgsql.org/efcore/mapping/translations.html)

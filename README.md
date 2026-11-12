@@ -1,6 +1,6 @@
 # ASP.NET Core 第一步
 
-写给有编程经验者的 ASP.NET Core 渐进式教程，基于 **.NET 10 + Minimal API**，从第一个接口到数据库、认证、测试与部署。以中文为内容基准，提供繁体中文（台湾）、英文与日文译文，四种语言共用可运行的示例代码。
+写给有编程经验者的 ASP.NET Core 渐进式教程，基于 **.NET 11 + Minimal API**，从第一个接口到数据库、认证、测试与部署。以中文为内容基准，提供繁体中文（台湾）、英文与日文译文，四种语言共用可运行的示例代码。
 
 ## 在线阅读
 
@@ -42,7 +42,7 @@ wrangler.jsonc           Cloudflare Pages 配置
 
 ## 本地运行
 
-文档站点使用 Node.js 24 与 npm（版本见 `.node-version`）；运行教程示例需要 .NET 10 SDK。
+文档站点使用 Node.js 24 与 npm（版本见 `.node-version`）；运行教程示例需要 .NET 11 SDK。
 
 ```bash
 npm ci

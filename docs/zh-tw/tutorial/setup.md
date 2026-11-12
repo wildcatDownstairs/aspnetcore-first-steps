@@ -1,6 +1,6 @@
 ---
 title: 環境準備
-description: 安裝 .NET 10 SDK 和 VS Code + C# Dev Kit，認識 dotnet 命令列，執行第一個 .NET 程式。
+description: 安裝 .NET 11 SDK 和 VS Code + C# Dev Kit，認識 dotnet 命令列，執行第一個 .NET 程式。
 ---
 
 # 環境準備
@@ -13,7 +13,7 @@ description: 安裝 .NET 10 SDK 和 VS Code + C# Dev Kit，認識 dotnet 命令�
 
 ```text
 Hello, .NET!
-.NET runtime version: 10.0.12
+.NET runtime version: 11.0.0
 Operating system: Microsoft Windows 10.0.26200
 ```
 
@@ -23,12 +23,12 @@ Operating system: Microsoft Windows 10.0.26200
 
 | 工具 | 作用 | 是否必須 |
 | --- | --- | --- |
-| .NET 10 SDK | 編譯、執行 C# 程式的全部工具 | 必須 |
+| .NET 11 SDK | 編譯、執行 C# 程式的全部工具 | 必須 |
 | VS Code + C# Dev Kit 擴充套件 | 編輯器，提供補全、錯誤提示、除錯 | 推薦（也可以用其他編輯器） |
 | 一個終端 | 執行 `dotnet` 指令 | 必須 |
 | curl | 在終端裡傳送 HTTP 請求，驗證 API | 推薦 |
 
-## 安裝 .NET 10 SDK
+## 安裝 .NET 11 SDK
 
 先分清兩個詞：
 
@@ -40,7 +40,7 @@ Operating system: Microsoft Windows 10.0.26200
 ::: code-group
 
 ```powershell [Windows]
-winget install Microsoft.DotNet.SDK.10
+winget install Microsoft.DotNet.SDK.11
 ```
 
 ```bash [macOS]
@@ -54,7 +54,7 @@ brew install --cask dotnet-sdk
 
 :::
 
-也可以直接到 [.NET 官方下載頁](https://dotnet.microsoft.com/download/dotnet/10.0) 下載安裝套件。
+也可以直接到 [.NET 官方下載頁](https://dotnet.microsoft.com/download/dotnet/11.0) 下載安裝套件。
 
 裝好之後**重新開啟一個終端**（讓新的 PATH 生效），然後執行：
 
@@ -62,24 +62,24 @@ brew install --cask dotnet-sdk
 dotnet --version
 ```
 
-預期輸出是一個以 `10.0` 開頭的版本號，例如：
+預期輸出是一個以 `11.0` 開頭的版本號，例如：
 
 ```text
-10.0.100
+11.0.100
 ```
 
 ::: tip 提示
 如果你的機器上裝了多個版本的 SDK，`dotnet --list-sdks` 會把它們全部列出來。多個版本可以共存，互不影響。
 :::
 
-### 為什麼選 .NET 10
+### 為什麼選 .NET 11
 
 .NET 每年 11 月發佈一個大版本，**偶數版本是 LTS**（Long Term Support，長期支援版本），獲得 3 年的官方支援；奇數版本是 STS（標準期限支援），只有 2 年。
 
-.NET 10 是 2025 年 11 月發佈的 LTS 版本，支援到 2028 年 11 月。對學習者來說，這意味著你現在學的寫法在未來幾年裡都是"目前寫法"，不會很快過時。本教學所有程式碼都基於 .NET 10 和它附帶的 C# 14。
+.NET 11 是 2026 年 11 月發佈的 STS 版本，支援到 2028 年 11 月。它是目前最新的版本，本教學所有程式碼都基於 .NET 11 和它附帶的 C# 15。如果你的團隊要求使用 LTS 版本，可以選擇 .NET 10，它同樣支援到 2028 年 11 月。
 
 ::: warning 注意
-網上很多 ASP.NET Core 教學基於 .NET 5 或更早的版本，裡面會有 `Startup.cs`、`ConfigureServices` 等寫法。這些是舊模式，在 .NET 10 中已經不需要了。遇到時請留意文章的發佈時間。
+網上很多 ASP.NET Core 教學基於 .NET 5 或更早的版本，裡面會有 `Startup.cs`、`ConfigureServices` 等寫法。這些是舊模式，在 .NET 11 中已經不需要了。遇到時請留意文章的發佈時間。
 :::
 
 ## 安裝編輯器
@@ -126,7 +126,7 @@ cd HelloDotnet
 
 這是**專案檔案**，用 XML 描述"這個專案是什麼、怎麼建置"。現在只需要看懂其中三行：
 
-- **第 5 行** `TargetFramework`：目標框架是 `net10.0`，也就是 .NET 10。
+- **第 5 行** `TargetFramework`：目標框架是 `net11.0`，也就是 .NET 11。
 - **第 6 行** `ImplicitUsings`：隱式 using。開啟後，常用的命名空間（如 `System`）會被自動引入，所以程式碼裡可以直接寫 `Console`，而不用先寫 `using System;`。
 - **第 7 行** `Nullable`：啟用可空引用型別檢查，讓編譯器幫你發現潛在的空引用錯誤。下一章會詳細介紹它。
 
@@ -140,11 +140,11 @@ dotnet run
 
 ```text
 Hello, .NET!
-.NET runtime version: 10.0.12
+.NET runtime version: 11.0.0
 Operating system: Microsoft Windows 10.0.26200
 ```
 
-版本號和作業系統會因機器而異，只要執行階段版本以 `10.0` 開頭就對了。
+版本號和作業系統會因機器而異，只要執行階段版本以 `11.0` 開頭就對了。
 
 ::: info 技術細節
 你可能注意到 `Program.cs` 裡沒有 `class`，也沒有 `Main` 方法，程式碼直接從第一行開始執行。這叫**最上層陳述式**（top-level statements）：編譯器會自動幫你產生 `Main` 方法並把這些程式碼放進去。它讓小程式（包括後面的 Web API）可以寫得很簡潔。
@@ -164,8 +164,8 @@ Operating system: Microsoft Windows 10.0.26200
 
 ## 總結
 
-- 開發機只需要安裝 **.NET 10 SDK**，它自帶執行階段；`dotnet --version` 應輸出 `10.0.x`。
-- .NET 10 是 **LTS** 版本，支援到 2028 年 11 月；看到 `Startup.cs` 的教學說明是舊寫法。
+- 開發機只需要安裝 **.NET 11 SDK**，它自帶執行階段；`dotnet --version` 應輸出 `11.0.x`。
+- .NET 11 是 **STS** 版本，支援到 2028 年 11 月；看到 `Startup.cs` 的教學說明是舊寫法。
 - 推薦 **VS Code + C# Dev Kit**，靜態型別讓編輯器能在執行前發現錯誤。
 - `dotnet new`、`dotnet run`、`dotnet watch`、`dotnet add package` 是貫穿全教學的四個指令。
 - `.csproj` 是專案檔案，`Program.cs` 使用**最上層陳述式**，從第一行開始執行。

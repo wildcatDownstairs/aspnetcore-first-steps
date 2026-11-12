@@ -114,7 +114,7 @@ curl -H "Authorization: Bearer $TOKEN" http://localhost:5080/todos
 
 `TodoEndpoints` は静的クラスです。`MapTodoEndpoints` の最初のパラメーターを `this WebApplication app` と書くのは**拡張メソッド**（extension method）です。これによりエントリーポイントから `app.MapTodoEndpoints()` と呼び出せます。内部ではおなじみの `MapGroup`、`MapGet`、`MapPost` を使います。
 
-処理メソッドは長いラムダ式にせず、`MapGet` などにそのまま渡せます。11 行目の `GetAsync` はこのファイルにあるメソッド名です。[Minimal API のルートハンドラー](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/route-handlers?view=aspnetcore-10.0)
+処理メソッドは長いラムダ式にせず、`MapGet` などにそのまま渡せます。11 行目の `GetAsync` はこのファイルにあるメソッド名です。[Minimal API のルートハンドラー](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/route-handlers?view=aspnetcore-11.0)
 
 `namespace TodoApi.Features.Todos;` は**名前空間**（namespace）宣言で、型の所属先を区別します。エントリーポイントでは `using TodoApi.Features.Todos` を使い、それらの型や拡張メソッドを利用します。検索しやすいようディレクトリと名前空間を対応させていますが、C# では両者を一致させる必要はありません。
 

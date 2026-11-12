@@ -114,7 +114,7 @@ POST、PUT、DELETE はすべて `RequireAuthorization("CanWriteTodos")` を呼�
 | 有効な alice のトークンで POST / PUT / DELETE | 403 | ID は有効だが、書き込みポリシーを満たしていない |
 | 有効な bob のトークンで正当な書き込み | 対応する 201 または 204 | ID と権限の両方が要件を満たす |
 
-**403 は、もう一度ログインすれば必ず解決するという意味ではありません。**ID サービスがユーザーに editor ロールを付与していない場合、同じ権限のトークンを取り直しても 403 のままです。[ロール認可の説明](https://learn.microsoft.com/en-us/aspnet/core/security/authorization/roles?view=aspnetcore-10.0)
+**403 は、もう一度ログインすれば必ず解決するという意味ではありません。**ID サービスがユーザーに editor ロールを付与していない場合、同じ権限のトークンを取り直しても 403 のままです。[ロール認可の説明](https://learn.microsoft.com/en-us/aspnet/core/security/authorization/roles?view=aspnetcore-11.0)
 
 ロール名はポリシーと一致させます。この例では小文字の `editor` を使います。ロールは ID サービスがユーザー権限に基づいて発行し、クライアントから送信された `role` フィールドを信用してはいけません。
 

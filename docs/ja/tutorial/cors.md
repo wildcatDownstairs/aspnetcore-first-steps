@@ -114,7 +114,7 @@ Access-Control-Allow-Headers: Authorization,Content-Type
 
 **リクエストヘッダーとレスポンスヘッダーを分けて設定するのはなぜでしょうか。**Authorization を送信できても、任意のレスポンスヘッダーを読み取れるとは限りません。`Location` はクロスオリジンのスクリプトに既定では公開されないため、追加指定が必要です。指定がなければ Network パネルでは見えても、`response.headers.get('Location')` は `null` を返す場合があります。
 
-この例では Bearer ヘッダーを手動で送信し、`credentials: 'omit'` でブラウザーが Cookie を付加しないようにしているため、`AllowCredentials()` は不要です。Cookie ログインに切り替える場合は、資格情報を別途設定し、**クロスサイトリクエストフォージェリ**（cross-site request forgery、CSRF）への対策が必要です。[ASP.NET Core CORS ドキュメント](https://learn.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-10.0)
+この例では Bearer ヘッダーを手動で送信し、`credentials: 'omit'` でブラウザーが Cookie を付加しないようにしているため、`AllowCredentials()` は不要です。Cookie ログインに切り替える場合は、資格情報を別途設定し、**クロスサイトリクエストフォージェリ**（cross-site request forgery、CSRF）への対策が必要です。[ASP.NET Core CORS ドキュメント](https://learn.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-11.0)
 
 ## 許可されないオリジンに必ず 403 が返るわけではない
 

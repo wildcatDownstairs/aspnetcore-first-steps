@@ -33,7 +33,7 @@ pageClass: page-cheatsheet
 | `@app.get("/")` | `app.MapGet("/", ...)` | 呼叫方法註冊端點，而不是用裝飾器 | [第一步](/zh-tw/tutorial/first-steps) |
 | 回傳 `dict` | 回傳匿名型別 `new { ... }` 或 `record` | 自動序列化為 JSON，屬性名轉為 camelCase | [第一步](/zh-tw/tutorial/first-steps) |
 | `/docs` | `/scalar`（Scalar.AspNetCore） | 互動式文件；.NET 中產生與展示分屬兩個套件 | [第一步](/zh-tw/tutorial/first-steps) |
-| `/openapi.json` | `/openapi/v1.json` | OpenAPI 文件，.NET 10 預設產生 OpenAPI 3.1 | [第一步](/zh-tw/tutorial/first-steps) |
+| `/openapi.json` | `/openapi/v1.json` | OpenAPI 文件，.NET 11 預設產生 OpenAPI 3.2 | [第一步](/zh-tw/tutorial/first-steps) |
 
 ## 請求參數
 
@@ -44,7 +44,7 @@ pageClass: page-cheatsheet
 | `{file_path:path}` | `{*path}` | 匹配包含 `/` 的剩餘路徑 | [路由參數](/zh-tw/tutorial/path-params) |
 | 查詢參數 `q: str \| None = None` | `string? q` | 可空型別表示可選參數 | [查詢參數](/zh-tw/tutorial/query-params) |
 | Pydantic 模型作為請求本文 | `record` 作為請求本文 | JSON 自動繫結到強型別物件 | [請求本文](/zh-tw/tutorial/request-body) |
-| `Field(ge=1)` 等驗證 | 資料註解 + .NET 10 內建驗證 | | [參數驗證](/zh-tw/tutorial/validation) |
+| `Field(ge=1)` 等驗證 | 資料註解 + .NET 11 內建驗證 | | [參數驗證](/zh-tw/tutorial/validation) |
 | `Header()` / `Cookie()` | `[FromHeader]` / `HttpRequest.Cookies` | .NET 沒有 `[FromCookie]` 特性，Cookie 從請求物件讀取 | [Header 與 Cookie](/zh-tw/tutorial/headers-cookies) |
 
 ## 回應與錯誤

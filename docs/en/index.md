@@ -1,13 +1,13 @@
 ---
 layout: home
 title: ASP.NET Core First Steps
-titleTemplate: .NET 10 & Minimal APIs Tutorial
-description: Learn C# and ASP.NET Core with .NET 10 and Minimal APIs. Follow runnable examples covering routing, EF Core, JWT authentication, testing, and Docker deployment.
+titleTemplate: .NET 11 & Minimal APIs Tutorial
+description: Learn C# and ASP.NET Core with .NET 11 and Minimal APIs. Follow runnable examples covering routing, EF Core, JWT authentication, testing, and Docker deployment.
 
 hero:
   name: ASP.NET Core First Steps
   text: From first endpoint to deployment
-  tagline: "Already code, but new to C#? Learn .NET 10 and Minimal APIs one concept at a time, with a complete runnable project in every chapter."
+  tagline: "Already code, but new to C#? Learn .NET 11 and Minimal APIs one concept at a time, with a complete runnable project in every chapter."
   actions:
     - theme: brand
       text: Start learning →

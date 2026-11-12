@@ -1,6 +1,6 @@
 ---
 title: Setup
-description: 'Install the .NET 10 SDK and VS Code + C# Dev Kit, learn the dotnet CLI, and run your first .NET program.'
+description: 'Install the .NET 11 SDK and VS Code + C# Dev Kit, learn the dotnet CLI, and run your first .NET program.'
 ---
 
 # Setup
@@ -13,7 +13,7 @@ If you see output similar to this, you’re done:
 
 ```text
 Hello, .NET!
-.NET runtime version:10.0.12
+.NET runtime version:11.0.0
 Operating system:Microsoft Windows 10.0.26200
 ```
 
@@ -23,12 +23,12 @@ Let’s go step by step.
 
 | Tool | Purpose | Required? |
 | --- | --- | --- |
-| .NET 10 SDK | All the tools needed to compile and run C# programs | Yes |
+| .NET 11 SDK | All the tools needed to compile and run C# programs | Yes |
 | VS Code + C# Dev Kit extension | Editor with completion, error hints, and debugging | Recommended (other editors work too) |
 | A terminal | Run `dotnet` commands | Yes |
 | curl | Send HTTP requests from the terminal to verify endpoints | Recommended |
 
-## Install the .NET 10 SDK
+## Install the .NET 11 SDK
 
 First, distinguish these two terms:
 
@@ -40,7 +40,7 @@ For development, installing the SDK is enough; you don’t need to install the r
 ::: code-group
 
 ```powershell [Windows]
-winget install Microsoft.DotNet.SDK.10
+winget install Microsoft.DotNet.SDK.11
 ```
 
 ```bash [macOS]
@@ -54,7 +54,7 @@ brew install --cask dotnet-sdk
 
 :::
 
-You can also download an installer from the [.NET downloads page](https://dotnet.microsoft.com/download/dotnet/10.0).
+You can also download an installer from the [.NET downloads page](https://dotnet.microsoft.com/download/dotnet/11.0).
 
 After installation, **open a new terminal** so the updated PATH takes effect, then run:
 
@@ -62,24 +62,24 @@ After installation, **open a new terminal** so the updated PATH takes effect, th
 dotnet --version
 ```
 
-You should see a version number beginning with `10.0`, for example:
+You should see a version number beginning with `11.0`, for example:
 
 ```text
-10.0.100
+11.0.100
 ```
 
 ::: tip
 If multiple SDK versions are installed, `dotnet --list-sdks` lists them all. Multiple versions can coexist without interfering with each other.
 :::
 
-### Why .NET 10?
+### Why .NET 11?
 
 .NET releases a major version every November. **Even-numbered versions are LTS** (Long Term Support) and receive three years of official support; odd-numbered versions are STS (Standard Term Support) and receive two years.
 
-.NET 10 is the LTS release from November 2025 and is supported through November 2028. For learners, that means the code you learn now will remain current for the next few years. All code in this tutorial is based on .NET 10 and its included C# 14.
+.NET 11 is the STS release from November 2026 and is supported through November 2028. It is the latest version, and all code in this tutorial is based on .NET 11 and its included C# 15. If your team requires an LTS release, you can choose .NET 10, which is also supported through November 2028.
 
 ::: warning
-Many ASP.NET Core tutorials online are based on .NET 5 or earlier and use patterns such as `Startup.cs` and `ConfigureServices`. These are older patterns and are no longer needed in .NET 10. Check when an article was published.
+Many ASP.NET Core tutorials online are based on .NET 5 or earlier and use patterns such as `Startup.cs` and `ConfigureServices`. These are older patterns and are no longer needed in .NET 11. Check when an article was published.
 :::
 
 ## Install an editor
@@ -126,7 +126,7 @@ cd HelloDotnet
 
 This is the **project file**, an XML description of what the project is and how to build it. For now, focus on these three lines:
 
-- **Line 5**, `TargetFramework`: the target framework is `net10.0`, which means .NET 10.
+- **Line 5**, `TargetFramework`: the target framework is `net11.0`, which means .NET 11.
 - **Line 6**, `ImplicitUsings`: enables implicit using directives. Common namespaces such as `System` are imported automatically, so code can use `Console` without first writing `using System;`.
 - **Line 7**, `Nullable`: enables nullable reference type checks so the compiler can help find potential null-reference errors. We’ll cover this in detail in the next chapter.
 
@@ -140,11 +140,11 @@ The first run compiles the program. After a few seconds, you should see:
 
 ```text
 Hello, .NET!
-.NET runtime version:10.0.12
+.NET runtime version:11.0.0
 Operating system:Microsoft Windows 10.0.26200
 ```
 
-The version and operating system vary by machine. As long as the runtime version starts with `10.0`, you’re all set.
+The version and operating system vary by machine. As long as the runtime version starts with `11.0`, you’re all set.
 
 ::: info Technical detail
 You may have noticed that `Program.cs` has no `class` or `Main` method; execution starts at the first line. These are called **top-level statements**: the compiler generates a `Main` method and places this code inside it. This keeps small programs, including the Web APIs later in this tutorial, concise.
@@ -164,8 +164,8 @@ After completing Chapter 02, you can read the [optional appendix: Development To
 
 ## Summary
 
-- Development machines need only the **.NET 10 SDK**, which includes the runtime. `dotnet --version` should print `10.0.x`.
-- .NET 10 is an **LTS** release supported through November 2028. Tutorials using `Startup.cs` show an older pattern.
+- Development machines need only the **.NET 11 SDK**, which includes the runtime. `dotnet --version` should print `11.0.x`.
+- .NET 11 is an **STS** release supported through November 2028. Tutorials using `Startup.cs` show an older pattern.
 - We recommend **VS Code + C# Dev Kit**. Static typing lets the editor catch errors before you run the program.
 - `dotnet new`, `dotnet run`, `dotnet watch`, and `dotnet add package` are four commands used throughout this tutorial.
 - `.csproj` is the project file. `Program.cs` uses **top-level statements** that execute from the first line.

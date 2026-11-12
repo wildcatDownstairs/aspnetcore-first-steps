@@ -1,6 +1,6 @@
 ---
 title: C# 速览
-description: 只讲本教程会用到的 C#：静态类型与 var、字符串插值、可空引用类型、Lambda、record、LINQ、async/await。
+description: 只讲本教程会用到的 C#：静态类型与 var、字符串插值、可空引用类型、Lambda、record、LINQ、async/await、联合类型，以及 C# 15 的其他新语法。
 ---
 
 # C# 速览
@@ -30,9 +30,16 @@ Todo { Id = 1, Title = Buy milk, Done = True }
 Value equality: True
 Pending: Buy milk
 Async operation complete
+Todo 3 not found
+High priority: Due today
+Distinct tags: 2
+Visited 1
+Visited 2
+Visited 3
+Found by title: Todo { Id = 2, Title = Write code, Done = True }
 ```
 
-下面分三组来看。
+下面分五组来看。
 
 ## 类型、可空与 Lambda
 
@@ -83,11 +90,11 @@ Program.cs(10,19): warning CS8602: 解引用可能出现空引用。
 
 ## record 与 LINQ
 
-<<< @/../samples/01-csharp-tour/Program.cs{17-21,24-26,38 cs:line-numbers} [01-csharp-tour/Program.cs]
+<<< @/../samples/01-csharp-tour/Program.cs{17-21,24-26,77 cs:line-numbers} [01-csharp-tour/Program.cs]
 
 ### record
 
-**第 38 行**一行代码定义了一个类型 `Todo`：
+**第 77 行**一行代码定义了一个类型 `Todo`：
 
 - 圆括号中的 `int Id, string Title, bool Done` 既是构造函数的参数，也自动生成同名的 `init` 属性，只能在初始化时赋值；
 - 编译器还自动生成了 `ToString()`（所以第 19 行能打印出 `Todo { Id = 1, ... }`）和基于值的相等比较。
@@ -142,12 +149,69 @@ record 的角色类似 Pydantic 模型或 `@dataclass(frozen=True)`：用字段�
 和 Python 的 `async def` / `await` 概念一致。区别是 ASP.NET Core 中同步和异步的处理程序可以混用，框架都能正确处理，不存在"在 async 函数里调用同步阻塞代码会卡住事件循环"这类问题——但阻塞调用仍会浪费线程，所以涉及 I/O 时仍应使用异步 API。
 :::
 
+## 联合类型
+
+<<< @/../samples/01-csharp-tour/Program.cs{39-45,78-79 cs:line-numbers} [01-csharp-tour/Program.cs]
+
+**第 79 行**用 `union` 声明了一个**联合类型**（union type）：`TodoResult` 的值要么是 `Todo`，要么是 `NotFound`，没有别的可能。这是 C# 15 新增的语法。
+
+- **第 39 行**把一个 `NotFound` 直接赋给 `TodoResult` 变量，编译器自动完成转换；
+- **第 40～44 行**的 `switch` 表达式按实际类型选择分支。`Todo todo =>` 的意思是"如果里面是 `Todo`，就把它取出来，命名为 `todo`"。
+
+**编译器会检查分支是否写全。**删掉第 43 行再编译，会得到警告：
+
+```text
+Program.cs(40,22): warning CS8509: switch 表达式不处理其输入类型的所有可能的值(它不是穷举)。例如，模式“NotFound”未包含在内。
+```
+
+以后给 `TodoResult` 增加第三种情况时，所有没有更新的 `switch` 都会被这样指出来。
+
+"找到了就返回数据，没找到就返回 404"是 Web API 里很常见的结果。「响应类型」一章会用 ASP.NET Core 自带的 `Results<Ok<Todo>, NotFound>` 表达同样的意思：它出现在 C# 有 `union` 之前，写法不同，思路一致。
+
+::: fastapi
+相当于 Python 类型标注里的 `Todo | NotFound`，`switch` 表达式对应 `match` 语句。区别是 C# 编译器会检查分支是否完整。
+:::
+
+## C# 15 的其他新语法
+
+除了联合类型，C# 15 还增加了几种语法。后面的章节不依赖它们，但你在别处读代码时会遇到。
+
+<<< @/../samples/01-csharp-tour/Program.cs{48-54,57,62,68,75,80-82,86-89 cs:line-numbers} [01-csharp-tour/Program.cs]
+
+### 封闭层次结构
+
+**第 80 行**的 `closed` 表示：只有同一个**程序集**（assembly，可以先理解为"同一个项目"）里的类型可以继承 `Priority`。第 81、82 行就是它全部的派生类型。`closed` 类型本身不能直接创建实例。
+
+派生类型是固定的，所以**第 49～53 行**的 `switch` 表达式列出 `Low` 和 `High` 之后，编译器就知道分支已经写全，不需要再写一个兜底分支。漏掉一个分支时，会得到和联合类型相同的 CS8509 警告。
+
+联合类型和封闭层次结构怎么选？几种情况是互不相关的现成类型（如 `Todo` 和 `NotFound`）时用 `union`；几种情况本来就有共同的基类型时用 `closed`。
+
+### 集合表达式参数
+
+**第 57 行**方括号里的第一项 `with(...)` 不是集合的元素，而是传给集合构造函数的参数。这里传入 `StringComparer.OrdinalIgnoreCase`，让 `HashSet<string>` 比较时忽略大小写，所以 `"home"` 和 `"Home"` 算同一个元素，程序输出 `Distinct tags: 2`。
+
+在 C# 15 之前，需要传构造函数参数时不能用方括号写法，只能写成 `new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ... }`。
+
+### 带标签的 break 与 continue
+
+**第 62 行**在外层循环前写了标签 `outer:`。**第 68 行**的 `break outer;` 直接跳出这个外层循环；不带标签的 `break` 只能跳出最内层的循环。所以输出停在 `Visited 3`，后面的 5 和 6 不会被访问。
+
+`continue outer;` 的用法相同，表示直接进入外层循环的下一轮。
+
+### 扩展索引器
+
+**第 86～89 行**是一个**扩展块**（extension block）：`extension(List<Todo> todos)` 表示"给 `List<Todo>` 添加成员"，不需要修改 `List<T>` 本身。扩展块是 C# 14 引入的，C# 15 允许在里面声明**索引器**（indexer，即 `this[...]`，它决定用方括号访问时的行为）。
+
+于是**第 75 行**可以写 `todos["Write code"]`，按标题查找待办。`List<T>` 自带的按位置访问（如 `todos[0]`）不受影响。返回类型是 `Todo?`，找不到时结果为 `null`。
+
 ## 总结
 
 - C# 是**静态类型**语言，`var` 只是让编译器推断类型，类型本身在编译期确定。
 - `$"..."` 是**字符串插值**；`string?` 表示**可为空**，配合 `?.` 和 `??` 安全地处理 `null`。可空检查只发生在编译期。
 - **Lambda** 表达式 `x => ...` 是匿名函数，`MapGet` 等方法用它作为处理程序。
 - **位置式 record** 能简洁地定义数据类型，自带值相等和 `with` 复制；本例的属性使用 `init`，但 `record` 并不强制所有成员不可变。
+- **联合类型** `union` 列出一个值可能的几种类型，`switch` 表达式漏掉分支时编译器会警告。
+- C# 15 还新增了 `closed` 封闭层次结构、集合表达式参数 `with(...)`、带标签的 `break` / `continue` 和扩展索引器。
 - **LINQ** 用 `Where`、`Select` 等方法链式处理集合；**async/await** 让等待 I/O 时不占用线程。
 
 下一章：[第一步](./first-steps)——写出你的第一个 Web API。上一章：[环境准备](./setup)。

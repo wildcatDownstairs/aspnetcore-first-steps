@@ -33,7 +33,7 @@ These comparisons are analogies to help you understand the concepts; they do not
 | `@app.get("/")` | `app.MapGet("/", ...)` | Register endpoints by calling a method rather than using a decorator | [First steps](/en/tutorial/first-steps) |
 | Return a `dict` | Return an anonymous type `new { ... }` or a `record` | Automatically serialized as JSON, with property names converted to camelCase | [First steps](/en/tutorial/first-steps) |
 | `/docs` | `/scalar` (`Scalar.AspNetCore`) | Interactive docs; in .NET, generation and display are handled by separate packages | [First steps](/en/tutorial/first-steps) |
-| `/openapi.json` | `/openapi/v1.json` | OpenAPI document; .NET 10 generates OpenAPI 3.1 by default | [First steps](/en/tutorial/first-steps) |
+| `/openapi.json` | `/openapi/v1.json` | OpenAPI document; .NET 11 generates OpenAPI 3.2 by default | [First steps](/en/tutorial/first-steps) |
 
 ## Request parameters
 
@@ -44,7 +44,7 @@ These comparisons are analogies to help you understand the concepts; they do not
 | `{file_path:path}` | `{*path}` | Match the remaining path, including `/` characters | [Route parameters](/en/tutorial/path-params) |
 | Query parameter `q: str \| None = None` | `string? q` | A nullable type represents an optional parameter | [Query parameters](/en/tutorial/query-params) |
 | Pydantic model as request body | `record` as request body | JSON is bound automatically to a strongly typed object | [Request body](/en/tutorial/request-body) |
-| Validation such as `Field(ge=1)` | Data annotations + built-in .NET 10 validation | | [Validation](/en/tutorial/validation) |
+| Validation such as `Field(ge=1)` | Data annotations + built-in .NET 11 validation | | [Validation](/en/tutorial/validation) |
 | `Header()` / `Cookie()` | `[FromHeader]` / `HttpRequest.Cookies` | .NET has no `[FromCookie]` attribute; read cookies from the request object | [Headers and cookies](/en/tutorial/headers-cookies) |
 
 ## Responses and errors

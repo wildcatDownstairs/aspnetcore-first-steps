@@ -48,7 +48,7 @@ Test run summary: Passed!
   skipped: 0
 ```
 
-The example uses the **xUnit** test framework and selects .NET 10's **Microsoft Testing Platform (MTP)** test runner in this chapter's `global.json`. That is why the command uses `--project` to select the test project; run it from this chapter's directory so the SDK finds that configuration. `v3` in the xUnit package name is a product-series name and does not have to match the package version. See [Getting started with xUnit](https://xunit.net/docs/getting-started/v3/getting-started).
+The example uses the **xUnit** test framework and selects .NET 11's **Microsoft Testing Platform (MTP)** test runner in this chapter's `global.json`. That is why the command uses `--project` to select the test project; run it from this chapter's directory so the SDK finds that configuration. `v3` in the xUnit package name is a product-series name and does not have to match the package version. See [Getting started with xUnit](https://xunit.net/docs/getting-started/v3/getting-started).
 
 ## What does one test check?
 
@@ -68,7 +68,7 @@ Why check more than `201`? A handler might report success without saving the tas
 
 `WebApplicationFactory<Program>` creates a test host. A test server handles requests from `HttpClient` without occupying the real port 5080. `Program` is the application entry point; the public declarations in `TestAccess.cs` let another project reference this type without adding an HTTP endpoint.
 
-Despite `Mvc` in its name, `Microsoft.AspNetCore.Mvc.Testing` can also test Minimal APIs; it does not require controllers. See [ASP.NET Core integration tests](https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests?view=aspnetcore-10.0).
+Despite `Mvc` in its name, `Microsoft.AspNetCore.Mvc.Testing` can also test Minimal APIs; it does not require controllers. See [ASP.NET Core integration tests](https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests?view=aspnetcore-11.0).
 
 The test factory replaces two settings:
 

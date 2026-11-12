@@ -38,7 +38,7 @@ dotnet user-jwts create --name alice --valid-for 1h --output token
 
 <<< @/../samples/18-authentication/appsettings.Development.json{2-11 json:line-numbers} [18-authentication/appsettings.Development.json]
 
-`ValidIssuer` は許可する**発行者**（issuer）、`ValidAudiences` は許可する**対象者**（audience）、つまりトークンが対象とする API の識別子です。構成とテストキーは `AddJwtBearer()` の構成機構から読み取られます。ソースコードに固定の署名キーはありません。[ローカル JWT ツールの説明](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/jwt-authn?view=aspnetcore-10.0)
+`ValidIssuer` は許可する**発行者**（issuer）、`ValidAudiences` は許可する**対象者**（audience）、つまりトークンが対象とする API の識別子です。構成とテストキーは `AddJwtBearer()` の構成機構から読み取られます。ソースコードに固定の署名キーはありません。[ローカル JWT ツールの説明](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/jwt-authn?view=aspnetcore-11.0)
 
 ::: warning 注意
 これらのトークンと署名キーはローカル開発専用です。User Secrets の内容は暗号化されずに保存され、リポジトリにコミットしてはいけません。詳しくは[第 12 章](./configuration)を参照してください。本番では信頼できる ID サービスを接続し、その説明に従ってトークン検証を構成し、HTTPS でトークンを送信してください。
@@ -129,7 +129,7 @@ curl -i -X POST http://localhost:5080/todos -H "Authorization: Bearer $TOKEN" -H
 
 この例の JWT ペイロードは暗号化されていません。ユーザー名を読み取れることは、トークンが本物である証拠にはなりません。サーバーは署名、発行者、対象者、有効期限を検証する必要があります。Base64 をデコードしただけで信用してはいけません。
 
-トークンが改ざんされていたり、発行者や対象者が一致しなかったりすると検証に失敗します。有効期限の確認には一定のクロックずれが許容されるため、期限後に短い猶予が生じる場合があります。[JWT Bearer の検証説明](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/configure-jwt-bearer-authentication?view=aspnetcore-10.0)
+トークンが改ざんされていたり、発行者や対象者が一致しなかったりすると検証に失敗します。有効期限の確認には一定のクロックずれが許容されるため、期限後に短い猶予が生じる場合があります。[JWT Bearer の検証説明](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/configure-jwt-bearer-authentication?view=aspnetcore-11.0)
 
 `ClaimsPrincipal` は検証後に作られるユーザーオブジェクトです。その中の**クレーム**（claim）は ID を表すキーと値の情報です。ローカルツールが生成したユーザー名は、既定のマッピング後に `user.Identity?.Name` で取得できます。ID サービスによってクレーム名とマッピング規則は異なるため、すべての JWT に同じユーザー名フィールドがあると仮定してはいけません。
 

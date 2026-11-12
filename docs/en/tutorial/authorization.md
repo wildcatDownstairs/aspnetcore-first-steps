@@ -114,7 +114,7 @@ The group's `RequireAuthorization()` requirement is not replaced by the named po
 | Valid Alice token requests POST / PUT / DELETE | 403 | The identity is valid but does not satisfy the write policy |
 | Valid Bob token makes a valid write | The relevant 201 or 204 | Both identity and permission requirements are satisfied |
 
-**A 403 will not necessarily be fixed by signing in again.** If the identity provider has not granted this user the editor role, another token with the same permissions will still get 403. [Role-based authorization](https://learn.microsoft.com/en-us/aspnet/core/security/authorization/roles?view=aspnetcore-10.0)
+**A 403 will not necessarily be fixed by signing in again.** If the identity provider has not granted this user the editor role, another token with the same permissions will still get 403. [Role-based authorization](https://learn.microsoft.com/en-us/aspnet/core/security/authorization/roles?view=aspnetcore-11.0)
 
 The role name must match the policy. This example uses lowercase `editor`. Roles should be issued by the identity provider based on user permissions; do not trust a `role` field submitted by the client.
 

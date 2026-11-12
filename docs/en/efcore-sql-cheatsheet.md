@@ -141,7 +141,7 @@ This time, `UseNpgsql` translates the query at the start of the program, and `To
 You can see that the provider uses a subquery and turns the category ID and pagination values into parameters instead of mechanically joining the SQL shown in the table above.
 
 ::: warning Note
-`ToQueryString()` is a debugging preview. The parameter comments at the start are not PostgreSQL variable declarations, so you cannot paste the full text containing `@categoryId` directly into psql. To observe the command that actually runs, use logging as shown in [Chapter 16](./tutorial/relations-queries). See [ToQueryString](https://learn.microsoft.com/en-us/dotnet/api/microsoft.entityframeworkcore.entityframeworkqueryableextensions.toquerystring?view=efcore-10.0).
+`ToQueryString()` is a debugging preview. The parameter comments at the start are not PostgreSQL variable declarations, so you cannot paste the full text containing `@categoryId` directly into psql. To observe the command that actually runs, use logging as shown in [Chapter 16](./tutorial/relations-queries). See [ToQueryString](https://learn.microsoft.com/en-us/dotnet/api/microsoft.entityframeworkcore.entityframeworkqueryableextensions.toquerystring?view=efcore-11.0).
 :::
 
 The same C# method does not guarantee the same translation across databases. For example, PostgreSQL's `ILIKE` can be used through Npgsql's `EF.Functions.ILike`; it is not a feature available from the SQLite provider used throughout this tutorial. See [Npgsql translations](https://www.npgsql.org/efcore/mapping/translations.html).

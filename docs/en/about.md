@@ -13,7 +13,7 @@ This tutorial is for developers with programming experience who **have not used 
 
 ## Scope
 
-- **.NET 10 (LTS) and C# 14**: All code uses the .NET 10 approach; older patterns such as `Startup.cs` are not covered.
+- **.NET 11 and C# 15**: All code uses the .NET 11 approach; older patterns such as `Startup.cs` are not covered.
 - **Minimal APIs only**: MVC Controllers, Razor Pages, and Blazor are outside the scope, keeping the focus on one learning path.
 - **EF Core with SQLite**: No database installation is needed; clone the repository and run the examples.
 - **Built-in OpenAPI with Scalar**: Every example includes interactive API documentation.
