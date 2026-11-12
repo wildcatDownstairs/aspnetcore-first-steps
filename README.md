@@ -1,6 +1,6 @@
 # ASP.NET Core 第一步
 
-写给有编程经验者的 ASP.NET Core 渐进式教程，基于 **.NET 11 + Minimal API**，从第一个接口到数据库、认证、测试与部署。以中文为内容基准，提供繁体中文（台湾）、英文与日文译文，四种语言共用可运行的示例代码。
+写给有编程经验者的 ASP.NET Core 渐进式教程，基于 **.NET 11、C# 15 与 Minimal API**，从第一个接口到数据库、认证、测试与部署。以中文为内容基准，提供繁体中文（台湾）、英文与日文译文，四种语言共用可运行的示例代码。
 
 ## 在线阅读
 
@@ -13,7 +13,7 @@
 
 ## 教程内容
 
-- **入门**：环境准备、C# 速览、第一个 Minimal API。
+- **入门**：环境准备、C# 速览（含联合类型等 C# 15 新语法）、第一个 Minimal API。
 - **请求与响应**：参数、请求体、校验、Cookie、响应类型、错误处理和路由分组。
 - **应用骨架**：依赖注入、配置、Middleware 和日志。
 - **数据访问**：EF Core、SQLite、关系与查询、完整 CRUD。
@@ -42,7 +42,7 @@ wrangler.jsonc           Cloudflare Pages 配置
 
 ## 本地运行
 
-文档站点使用 Node.js 24 与 npm（版本见 `.node-version`）；运行教程示例需要 .NET 11 SDK。
+文档站点使用 Node.js 24 与 npm（版本见 `.node-version`）；运行教程示例需要 .NET 11 SDK。`samples/efcore-sql-cheatsheet` 暂时仍以 `net10.0` 为目标框架（Npgsql 的 EF Core 提供程序尚未发布 11 正式版），用 .NET 11 SDK 可以编译，运行它还需要 .NET 10 运行时。
 
 ```bash
 npm ci
